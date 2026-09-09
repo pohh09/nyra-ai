@@ -23,7 +23,7 @@ export function applyTheme(theme: ThemeMode) {
 export function initTheme() {
   if (typeof window === 'undefined') return;
 
-  const savedTheme = (localStorage.getItem('theme') as ThemeMode) || 'light';
+  const savedTheme = (localStorage.getItem('theme') as ThemeMode) || 'dark';
   applyTheme(savedTheme);
 
   // Listen for system theme changes if user selected 'system'

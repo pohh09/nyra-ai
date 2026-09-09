@@ -448,47 +448,8 @@ html.light .chat-accent-button,
 }
 
 /* =========================================
-   LIGHT MODE COMPONENT CONTRAST OVERRIDES
+   LIGHT MODE COMPONENT CONTRAST OVERRIDES (SCOPED)
 ========================================= */
-
-/* Main canvas container in light theme */
-html.light main,
-[data-theme="light"] main {
-  background-color: #F8F7FB !important;
-}
-
-html.light main>div,
-[data-theme="light"] main>div {
-  background: #FFFFFF !important;
-  border-color: #E8E4EF !important;
-  box-shadow: 0 4px 20px rgba(41, 38, 51, 0.04) !important;
-}
-
-/* Mobile & Tablet Full Viewport Edge-to-Edge Layout */
-@media (max-width: 767px) {
-  main {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-  }
-
-  main>div {
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  html.light main>div,
-  [data-theme="light"] main>div {
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-  }
-}
 
 /* Seamless Canvas Flow for AI responses in light theme */
 html.light .chat-assistant-container,
@@ -523,107 +484,16 @@ html.light .chat-message-text,
 }
 
 html.light .chat-assistant-body strong,
-html.light strong,
-[data-theme="light"] .chat-assistant-body strong,
-[data-theme="light"] strong {
+[data-theme="light"] .chat-assistant-body strong {
   color: #292633 !important;
   font-weight: 650 !important;
 }
 
-/* Header in light theme */
-html.light header,
-[data-theme="light"] header {
-  background-color: transparent !important;
-  border-color: #E8E4EF !important;
-}
-
 /* Sidebar in light theme */
-html.light aside,
-[data-theme="light"] aside {
+html.light aside.chat-sidebar,
+[data-theme="light"] aside.chat-sidebar {
   background-color: #F5F3F9 !important;
   border-color: #E8E4EF !important;
-}
-
-html.light aside nav button,
-html.light aside a,
-[data-theme="light"] aside nav button,
-[data-theme="light"] aside a {
-  color: #686477 !important;
-}
-
-html.light aside nav button:hover,
-html.light aside a:hover,
-[data-theme="light"] aside nav button:hover,
-[data-theme="light"] aside a:hover {
-  background-color: #EEE8FA !important;
-  color: #292633 !important;
-}
-
-/* Right-Side Prompts Panel in light theme */
-html.light aside[class*="RightPanel"],
-html.light aside.fixed,
-html.light aside.sm\:relative,
-[data-theme="light"] aside[class*="RightPanel"],
-[data-theme="light"] aside.fixed,
-[data-theme="light"] aside.sm\:relative {
-  background-color: #FFFFFF !important;
-  border-color: #E8E4EF !important;
-  box-shadow: 0 16px 45px rgba(41, 38, 51, 0.06) !important;
-}
-
-/* Heavy dark blocks converted to soft surfaces in light mode */
-html.light [class*="bg-purple-950"],
-html.light [class*="bg-[#1c1335]"],
-html.light [class*="bg-[#140e26]"],
-html.light [class*="bg-[#130f24]"],
-html.light [class*="bg-[#19122c]"],
-html.light [class*="bg-[#241a42]"],
-html.light [class*="bg-[#160f2b]"],
-html.light [class*="bg-[#160f30]"],
-html.light [class*="bg-[#160f2c]"],
-html.light [class*="bg-[#181030]"],
-html.light [class*="bg-[#110a24]"],
-html.light [class*="bg-[#191130]"],
-html.light [class*="bg-[#100a22]"],
-html.light [class*="bg-[#140e28]"],
-html.light [class*="bg-[#150d2c]"],
-html.light [class*="bg-[#120c24]"],
-html.light [class*="bg-[#130d26]"],
-html.light [class*="bg-[#0e091d]"],
-html.light [class*="bg-[#0e0a1b]"],
-[data-theme="light"] [class*="bg-purple-950"],
-[data-theme="light"] [class*="bg-[#1c1335]"],
-[data-theme="light"] [class*="bg-[#140e26]"],
-[data-theme="light"] [class*="bg-[#130f24]"],
-[data-theme="light"] [class*="bg-[#19122c]"],
-[data-theme="light"] [class*="bg-[#241a42]"],
-[data-theme="light"] [class*="bg-[#160f2b]"],
-[data-theme="light"] [class*="bg-[#160f30]"],
-[data-theme="light"] [class*="bg-[#160f2c]"],
-[data-theme="light"] [class*="bg-[#181030]"],
-[data-theme="light"] [class*="bg-[#110a24]"],
-[data-theme="light"] [class*="bg-[#191130]"],
-[data-theme="light"] [class*="bg-[#100a22]"],
-[data-theme="light"] [class*="bg-[#140e28]"],
-[data-theme="light"] [class*="bg-[#150d2c]"],
-[data-theme="light"] [class*="bg-[#120c24]"],
-[data-theme="light"] [class*="bg-[#130d26]"],
-[data-theme="light"] [class*="bg-[#0e091d]"],
-[data-theme="light"] [class*="bg-[#0e0a1b]"] {
-  background-color: #F5F3F9 !important;
-  border-color: #E8E4EF !important;
-  color: #292633 !important;
-}
-
-html.light [class*="bg-[#07050d]"],
-html.light [class*="bg-[#040a17]"],
-html.light [class*="bg-[#060e1e]"],
-html.light [class*="bg-[#0a1835]"],
-[data-theme="light"] [class*="bg-[#07050d]"],
-[data-theme="light"] [class*="bg-[#040a17]"],
-[data-theme="light"] [class*="bg-[#060e1e]"],
-[data-theme="light"] [class*="bg-[#0a1835]"] {
-  background-color: #F8F7FB !important;
 }
 
 /* =========================================
@@ -673,38 +543,6 @@ html.light .chat-composer-box .border-t,
   border-color: #E8E4EF !important;
 }
 
-/* Light Mode Composer Icon & Action Buttons */
-html.light .chat-composer-box button[class*="bg-purple-500/10"],
-html.light .chat-composer-box button[class*="bg-purple-500/15"],
-html.light .chat-composer-box button[class*="bg-purple-500/20"],
-html.light .chat-composer-box div[class*="bg-purple-500/10"],
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/10"],
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/15"],
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/20"],
-[data-theme="light"] .chat-composer-box div[class*="bg-purple-500/10"] {
-  background-color: #F5F3F9 !important;
-  border-color: #E8E4EF !important;
-  color: #686477 !important;
-}
-
-html.light .chat-composer-box button[class*="bg-purple-500/10"]:hover,
-html.light .chat-composer-box button[class*="bg-purple-500/15"]:hover,
-html.light .chat-composer-box button[class*="bg-purple-500/20"]:hover,
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/10"]:hover,
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/15"]:hover,
-[data-theme="light"] .chat-composer-box button[class*="bg-purple-500/20"]:hover {
-  background-color: #EEE8FA !important;
-  border-color: #8B6FC9 !important;
-  color: #292633 !important;
-}
-
-html.light .chat-composer-box button svg,
-html.light .chat-composer-box svg,
-[data-theme="light"] .chat-composer-box button svg,
-[data-theme="light"] .chat-composer-box svg {
-  color: #8B6FC9 !important;
-}
-
 /* Deep Research Active in Light Mode */
 html.light .chat-composer-box button[class*="bg-gradient-to-r from-amber-500"],
 [data-theme="light"] .chat-composer-box button[class*="bg-gradient-to-r from-amber-500"] {
@@ -734,161 +572,6 @@ html.light .chat-composer-box button:disabled svg,
 html.light .chat-composer-box button[class*="cursor-not-allowed"] svg,
 [data-theme="light"] .chat-composer-box button:disabled svg,
 [data-theme="light"] .chat-composer-box button[class*="cursor-not-allowed"] svg {
-  color: #92909B !important;
-}
-
-/* Popover Menu inside Light Mode Composer */
-html.light .chat-composer-box div[class*="bg-[#130f24]"],
-html.light .chat-composer-box div[class*="bg-[#140e26]"],
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"],
-[data-theme="light"] .chat-composer-box div[class*="bg-[#140e26]"] {
-  background-color: #FFFFFF !important;
-  border-color: #E8E4EF !important;
-  box-shadow: 0 12px 36px rgba(41, 38, 51, 0.1) !important;
-  color: #292633 !important;
-}
-
-html.light .chat-composer-box div[class*="bg-[#130f24]"] label,
-html.light .chat-composer-box div[class*="bg-[#130f24]"] button,
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"] label,
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"] button {
-  color: #292633 !important;
-}
-
-html.light .chat-composer-box div[class*="bg-[#130f24]"] label:hover,
-html.light .chat-composer-box div[class*="bg-[#130f24]"] button:hover,
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"] label:hover,
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"] button:hover {
-  background-color: #F5F3F9 !important;
-  color: #292633 !important;
-}
-
-html.light .chat-composer-box div[class*="bg-[#130f24]"] span[class*="text-purple-300/70"],
-[data-theme="light"] .chat-composer-box div[class*="bg-[#130f24]"] span[class*="text-purple-300/70"] {
-  color: #686477 !important;
-}
-
-/* =========================================
-   LIGHT MODE SOFT HARMONIOUS COLOR SYSTEM
-========================================= */
-
-/* Soft Primary and Secondary Text */
-html.light .text-white,
-[data-theme="light"] .text-white {
-  color: #292633 !important;
-}
-
-html.light .text-zinc-100,
-html.light .text-zinc-200,
-html.light .text-slate-100,
-html.light .text-slate-200,
-[data-theme="light"] .text-zinc-100,
-[data-theme="light"] .text-zinc-200,
-[data-theme="light"] .text-slate-100,
-[data-theme="light"] .text-slate-200 {
-  color: #292633 !important;
-}
-
-html.light .text-zinc-300,
-html.light .text-slate-300,
-[data-theme="light"] .text-zinc-300,
-[data-theme="light"] .text-slate-300 {
-  color: #686477 !important;
-}
-
-html.light .text-zinc-400,
-html.light .text-slate-400,
-[data-theme="light"] .text-zinc-400,
-[data-theme="light"] .text-slate-400 {
-  color: #686477 !important;
-}
-
-html.light .text-zinc-500,
-html.light .text-slate-500,
-[data-theme="light"] .text-zinc-500,
-[data-theme="light"] .text-slate-500 {
-  color: #92909B !important;
-}
-
-html.light .text-purple-100,
-html.light .text-purple-200,
-html.light .text-purple-300,
-[data-theme="light"] .text-purple-100,
-[data-theme="light"] .text-purple-200,
-[data-theme="light"] .text-purple-300 {
-  color: #6B52A3 !important;
-}
-
-html.light .text-purple-400,
-html.light .text-purple-500,
-[data-theme="light"] .text-purple-400,
-[data-theme="light"] .text-purple-500 {
-  color: #8B6FC9 !important;
-}
-
-/* Soft Cards & Delicate Borders */
-html.light [class*="border-purple-400/"],
-html.light [class*="border-purple-500/"],
-html.light [class*="border-white/"],
-[data-theme="light"] [class*="border-purple-400/"],
-[data-theme="light"] [class*="border-purple-500/"],
-[data-theme="light"] [class*="border-white/"] {
-  border-color: #E8E4EF !important;
-}
-
-html.light [class*="bg-white/[0.03]"],
-html.light [class*="bg-white/[0.04]"],
-html.light [class*="bg-white/[0.05]"],
-html.light [class*="bg-white/[0.06]"],
-html.light [class*="bg-white/[0.08]"],
-[data-theme="light"] [class*="bg-white/[0.03]"],
-[data-theme="light"] [class*="bg-white/[0.04]"],
-[data-theme="light"] [class*="bg-white/[0.05]"],
-[data-theme="light"] [class*="bg-white/[0.06]"],
-[data-theme="light"] [class*="bg-white/[0.08]"] {
-  background-color: #F5F3F9 !important;
-  color: #292633 !important;
-}
-
-html.light [class*="hover:bg-white/[0.06]"]:hover,
-html.light [class*="hover:bg-white/[0.08]"]:hover,
-html.light [class*="hover:bg-white/[0.1]"]:hover,
-html.light [class*="hover:bg-white/[0.12]"]:hover,
-[data-theme="light"] [class*="hover:bg-white/[0.06]"]:hover,
-[data-theme="light"] [class*="hover:bg-white/[0.08]"]:hover,
-[data-theme="light"] [class*="hover:bg-white/[0.1]"]:hover,
-[data-theme="light"] [class*="hover:bg-white/[0.12]"]:hover {
-  background-color: #EEE8FA !important;
-  color: #292633 !important;
-}
-
-html.light [class*="bg-black/"],
-html.light [class*="bg-black"],
-[data-theme="light"] [class*="bg-black/"],
-[data-theme="light"] [class*="bg-black"] {
-  background-color: #F8F7FB !important;
-}
-
-/* Soft Input & Textarea Styling */
-html.light textarea,
-html.light input[type="text"],
-html.light input[type="search"],
-html.light input[type="email"],
-html.light input[type="password"],
-html.light select,
-[data-theme="light"] textarea,
-[data-theme="light"] input[type="text"],
-[data-theme="light"] input[type="search"],
-[data-theme="light"] input[type="email"],
-[data-theme="light"] input[type="password"],
-[data-theme="light"] select {
-  color: #292633 !important;
-}
-
-html.light textarea::placeholder,
-html.light input::placeholder,
-[data-theme="light"] textarea::placeholder,
-[data-theme="light"] input::placeholder {
   color: #92909B !important;
 }
 
