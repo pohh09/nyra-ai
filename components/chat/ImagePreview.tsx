@@ -24,7 +24,7 @@ export default function ImagePreview({ image, images, onRemove }: Props) {
         {imageList.map((img, idx) => (
           <div
             key={idx}
-            className="group relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-purple-400/30 bg-[#130f24] shadow-lg shadow-purple-950/40 backdrop-blur-xl shrink-0 transition-all hover:border-purple-400/60"
+            className="group relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF] dark:bg-[#130f24] shadow-sm dark:shadow-lg dark:shadow-purple-950/40 backdrop-blur-xl shrink-0 transition-all hover:border-[#8B6FC9]/60 dark:hover:border-purple-400/60"
           >
             {/* THUMBNAIL */}
             <Image
@@ -38,7 +38,7 @@ export default function ImagePreview({ image, images, onRemove }: Props) {
             {/* HOVER OVERLAY */}
             <div
               onClick={() => setLightboxSrc(img)}
-              className="absolute inset-0 bg-purple-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer pointer-events-none"
+              className="absolute inset-0 bg-[#292633]/20 dark:bg-purple-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer pointer-events-none"
             >
               <ZoomIn size={16} className="text-white drop-shadow" />
             </div>
@@ -57,9 +57,9 @@ export default function ImagePreview({ image, images, onRemove }: Props) {
             </button>
 
             {/* FOOTER BADGE */}
-            <div className="absolute bottom-0 inset-x-0 bg-black/65 backdrop-blur-sm px-1.5 py-0.5 flex items-center justify-between text-[9px] font-mono text-purple-200 pointer-events-none">
+            <div className="absolute bottom-0 inset-x-0 bg-[#FFFFFF]/90 dark:bg-black/65 backdrop-blur-sm px-1.5 py-0.5 flex items-center justify-between text-[9px] font-mono text-[#686477] dark:text-purple-200 pointer-events-none border-t border-[#E8E4EF]/50 dark:border-white/5">
               <span className="truncate">Img {idx + 1}</span>
-              <ImageIcon size={10} className="text-purple-400 shrink-0" />
+              <ImageIcon size={10} className="text-[#8B6FC9] dark:text-purple-400 shrink-0" />
             </div>
           </div>
         ))}

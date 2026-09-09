@@ -634,7 +634,7 @@ export default function Sidebar({
           relative
           flex
           items-center
-          rounded-lg
+          rounded-xl
           px-2.5
           py-2
           text-xs
@@ -642,10 +642,10 @@ export default function Sidebar({
           duration-150
           cursor-pointer
           ${isActive
-            ? 'bg-purple-100/80 dark:bg-white/[0.09] text-purple-950 dark:text-white font-medium shadow-sm'
-            : 'text-zinc-700 dark:text-zinc-300 hover:bg-purple-50/70 dark:hover:bg-white/[0.05] hover:text-zinc-900 dark:hover:text-white'
+            ? 'bg-[#EEE8FA] dark:bg-white/[0.09] text-[#292633] dark:text-white font-semibold shadow-xs'
+            : 'text-[#686477] dark:text-zinc-300 hover:bg-[#EEE8FA]/60 dark:hover:bg-white/[0.05] hover:text-[#292633] dark:hover:text-white'
           }
-          ${isMenuOpen ? 'bg-purple-100 dark:bg-white/[0.08] text-purple-950 dark:text-white' : ''}
+          ${isMenuOpen ? 'bg-[#EEE8FA] dark:bg-white/[0.08] text-[#292633] dark:text-white' : ''}
         `}
         onClick={() => {
           if (!isEditing) handleSelectChat(chat.id);
@@ -653,9 +653,9 @@ export default function Sidebar({
       >
         <div className="mr-2 shrink-0">
           {chat.pinned ? (
-            <Pin size={12} className="text-purple-600 dark:text-purple-400 fill-purple-600/40 dark:fill-purple-400/40" />
+            <Pin size={12} className="text-[#8B6FC9] dark:text-purple-400 fill-[#8B6FC9]/40 dark:fill-purple-400/40" />
           ) : (
-            <MessageSquare size={13} className={isActive ? 'text-purple-600 dark:text-purple-300' : 'text-zinc-400 dark:text-zinc-500'} />
+            <MessageSquare size={13} className={isActive ? 'text-[#8B6FC9] dark:text-purple-300' : 'text-[#92909B] dark:text-zinc-500'} />
           )}
         </div>
 
@@ -671,7 +671,7 @@ export default function Sidebar({
                 if (e.key === 'Escape') setEditingChatId(null);
               }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-transparent outline-none text-xs text-zinc-900 dark:text-white border-b border-purple-500 dark:border-purple-400 pb-0.5"
+              className="w-full bg-transparent outline-none text-xs text-[#292633] dark:text-white border-b border-[#8B6FC9] dark:border-purple-400 pb-0.5"
             />
           ) : (
             <p
@@ -700,14 +700,14 @@ export default function Sidebar({
               items-center
               justify-center
               rounded-md
-              text-zinc-400
+              text-[#92909B]
               opacity-0
               transition-opacity
-              hover:bg-purple-200/50 dark:hover:bg-white/[0.1]
-              hover:text-zinc-800 dark:hover:text-white
+              hover:bg-[#E2D8F7] dark:hover:bg-white/[0.1]
+              hover:text-[#292633] dark:hover:text-white
               group-hover:opacity-100
               cursor-pointer
-              ${isMenuOpen ? 'opacity-100 bg-purple-200/50 dark:bg-white/[0.1] text-zinc-900 dark:text-white' : ''}
+              ${isMenuOpen ? 'opacity-100 bg-[#E2D8F7] dark:bg-white/[0.1] text-[#292633] dark:text-white' : ''}
             `}
           >
             <MoreHorizontal size={13} />
