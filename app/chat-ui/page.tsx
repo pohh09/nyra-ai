@@ -1408,8 +1408,8 @@ export default function ChatPage() {
 
   if (appLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#040a17]">
-        <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 animate-pulse flex items-center justify-center text-white shadow-2xl">
+      <div className="flex h-screen w-screen items-center justify-center bg-[#F8F7FB] dark:bg-[#07050d] transition-colors">
+        <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#8B6FC9] to-[#7E9AC7] dark:from-purple-600 dark:to-sky-400 animate-pulse flex items-center justify-center text-white shadow-2xl">
           <span className="text-lg font-bold">✦</span>
         </div>
       </div>
@@ -1421,7 +1421,7 @@ export default function ChatPage() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="relative flex h-[100dvh] w-full max-w-full overflow-hidden bg-[#07050d] text-[#ede7f3]"
+      className="relative flex h-[100dvh] w-full max-w-full overflow-hidden bg-[#F8F7FB] dark:bg-[#07050d] text-[#292633] dark:text-[#ede7f3] transition-colors"
     >
       {/* DRAG AND DROP OVERLAY */}
       {isDraggingOver && (
