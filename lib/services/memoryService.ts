@@ -59,6 +59,11 @@ const DEFAULT_STARTER_MEMORIES: MemoryItem[] = [
 
 let cachedUserId: string | null = null;
 
+function getStorageKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_memories_${uid}` : MEMORY_STORAGE_KEY;
+}
+
 async function getAuthUserId(): Promise<string | null> {
   if (cachedUserId) return cachedUserId;
   if (!isSupabaseConfigured()) return null;
@@ -98,12 +103,13 @@ export function setMemoryMasterEnabled(enabled: boolean): void {
   }
 }
 
-export function getMemories(): MemoryItem[] {
+export function getMemories(userId?: string): MemoryItem[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(MEMORY_STORAGE_KEY);
+    const key = getStorageKey(userId);
+    const raw = localStorage.getItem(key);
     if (!raw) {
-      localStorage.setItem(MEMORY_STORAGE_KEY, JSON.stringify(DEFAULT_STARTER_MEMORIES));
+      localStorage.setItem(key, JSON.stringify(DEFAULT_STARTER_MEMORIES));
       return DEFAULT_STARTER_MEMORIES;
     }
     const parsed = JSON.parse(raw);
@@ -118,13 +124,14 @@ export function getMemories(): MemoryItem[] {
   }
 }
 
-export function saveMemories(memories: MemoryItem[]): void {
+export function saveMemories(memories: MemoryItem[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
+    const key = getStorageKey(userId);
     const safeMemories = Array.isArray(memories)
       ? memories.filter((m): m is MemoryItem => Boolean(m && typeof m === 'object' && m.id && m.content))
       : [];
-    localStorage.setItem(MEMORY_STORAGE_KEY, JSON.stringify(safeMemories));
+    localStorage.setItem(key, JSON.stringify(safeMemories));
     window.dispatchEvent(new CustomEvent('nyra_memories_updated', { detail: safeMemories }));
   } catch (err) {
     console.error('Failed to save memories to storage:', err);
@@ -133,7 +140,7 @@ export function saveMemories(memories: MemoryItem[]): void {
 
 export async function syncMemoriesWithCloud(userId: string): Promise<MemoryItem[]> {
   if (!userId || !isSupabaseConfigured()) {
-    return getMemories();
+    return getMemories(userId);
   }
 
   cachedUserId = userId;
@@ -141,19 +148,19 @@ export async function syncMemoriesWithCloud(userId: string): Promise<MemoryItem[
   try {
     const cloudMemories = await fetchCloudMemories(userId);
     if (cloudMemories && cloudMemories.length > 0) {
-      saveMemories(cloudMemories);
+      saveMemories(cloudMemories, userId);
       return cloudMemories;
     }
 
     // Cloud is empty for this user: migrate local starter memories
-    const local = getMemories();
+    const local = getMemories(userId);
     if (local.length > 0) {
       await migrateLocalMemoriesToCloud(userId, local);
     }
     return local;
   } catch (err) {
     console.error('Failed to sync memories with Supabase:', err);
-    return getMemories();
+    return getMemories(userId);
   }
 }
 
@@ -164,7 +171,7 @@ export function createMemory(params: {
   reason?: string;
   confidence?: number;
 }, userId?: string): MemoryItem {
-  const current = getMemories();
+  const current = getMemories(userId);
   const newMemory: MemoryItem = {
     id: `mem_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     title: params.title?.trim() || undefined,
@@ -177,7 +184,7 @@ export function createMemory(params: {
   };
 
   const updated = [newMemory, ...current];
-  saveMemories(updated);
+  saveMemories(updated, userId);
 
   // Sync to Supabase in the background if authenticated
   const targetUid = userId || cachedUserId;
@@ -197,7 +204,7 @@ export function updateMemory(
   updates: Partial<Omit<MemoryItem, 'id' | 'createdAt'>>,
   userId?: string
 ): MemoryItem | null {
-  const current = getMemories();
+  const current = getMemories(userId);
   let updatedMem: MemoryItem | null = null;
 
   const updatedList = current.map((m) => {
@@ -213,7 +220,7 @@ export function updateMemory(
   });
 
   if (updatedMem) {
-    saveMemories(updatedList);
+    saveMemories(updatedList, userId);
 
     // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
@@ -230,10 +237,10 @@ export function updateMemory(
 }
 
 export function deleteMemory(id: string, userId?: string): boolean {
-  const current = getMemories();
+  const current = getMemories(userId);
   const filtered = current.filter((m) => m.id !== id);
   if (filtered.length !== current.length) {
-    saveMemories(filtered);
+    saveMemories(filtered, userId);
 
     // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
@@ -251,7 +258,7 @@ export function deleteMemory(id: string, userId?: string): boolean {
 }
 
 export function toggleMemory(id: string, userId?: string): MemoryItem | null {
-  const current = getMemories();
+  const current = getMemories(userId);
   const mem = current.find((m) => m.id === id);
   if (!mem) return null;
 
@@ -259,7 +266,7 @@ export function toggleMemory(id: string, userId?: string): MemoryItem | null {
 }
 
 export function clearAllMemories(userId?: string): void {
-  saveMemories([]);
+  saveMemories([], userId);
 
   const targetUid = userId || cachedUserId;
   if (targetUid) {
@@ -272,7 +279,7 @@ export function clearAllMemories(userId?: string): void {
 }
 
 export function resetDefaultMemories(userId?: string): MemoryItem[] {
-  saveMemories(DEFAULT_STARTER_MEMORIES);
+  saveMemories(DEFAULT_STARTER_MEMORIES, userId);
 
   const targetUid = userId || cachedUserId;
   if (targetUid) {
@@ -292,9 +299,9 @@ export function resetDefaultMemories(userId?: string): MemoryItem[] {
   return DEFAULT_STARTER_MEMORIES;
 }
 
-export function formatMemoriesForPrompt(): string {
+export function formatMemoriesForPrompt(userId?: string): string {
   if (!isMemoryMasterEnabled()) return '';
-  const memories = getMemories().filter((m) => m.enabled);
+  const memories = getMemories(userId).filter((m) => m.enabled);
   if (memories.length === 0) return '';
 
   const bulletList = memories

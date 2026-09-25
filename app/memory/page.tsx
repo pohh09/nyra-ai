@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
@@ -38,7 +39,7 @@ import { MemoryItem, MemoryCategory } from '@/lib/types';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
 
-export const MEMORY_CATEGORIES: { id: MemoryCategory; label: string; icon: LucideIcon }[] = [
+const MEMORY_CATEGORIES: { id: MemoryCategory; label: string; icon: LucideIcon }[] = [
   { id: 'career', label: 'Career', icon: Briefcase },
   { id: 'goal', label: 'Goals', icon: Target },
   { id: 'preference', label: 'Preferences', icon: Sliders },
@@ -80,8 +81,15 @@ const CATEGORY_COLORS: Record<MemoryCategory, { bg: string; text: string; border
 };
 
 export default function MemoryPage() {
+  const router = useRouter();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   const [memories, setMemories] = useState<MemoryItem[]>([]);
   const [masterEnabled, setMasterEnabled] = useState<boolean>(true);
@@ -229,7 +237,7 @@ export default function MemoryPage() {
   };
 
   return (
-    <div className="memory-page-root min-h-screen w-full bg-[#07050d] text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
+    <div className="memory-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
       {/* Centered Workspace Container Matching Tasks & Documents */}
       <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         

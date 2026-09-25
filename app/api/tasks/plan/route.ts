@@ -299,7 +299,7 @@ Return ONLY the raw JSON object. Do not include markdown code block backticks (\
             Authorization: `Bearer ${groqKey}`,
           },
           body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
+            model: 'qwen/qwen3.8-27b',
             messages: [
               { role: 'system', content: 'You are an expert curriculum designer that outputs strictly valid JSON.' },
               { role: 'user', content: prompt },

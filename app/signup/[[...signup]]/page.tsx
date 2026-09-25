@@ -1,62 +1,64 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  ArrowRight,
-  Shield,
   Sparkles,
-  Stars,
-  Zap,
-  Lock,
-  Mail,
-  User as UserIcon,
+  Eye,
+  EyeOff,
   Loader2,
   AlertCircle,
-  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 
-export default function SignupPage() {
+function SignupFormContent() {
   const router = useRouter();
-  const { signUp, user, isLoading: authLoading } = useAuth();
+  const { signUp, signInWithGoogle, startGuest, user, profile, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
 
-  const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light') {
-      setIsDark(false);
-      document.documentElement.classList.remove('dark');
-    } else {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
 
   useEffect(() => {
     if (user && !authLoading) {
-      router.push('/chat-ui');
+      if (profile && !profile.onboardingCompleted) {
+        router.push('/onboarding');
+      } else if (profile?.onboardingCompleted) {
+        router.push('/chat-ui');
+      }
     }
-  }, [user, authLoading, router]);
+  }, [user, profile, authLoading, router]);
 
-  const toggleTheme = () => {
-    const next = !isDark;
-    setIsDark(next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-    if (next) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+  const handleContinueAsGuest = (e: React.MouseEvent) => {
+    e.preventDefault();
+    startGuest();
+    addToast({ type: 'info', title: 'Welcome to Nyra AI (Guest Mode)' });
+    router.push('/chat-ui');
+  };
+
+  const handleGoogleSignUp = async () => {
+    setIsGoogleLoading(true);
+    setErrorMsg(null);
+    try {
+      const res = await signInWithGoogle();
+      if (!res.success) {
+        setErrorMsg(res.error || 'Google Sign-Up failed');
+        addToast({ type: 'error', title: res.error || 'Google Sign-Up failed' });
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Google Sign-Up failed.');
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -64,8 +66,13 @@ export default function SignupPage() {
     e.preventDefault();
     setErrorMsg(null);
 
+    if (!name.trim()) {
+      setErrorMsg('Please enter your name.');
+      return;
+    }
+
     if (!email.trim() || !password) {
-      setErrorMsg('Please complete all required fields.');
+      setErrorMsg('Please enter your email and password.');
       return;
     }
 
@@ -75,19 +82,20 @@ export default function SignupPage() {
     }
 
     if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match.');
+      setErrorMsg('Passwords do not match. Please re-enter.');
       return;
     }
 
+    const cleanEmail = email.trim().toLowerCase();
     setIsSubmitting(true);
     try {
-      const res = await signUp(email.trim(), password, displayName.trim());
+      const res = await signUp(cleanEmail, password, name.trim());
       if (!res.success) {
         setErrorMsg(res.error || 'Registration failed. Please try a different email.');
         addToast({ type: 'error', title: res.error || 'Signup failed' });
       } else {
-        addToast({ type: 'success', title: 'Account created successfully!' });
-        router.push('/chat-ui');
+        addToast({ type: 'success', title: 'Account created! Welcome to Nyra AI' });
+        router.push('/onboarding');
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'An error occurred during registration.');
@@ -97,251 +105,222 @@ export default function SignupPage() {
   };
 
   return (
-    <main
-      className={`relative min-h-screen overflow-hidden transition-all duration-500 ${
-        isDark ? 'bg-[#020617]' : 'bg-[#F8F7FB]'
-      }`}
-    >
-      {/* BACKGROUND */}
+    <main className="relative min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633] flex items-center justify-center p-4 sm:p-6 selection:bg-[#8B6FC9]/30 transition-colors">
+      {/* Subtle ambient background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
-          className={`absolute inset-0 ${isDark ? 'opacity-[0.04]' : 'opacity-[0.06]'}`}
+          className="absolute inset-0 dark:opacity-[0.03] opacity-[0.015]"
           style={{
             backgroundImage:
-              'linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)',
-            backgroundSize: '70px 70px',
+              'linear-gradient(to right, rgba(139,111,201,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(139,111,201,0.2) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
           }}
         />
-        <div className="absolute left-[-120px] top-[-80px] h-[380px] w-[380px] rounded-full bg-[#8B6FC9]/15 blur-[120px]" />
-        <div className="absolute right-[-100px] top-[120px] h-[420px] w-[420px] rounded-full bg-[#7E9AC7]/15 blur-[120px]" />
-        <div className="absolute bottom-[-200px] left-1/2 h-[400px] w-[720px] -translate-x-1/2 rounded-full bg-[#8B6FC9]/10 blur-[160px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-[#8B6FC9]/10 blur-[150px]" />
       </div>
 
-      {/* THEME TOGGLE BUTTON */}
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className={`absolute right-6 top-6 z-50 rounded-2xl border px-5 py-2.5 text-sm font-medium backdrop-blur-xl transition-all cursor-pointer ${
-          isDark
-            ? 'border-white/10 bg-white/[0.05] text-white hover:bg-white/10'
-            : 'border-[#E8E4EF] bg-white/80 text-[#292633] hover:bg-white shadow-sm'
-        }`}
-      >
-        {isDark ? 'Light Mode' : 'Dark Mode'}
-      </button>
+      {/* CENTERED CLEAN AUTH CARD */}
+      <div className="relative z-10 w-full max-w-[440px] dark:bg-[#0A0C14] bg-white border dark:border-white/10 border-[#E8E4EF] rounded-3xl p-8 sm:p-10 shadow-xl dark:shadow-[0_24px_80px_rgba(0,0,0,0.7)] backdrop-blur-xl">
+        
+        {/* Logo & Header */}
+        <div className="flex flex-col items-center text-center mb-7">
+          <div className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-[0_0_24px_rgba(139,111,201,0.35)] mb-3.5 ring-1 ring-purple-400/30 border border-white/10 bg-[#120726]">
+            <Image src="/logo.png" alt="Nyra AI Logo" fill className="object-cover" priority />
+          </div>
+          <span className="text-xs font-bold tracking-wider dark:text-purple-300 text-purple-700 uppercase mb-1">Nyra</span>
+          <h1 className="text-2xl sm:text-[26px] font-extrabold tracking-tight dark:text-white text-[#292633]">
+            Create your Nyra account
+          </h1>
+          <p className="text-xs sm:text-sm dark:text-white/50 text-[#686477] mt-1">
+            Start your personalized AI workspace
+          </p>
+        </div>
 
-      {/* MAIN CONTAINER */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-10">
-        <div
-          className={`grid w-full max-w-7xl overflow-hidden rounded-[40px] border backdrop-blur-[40px] lg:grid-cols-2 transition-all duration-500 ${
-            isDark
-              ? 'border-white/10 bg-white/[0.03]'
-              : 'border-[#E8E4EF] bg-white/80 shadow-[0_20px_80px_rgba(41,38,51,0.06)]'
-          }`}
-        >
-          {/* LEFT HERO */}
-          <div className="relative flex flex-col justify-center px-10 py-16 lg:px-24">
-            <div
-              className={`mb-8 flex w-fit items-center gap-2 rounded-full border px-5 py-2.5 text-sm backdrop-blur-xl ${
-                isDark
-                  ? 'border-white/10 bg-white/[0.04] text-white/70'
-                  : 'border-[#E8E4EF] bg-[#EEE8FA] text-[#8B6FC9] font-medium'
-              }`}
-            >
-              <Stars size={14} className={isDark ? 'text-sky-400' : 'text-[#8B6FC9]'} />
-              <span>AI Workspace Platform</span>
-            </div>
+        {errorMsg && (
+          <div className="mb-4 p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-xs text-rose-600 dark:text-rose-300 flex items-start gap-2.5">
+            <AlertCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
+            <span className="leading-relaxed">{errorMsg}</span>
+          </div>
+        )}
 
-            <h1
-              className={`text-6xl font-black leading-[0.9] tracking-[-0.08em] lg:text-[96px] ${
-                isDark ? 'text-white' : 'text-[#292633]'
-              }`}
-            >
-              Create
-              <br />
-              <span className="bg-gradient-to-r from-[#8B6FC9] to-[#7E9AC7] bg-clip-text text-transparent">
-                Account
-              </span>
-            </h1>
+        {/* REGISTRATION FORM */}
+        <form onSubmit={handleSignup} className="space-y-3.5">
+          {/* NAME */}
+          <div>
+            <label className="block text-xs font-medium dark:text-white/80 text-[#292633] mb-1.5">
+              Name
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="w-full h-11 px-3.5 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/[0.04] bg-[#F5F3F9] focus:bg-white dark:focus:bg-white/[0.06] text-sm dark:text-white text-[#292633] dark:placeholder:text-white/25 placeholder:text-[#686477]/60 focus:border-[#8B6FC9] focus:outline-none focus:ring-1 focus:ring-[#8B6FC9] transition"
+            />
+          </div>
 
-            <p className={`mt-8 max-w-[520px] text-lg leading-9 ${isDark ? 'text-white/55' : 'text-[#686477]'}`}>
-              Build futuristic AI workflows, automate modern products, and experience persistent multi-model intelligence with Nyra AI.
-            </p>
+          {/* EMAIL */}
+          <div>
+            <label className="block text-xs font-medium dark:text-white/80 text-[#292633] mb-1.5">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              className="w-full h-11 px-3.5 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/[0.04] bg-[#F5F3F9] focus:bg-white dark:focus:bg-white/[0.06] text-sm dark:text-white text-[#292633] dark:placeholder:text-white/25 placeholder:text-[#686477]/60 focus:border-[#8B6FC9] focus:outline-none focus:ring-1 focus:ring-[#8B6FC9] transition"
+            />
+          </div>
 
-            {/* FEATURES */}
-            <div className="mt-14 flex flex-wrap gap-6">
-              <FeatureCard icon={<Sparkles size={18} />} title="AI Powered" subtitle="Smart automation" isDark={isDark} />
-              <FeatureCard icon={<Shield size={18} />} title="Secure" subtitle="Row-level security" isDark={isDark} />
-              <FeatureCard icon={<Zap size={18} />} title="Fast" subtitle="Lightning performance" isDark={isDark} />
-            </div>
-
-            <div className={`mt-14 flex items-center gap-3 text-sm ${isDark ? 'text-white/50' : 'text-[#686477]'}`}>
-              <span>Start building in seconds</span>
-              <ArrowRight size={16} className={isDark ? 'text-blue-500' : 'text-[#8B6FC9]'} />
+          {/* PASSWORD */}
+          <div>
+            <label className="block text-xs font-medium dark:text-white/80 text-[#292633] mb-1.5">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                className="w-full h-11 pl-3.5 pr-10 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/[0.04] bg-[#F5F3F9] focus:bg-white dark:focus:bg-white/[0.06] text-sm dark:text-white text-[#292633] dark:placeholder:text-white/25 placeholder:text-[#686477]/60 focus:border-[#8B6FC9] focus:outline-none focus:ring-1 focus:ring-[#8B6FC9] transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 dark:text-white/40 text-[#686477] dark:hover:text-white hover:text-[#292633] transition cursor-pointer"
+                tabIndex={-1}
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
           </div>
 
-          {/* RIGHT SIGN UP FORM */}
-          <div className="relative flex items-center justify-center px-6 py-16 lg:px-12">
-            <div className="absolute h-[500px] w-[500px] rounded-full bg-[#8B6FC9]/10 blur-[100px] pointer-events-none" />
-
-            <div className="relative z-10 w-full max-w-[460px]">
-              <div
-                className={`overflow-hidden rounded-[36px] border p-8 backdrop-blur-2xl transition-all duration-500 ${
-                  isDark
-                    ? 'bg-[#081122]/95 border-white/10 shadow-[0_20px_100px_rgba(0,0,0,0.25)]'
-                    : 'bg-white border-[#E8E4EF] shadow-[0_16px_50px_rgba(41,38,51,0.08)]'
-                }`}
+          {/* CONFIRM PASSWORD */}
+          <div>
+            <label className="block text-xs font-medium dark:text-white/80 text-[#292633] mb-1.5">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className="w-full h-11 pl-3.5 pr-10 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/[0.04] bg-[#F5F3F9] focus:bg-white dark:focus:bg-white/[0.06] text-sm dark:text-white text-[#292633] dark:placeholder:text-white/25 placeholder:text-[#686477]/60 focus:border-[#8B6FC9] focus:outline-none focus:ring-1 focus:ring-[#8B6FC9] transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 dark:text-white/40 text-[#686477] dark:hover:text-white hover:text-[#292633] transition cursor-pointer"
+                tabIndex={-1}
+                aria-label="Toggle password visibility"
               >
-                <div className="mb-6">
-                  <h2 className={`text-[28px] font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-[#292633]'}`}>
-                    Create your Account
-                  </h2>
-                  <p className={`text-xs mt-1.5 ${isDark ? 'text-white/60' : 'text-[#686477]'}`}>
-                    Start your intelligent AI journey with cloud synchronization
-                  </p>
-                </div>
-
-                {errorMsg && (
-                  <div className="mb-5 p-3.5 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-xs text-rose-300 dark:text-rose-300 flex items-start gap-2.5">
-                    <AlertCircle size={15} className="text-rose-400 shrink-0 mt-0.5" />
-                    <span>{errorMsg}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleSignup} className="space-y-3.5">
-                  <div>
-                    <label className={`block text-xs font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-[#292633]'}`}>
-                      Display Name (Optional)
-                    </label>
-                    <div className="relative">
-                      <UserIcon size={15} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isDark ? 'text-slate-400' : 'text-[#92909B]'}`} />
-                      <input
-                        type="text"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                        placeholder="Alex Parker"
-                        className={`w-full h-11 pl-10 pr-4 rounded-2xl border text-sm outline-none transition ${
-                          isDark
-                            ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:border-sky-400 focus:bg-[#0a1835]'
-                            : 'bg-[#F8F7FB] border-[#E8E4EF] text-[#292633] placeholder:text-[#92909B] focus:border-[#8B6FC9] focus:bg-white shadow-inner'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className={`block text-xs font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-[#292633]'}`}>
-                      Email address
-                    </label>
-                    <div className="relative">
-                      <Mail size={15} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isDark ? 'text-slate-400' : 'text-[#92909B]'}`} />
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        className={`w-full h-11 pl-10 pr-4 rounded-2xl border text-sm outline-none transition ${
-                          isDark
-                            ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:border-sky-400 focus:bg-[#0a1835]'
-                            : 'bg-[#F8F7FB] border-[#E8E4EF] text-[#292633] placeholder:text-[#92909B] focus:border-[#8B6FC9] focus:bg-white shadow-inner'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className={`block text-xs font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-[#292633]'}`}>
-                      Password (min 6 characters)
-                    </label>
-                    <div className="relative">
-                      <Lock size={15} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isDark ? 'text-slate-400' : 'text-[#92909B]'}`} />
-                      <input
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••••••"
-                        className={`w-full h-11 pl-10 pr-4 rounded-2xl border text-sm outline-none transition ${
-                          isDark
-                            ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:border-sky-400 focus:bg-[#0a1835]'
-                            : 'bg-[#F8F7FB] border-[#E8E4EF] text-[#292633] placeholder:text-[#92909B] focus:border-[#8B6FC9] focus:bg-white shadow-inner'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className={`block text-xs font-semibold mb-1.5 ${isDark ? 'text-white/80' : 'text-[#292633]'}`}>
-                      Confirm Password
-                    </label>
-                    <div className="relative">
-                      <Lock size={15} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isDark ? 'text-slate-400' : 'text-[#92909B]'}`} />
-                      <input
-                        type="password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••••••"
-                        className={`w-full h-11 pl-10 pr-4 rounded-2xl border text-sm outline-none transition ${
-                          isDark
-                            ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:border-sky-400 focus:bg-[#0a1835]'
-                            : 'bg-[#F8F7FB] border-[#E8E4EF] text-[#292633] placeholder:text-[#92909B] focus:border-[#8B6FC9] focus:bg-white shadow-inner'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-12 mt-3 rounded-2xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white font-bold text-sm shadow-[0_8px_24px_rgba(139,111,201,0.25)] hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin text-white" />
-                        <span>Creating Account...</span>
-                      </>
-                    ) : (
-                      <span>Sign Up & Launch</span>
-                    )}
-                  </button>
-                </form>
-
-                <div className="mt-6 pt-5 border-t border-[#E8E4EF] dark:border-white/10 text-center">
-                  <p className={`text-xs ${isDark ? 'text-white/60' : 'text-[#686477]'}`}>
-                    Already have an account?{' '}
-                    <Link href="/login" className="text-[#8B6FC9] font-semibold hover:underline">
-                      Sign In
-                    </Link>
-                  </p>
-                </div>
-              </div>
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
+          </div>
+
+          {/* PRIMARY BUTTON */}
+          <button
+            type="submit"
+            disabled={isSubmitting || isGoogleLoading}
+            className="w-full h-11 mt-2 rounded-xl dark:bg-white bg-[#292633] dark:hover:bg-white/90 hover:bg-[#1f1c27] dark:text-[#07090F] text-white font-semibold text-sm shadow-md transition active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin text-white dark:text-[#07090F]" />
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              <span>Create Account</span>
+            )}
+          </button>
+        </form>
+
+        {/* GOOGLE SIGN UP BUTTON */}
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={isSubmitting || isGoogleLoading}
+            className="w-full h-11 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/[0.04] bg-white dark:hover:bg-white/[0.08] hover:bg-[#F5F3F9] dark:text-white text-[#292633] text-xs sm:text-sm font-medium flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer disabled:opacity-50 shadow-xs"
+          >
+            {isGoogleLoading ? (
+              <Loader2 size={16} className="animate-spin text-purple-600 dark:text-purple-300" />
+            ) : (
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                />
+              </svg>
+            )}
+            <span>Continue with Google</span>
+          </button>
+        </div>
+
+        {/* DIVIDER */}
+        <div className="relative flex items-center justify-center my-6">
+          <div className="w-full border-t dark:border-white/10 border-[#E8E4EF]" />
+          <span className="absolute px-3 text-[11px] uppercase tracking-wider dark:text-white/40 text-[#686477] dark:bg-[#0A0C14] bg-white">
+            OR
+          </span>
+        </div>
+
+        {/* FOOTER LINKS */}
+        <div className="text-center space-y-3">
+          <p className="text-xs dark:text-white/50 text-[#686477]">
+            Already have an account?{' '}
+            <Link href="/login" className="dark:text-white text-[#292633] font-semibold hover:underline">
+              Sign in
+            </Link>
+          </p>
+
+          <div>
+            <button
+              type="button"
+              onClick={handleContinueAsGuest}
+              className="text-xs font-semibold dark:text-purple-300 text-purple-700 hover:text-purple-900 dark:hover:text-white transition cursor-pointer hover:underline"
+            >
+              ✦ Continue as Guest
+            </button>
           </div>
         </div>
+
       </div>
     </main>
   );
 }
 
-function FeatureCard({ icon, title, subtitle, isDark }: any) {
+export default function SignupPage() {
   return (
-    <div
-      className={`flex items-center gap-4 rounded-3xl border px-5 py-4 backdrop-blur-xl transition-all ${
-        isDark
-          ? 'border-white/10 bg-white/[0.04] hover:bg-white/[0.06]'
-          : 'border-[#E8E4EF] bg-white shadow-sm'
-      }`}
+    <Suspense
+      fallback={
+        <main className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633] flex items-center justify-center p-6">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
+        </main>
+      }
     >
-      <div className={`rounded-2xl p-3 ${isDark ? 'bg-white/[0.05] text-white' : 'bg-[#EEE8FA] text-[#8B6FC9]'}`}>
-        {icon}
-      </div>
-      <div>
-        <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-[#292633]'}`}>{title}</p>
-        <p className={`text-xs ${isDark ? 'text-white/40' : 'text-[#686477]'}`}>{subtitle}</p>
-      </div>
-    </div>
+      <SignupFormContent />
+    </Suspense>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -30,9 +31,18 @@ import {
   ResearchBrief,
 } from '@/lib/services/researchService';
 import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function ResearchPage() {
+  const router = useRouter();
   const { addToast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   const [briefs, setBriefs] = useState<ResearchBrief[]>([]);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
@@ -184,14 +194,14 @@ Summarize concrete steps, architectural takeaways, or strategic decisions.`;
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7FB] dark:bg-[#07050d] text-[#292633] dark:text-white flex flex-col selection:bg-[#EEE8FA] selection:text-[#8B6FC9] dark:selection:text-purple-200 transition-colors duration-200">
+    <div className="min-h-screen bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-white flex flex-col selection:bg-[#F4DCE9] selection:text-[#B31372] dark:selection:text-pink-200 transition-colors duration-200">
       {/* Ambient Top Glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,111,201,0.08),transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.18),transparent_75%)]" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.08),transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.18),transparent_75%)]" />
       </div>
 
       {/* Top Header */}
-      <header className="relative z-20 border-b border-[#E8E4EF] dark:border-purple-400/15 bg-white/80 dark:bg-[#0d081b]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      <header className="relative z-20 border-b border-[#E7B8CF] dark:border-pink-500/15 bg-white/80 dark:bg-[#16091F]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href="/chat-ui"

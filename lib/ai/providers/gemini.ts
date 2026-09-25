@@ -94,13 +94,10 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
   // Candidate Gemini models to try in order of capability & speed
   const candidateModels = [
     options.modelConfig.modelIdentifier,
-    'gemini-2.5-flash',
-    'gemini-flash-latest',
-    'gemini-2.5-pro',
-    'gemini-3.7-flash',
     'gemini-3.6-flash',
-    'gemini-1.5-flash',
-    'gemini-1.5-pro',
+    'gemini-3.1-flash-lite',
+    'gemini-3.8-flash',
+    'gemini-flash-latest',
   ].filter((m, idx, arr) => m && arr.indexOf(m) === idx);
 
   let lastError: any = null;
@@ -108,6 +105,15 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
   for (const modelName of candidateModels) {
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
+      const generationConfig: any = {
+        temperature: options.temperature ?? 0.7,
+        maxOutputTokens: options.maxTokens ?? 8192,
+      };
+
+      if (options.modelConfig.id !== 'reasoning') {
+        generationConfig.thinkingConfig = { thinkingBudget: 0 };
+      }
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -119,10 +125,7 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
           systemInstruction: {
             parts: [{ text: options.systemPrompt }],
           },
-          generationConfig: {
-            temperature: options.temperature ?? 0.7,
-            maxOutputTokens: options.maxTokens ?? 8192,
-          },
+          generationConfig,
         }),
       });
 

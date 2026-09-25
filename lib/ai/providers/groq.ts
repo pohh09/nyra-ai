@@ -49,26 +49,32 @@ export async function streamGroq(options: StreamProviderOptions, onChunk: (text:
   );
 
   const candidateModels = isVisionRequest
-    ? [modelId, 'llama-3.2-11b-vision-preview', 'llama-3.3-70b-versatile'].filter((m, idx, arr) => m && arr.indexOf(m) === idx)
+    ? [modelId, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'].filter((m, idx, arr) => m && arr.indexOf(m) === idx)
     : [
       modelId,
-      'llama-3.3-70b-versatile',
-      'llama-3.1-8b-instant',
-      'deepseek-r1-distill-llama-70b',
-      'gemma2-9b-it',
+      'qwen/qwen3.8-27b',
+      'openai/gpt-oss-120b',
+      'openai/gpt-oss-20b',
     ].filter((m, idx, arr) => m && arr.indexOf(m) === idx);
 
   let lastError: any = null;
 
   for (const candidateModel of candidateModels) {
     try {
-      const completion = await groq.chat.completions.create({
+      const completionParams: any = {
         model: candidateModel,
         messages: formattedMessages,
         stream: true,
         max_tokens: maxTokens,
         temperature: options.temperature ?? 0.7,
-      });
+      };
+
+      // Set reasoning_effort to low for standard/balanced/fast/advanced models to prevent 3.5s reasoning stalls
+      if (candidateModel.startsWith('openai/gpt-oss')) {
+        completionParams.reasoning_effort = options.modelConfig.id === 'reasoning' ? 'medium' : 'low';
+      }
+
+      const completion: any = await groq.chat.completions.create(completionParams);
 
       let finishReason = '';
       let chunkCount = 0;

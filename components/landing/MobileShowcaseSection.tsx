@@ -2,10 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  Sparkles,
-  Bot,
   Volume2,
   Mic,
   MicOff,
@@ -16,24 +14,20 @@ import {
   FileText,
   Globe,
   Radio,
-  Copy,
-  Check,
   Smartphone,
   Layers,
-  Cpu,
   Wifi,
   Battery,
   Flame,
   Search,
   CheckCircle2,
   ArrowUpRight,
-  Paperclip,
   ShieldCheck,
   ImageIcon,
-  Maximize2,
   Server,
   Database,
   ArrowRight,
+  Bot,
 } from 'lucide-react';
 
 interface PromptTemplate {
@@ -99,24 +93,25 @@ export default function MobileShowcaseSection() {
     }
     setTimeout(() => {
       router.push('/chat-ui');
-    }, 400);
+    }, 280);
   };
 
-  const filteredPrompts = activeCategory === 'All'
-    ? SIMPLE_PROMPTS
-    : SIMPLE_PROMPTS.filter((p) => p.category === activeCategory);
+  const filteredPrompts =
+    activeCategory === 'All'
+      ? SIMPLE_PROMPTS
+      : SIMPLE_PROMPTS.filter((p) => p.category === activeCategory);
 
   return (
     <section
       id="mobile-showcase"
       className="relative z-10 w-full bg-transparent py-20 sm:py-28 lg:py-32 overflow-hidden transition-colors"
     >
-      {/* Soft Lavender Ambient Backdrop */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0">
-        <div className="h-[550px] w-[750px] rounded-full bg-[#8B6FC9]/[0.06] blur-[100px] transform -translate-y-10" />
+      {/* Dark Ambient Violet Glow */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0 select-none">
+        <div className="h-[600px] w-[800px] rounded-full bg-[#B31372]/[0.08] blur-[150px] transform -translate-y-10" />
       </div>
 
-      <div className="relative w-[94%] sm:w-[90%] max-w-[1500px] mx-auto px-2 sm:px-4 z-10">
+      <div className="relative w-[94%] sm:w-[90%] max-w-[1800px] mx-auto px-2 sm:px-4 z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -126,23 +121,26 @@ export default function MobileShowcaseSection() {
           className="text-center max-w-3xl mx-auto space-y-3 relative z-10"
         >
           {/* Eyebrow Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/90 bg-white/95 px-3.5 py-1.5 text-xs font-semibold text-[#6B52A3] shadow-[0_2px_10px_rgba(124,92,184,0.07)] hover:border-[#8B6FC9] transition-all mb-1">
-            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-[#EDE6FA] text-[#7C5CB8]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/70 px-3.5 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl hover:border-pink-300/40 transition-all mb-1">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-pink-500/20 text-pink-300">
               <Smartphone className="h-2.5 w-2.5" />
             </div>
-            <span className="font-mono text-[11px] text-[#7C5CB8] font-bold tracking-wider uppercase">
+            <span className="font-mono text-[11px] text-pink-300 font-bold tracking-wider uppercase">
               MOBILE INTELLIGENCE
             </span>
-            <span className="text-[#7C5CB8]/30">&bull;</span>
-            <span className="text-[#1E162D] font-medium">Pocket AI Companion</span>
-            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5 shadow-[0_0_6px_#10B981]" />
+            <span className="text-white/30">&bull;</span>
+            <span className="text-white font-medium">Pocket AI Companion</span>
+            <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5 shadow-[0_0_8px_#34d399]" />
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-[#1E162D] leading-[1.15]">
-            Simple, fast, and always with you.
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-white leading-[1.15]">
+            Simple, fast, and{' '}
+            <span className="bg-gradient-to-r from-white via-pink-100 to-rose-200 bg-clip-text text-transparent">
+              always with you.
+            </span>
           </h2>
 
-          <p className="text-sm sm:text-base text-[#554D66] leading-relaxed max-w-2xl mx-auto font-normal">
+          <p className="text-sm sm:text-base text-[#A7A7B0] leading-relaxed max-w-2xl mx-auto font-normal">
             Clean voice ideation, instant multimodal image reasoning, and one-tap prompt templates designed for everyday touch workflow.
           </p>
 
@@ -162,11 +160,11 @@ export default function MobileShowcaseSection() {
                   onClick={() => setActiveFocusMode(tab.id as any)}
                   className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#241C35] text-white shadow-sm'
-                      : 'bg-white hover:bg-[#FAF7FE] text-[#554D66] border border-purple-200/80 hover:border-[#8B6FC9]'
+                      ? 'bg-gradient-to-r from-[#E52A83] to-[#B31372] text-white shadow-md shadow-pink-950/60 border border-pink-400/40'
+                      : 'bg-white/[0.05] hover:bg-white/[0.1] text-[#A7A7B0] hover:text-white border border-white/10 hover:border-pink-400/30'
                   }`}
                 >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-purple-300' : 'text-[#7C5CB8]'}`} />
+                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-white' : 'text-pink-300'}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -174,11 +172,10 @@ export default function MobileShowcaseSection() {
           </div>
         </motion.div>
 
-        {/* 3D Showcase Stage with Elevated Center Device & Generous Spacing */}
+        {/* 3D Showcase Stage with Elevated Center Device */}
         <div className="mt-16 sm:mt-24 lg:mt-32 xl:mt-36 relative">
-          
           {/* Subtle Ground Pedestal Shadow */}
-          <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 w-[85%] max-w-[1000px] h-16 bg-[#8B6FC9]/[0.08] rounded-[100%] blur-xl hidden lg:block" />
+          <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 w-[85%] max-w-[1000px] h-16 bg-[#B31372]/[0.10] rounded-[100%] blur-2xl hidden lg:block" />
 
           {/* Device Showcase Grid */}
           <div
@@ -187,7 +184,6 @@ export default function MobileShowcaseSection() {
               perspective: isMobile ? 'none' : '2000px',
             }}
           >
-
             {/* =========================================================
                 PHONE 1 (LEFT) — VOICE MODE (Supporting Flank)
             ========================================================= */}
@@ -204,38 +200,37 @@ export default function MobileShowcaseSection() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-4 flex flex-col items-center order-2 lg:order-1 w-full lg:-mr-5 z-10"
             >
-              {/* Phone Outer Chassis - Clean Titanium Lavender Border */}
-              <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#F2ECFB] via-[#DDD0F2] to-[#CBB8E8] shadow-[0_18px_45px_rgba(124,92,184,0.12),0_1px_3px_rgba(0,0,0,0.04)] border border-purple-200/90 transition-all duration-300 hover:shadow-[0_24px_60px_rgba(124,92,184,0.18)]">
-                {/* Inner Screen Surface - Crisp White with Refined Screen Border */}
-                <div className="relative w-full rounded-[45px] bg-white p-4 flex flex-col justify-between min-h-[550px] text-[#1E162D] overflow-hidden border border-purple-200/60">
-                  
+              {/* Phone Outer Chassis - Dark Titanium Border */}
+              <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-pink-500/25 transition-all duration-300 hover:border-pink-300/50">
+                {/* Inner Screen Surface - Deep Dark Obsidian */}
+                <div className="relative w-full rounded-[45px] bg-[#0A0410] p-4 flex flex-col justify-between min-h-[550px] text-white overflow-hidden border border-pink-500/15">
                   {/* Status Bar & Dynamic Capsule */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2">
-                    <span className="text-[11px] font-mono font-semibold text-[#554D66]">9:41</span>
-                    <div className="h-4.5 w-24 rounded-full bg-[#F4EFFC] flex items-center justify-center gap-1.5 border border-purple-200/80">
-                      <span className={`h-1.5 w-1.5 rounded-full ${isVoiceRecording ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`} />
-                      <span className="text-[8.5px] font-mono text-[#6B52A3] font-bold">
+                    <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
+                    <div className="h-4.5 w-24 rounded-full bg-white/[0.08] flex items-center justify-center gap-1.5 border border-pink-400/25">
+                      <span className={`h-1.5 w-1.5 rounded-full ${isVoiceRecording ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                      <span className="text-[8.5px] font-mono text-pink-200 font-bold">
                         {isVoiceRecording ? 'Voice Live' : 'Muted'}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[#554D66]">
+                    <div className="flex items-center gap-1.5 text-pink-300/80">
                       <Wifi className="h-3 w-3" />
                       <Battery className="h-3.5 w-3.5" />
                     </div>
                   </div>
 
                   {/* App Header */}
-                  <div className="flex items-center justify-between px-1 pb-2.5 border-b border-purple-100">
+                  <div className="flex items-center justify-between px-1 pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
-                      <div className="h-7 w-7 rounded-xl bg-[#F4EFFC] border border-purple-200/80 flex items-center justify-center shadow-2xs">
-                        <Volume2 className="h-3.5 w-3.5 text-[#7C5CB8]" />
+                      <div className="h-7 w-7 rounded-xl bg-pink-500/15 border border-pink-400/30 flex items-center justify-center shadow-2xs">
+                        <Volume2 className="h-3.5 w-3.5 text-[#FF4FA3]" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-[#1E162D]">Voice Mode</h4>
-                        <p className="text-[9px] text-[#7C5CB8] font-mono">Whisper Edge &bull; Instant</p>
+                        <h4 className="text-xs font-bold text-white">Voice Mode</h4>
+                        <p className="text-[9px] text-pink-300 font-mono">Whisper Edge &bull; Instant</p>
                       </div>
                     </div>
-                    <span className="text-[9px] font-mono text-emerald-700 font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
+                    <span className="text-[9px] font-mono text-emerald-300 font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-400/25">
                       READY
                     </span>
                   </div>
@@ -244,36 +239,34 @@ export default function MobileShowcaseSection() {
                   <div className="flex-1 flex flex-col items-center justify-center py-3 space-y-3.5">
                     {/* Multi-Layer Studio Acoustic Mic Orb */}
                     <div className="relative flex items-center justify-center py-2">
-                      {/* Concentric Ambient Audio Ripple Rings */}
                       {isVoiceRecording && (
                         <>
                           <motion.div
                             animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
                             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
-                            className="absolute h-28 w-28 rounded-full border border-purple-300/60 pointer-events-none"
+                            className="absolute h-28 w-28 rounded-full border border-pink-400/50 pointer-events-none"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.1, 0.5] }}
                             transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: 0.4 }}
-                            className="absolute h-24 w-24 rounded-full border border-purple-400/40 bg-purple-500/[0.04] pointer-events-none"
+                            className="absolute h-24 w-24 rounded-full border border-pink-400/30 bg-pink-500/[0.08] pointer-events-none"
                           />
                         </>
                       )}
 
                       {/* Tactile Outer Bezel Rim */}
-                      <div className="relative p-1 rounded-full bg-gradient-to-b from-[#F2ECFB] via-[#DDD0F2] to-[#CAB8E8] shadow-[0_10px_25px_rgba(124,92,184,0.25)] border border-purple-200/90">
+                      <div className="relative p-1 rounded-full bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_10px_25px_rgba(0,0,0,0.5)] border border-pink-400/30">
                         <button
                           onClick={() => setIsVoiceRecording(!isVoiceRecording)}
                           className={`relative z-10 flex h-20 w-20 items-center justify-center rounded-full transition-all duration-300 cursor-pointer ${
                             isVoiceRecording
-                              ? 'bg-gradient-to-b from-[#8B6FC9] via-[#7C5CB8] to-[#5F3FA0] text-white shadow-[0_8px_20px_rgba(124,92,184,0.35),inset_0_2px_4px_rgba(255,255,255,0.35)] scale-102 hover:scale-105 active:scale-95'
-                              : 'bg-white border border-purple-200/90 text-[#7C5CB8] shadow-inner hover:bg-[#FAF8FE]'
+                              ? 'bg-gradient-to-b from-[#E52A83] via-[#B31372] to-[#800A4C] text-white shadow-[0_8px_25px_rgba(229,42,131,0.5)] scale-102 hover:scale-105 active:scale-95'
+                              : 'bg-[#12051A] border border-pink-400/30 text-pink-300 shadow-inner hover:bg-[#1A0724]'
                           }`}
                           title={isVoiceRecording ? 'Tap to mute microphone' : 'Tap to activate microphone'}
                         >
-                          {/* Inner Concentric Glow Ring */}
                           {isVoiceRecording && (
-                            <span className="absolute inset-1.5 rounded-full border border-white/25 pointer-events-none" />
+                            <span className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                           )}
 
                           {isVoiceRecording ? (
@@ -281,15 +274,15 @@ export default function MobileShowcaseSection() {
                               <Mic className="h-7 w-7 text-white drop-shadow-sm animate-pulse" />
                             </div>
                           ) : (
-                            <MicOff className="h-7 w-7 text-[#7C5CB8]" />
+                            <MicOff className="h-7 w-7 text-pink-300" />
                           )}
                         </button>
                       </div>
                     </div>
 
                     {/* Live Voice Frequency Telemetry Pill */}
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F4EFFC] border border-purple-200/80 text-[9.5px] font-mono font-semibold text-[#6B52A3]">
-                      <span className={`h-1.5 w-1.5 rounded-full ${isVoiceRecording ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-pink-400/25 text-[9.5px] font-mono font-semibold text-pink-200">
+                      <span className={`h-1.5 w-1.5 rounded-full ${isVoiceRecording ? 'bg-emerald-400 animate-pulse' : 'bg-slate-400'}`} />
                       <span>{isVoiceRecording ? '48kHz Stereo · Active' : 'Microphone Muted'}</span>
                     </div>
 
@@ -307,36 +300,36 @@ export default function MobileShowcaseSection() {
                             repeat: Infinity,
                             ease: 'easeInOut',
                           }}
-                          className="w-1.2 rounded-full bg-gradient-to-t from-[#7C5CB8] to-[#A78BFA]"
+                          className="w-1.2 rounded-full bg-gradient-to-t from-[#B31372] to-[#FF85C0]"
                         />
                       ))}
                     </div>
 
-                    {/* Clean Light Transcript Bubble */}
-                    <div className="w-full p-3 rounded-xl bg-[#FBF9FE] border border-purple-200/80 text-left space-y-1 shadow-2xs">
-                      <div className="flex items-center justify-between text-[9px] font-mono text-[#7C5CB8] font-bold">
+                    {/* Dark Transcript Bubble */}
+                    <div className="w-full p-3 rounded-xl bg-[#12051A] border border-pink-400/20 text-left space-y-1 shadow-2xs">
+                      <div className="flex items-center justify-between text-[9px] font-mono text-pink-300 font-bold">
                         <span>LIVE TRANSCRIPT</span>
-                        <span className="text-emerald-700 font-semibold">12ms Latency</span>
+                        <span className="text-emerald-400 font-semibold">12ms Latency</span>
                       </div>
-                      <p className="text-[11.5px] font-medium text-[#1E162D] leading-snug">
+                      <p className="text-[11.5px] font-medium text-white leading-snug">
                         "Explain the difference between Groq LPUs and standard GPUs."
                       </p>
                     </div>
                   </div>
 
                   {/* Bottom Action Controls */}
-                  <div className="pt-2.5 border-t border-purple-100 flex items-center justify-between gap-2">
+                  <div className="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2">
                     <button
                       onClick={() => setIsVoiceRecording(!isVoiceRecording)}
-                      className="flex-1 py-2 px-3 rounded-lg border border-purple-200/80 bg-[#FBF9FE] hover:bg-[#F4EFFC] text-[11px] font-semibold text-[#6B52A3] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="flex-1 py-2 px-3 rounded-lg border border-white/10 bg-white/[0.05] hover:bg-white/[0.1] text-[11px] font-semibold text-pink-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <Radio className="h-3 w-3 text-[#7C5CB8]" />
+                      <Radio className="h-3 w-3 text-pink-300" />
                       <span>{isVoiceRecording ? 'Mute' : 'Speak'}</span>
                     </button>
 
                     <button
                       onClick={() => router.push('/chat-ui')}
-                      className="flex-1 py-2 px-3 rounded-lg bg-gradient-to-r from-[#7C5CB8] to-[#6B4BA8] hover:from-[#6B4BA8] hover:to-[#5B3E96] text-[11px] font-bold text-white shadow-2xs transition-all hover:scale-102 flex items-center justify-center gap-1 cursor-pointer"
+                      className="flex-1 py-2 px-3 rounded-lg bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:from-[#FF4FA3] hover:to-[#E52A83] text-[11px] font-bold text-white shadow-md shadow-pink-950/50 transition-all hover:scale-102 flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <span>Open Chat</span>
                       <ArrowUpRight className="h-3 w-3" />
@@ -347,14 +340,13 @@ export default function MobileShowcaseSection() {
 
               {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
-                <h3 className="text-sm font-bold text-[#1E162D]">Voice Mode</h3>
-                <p className="text-xs text-[#554D66]">Hands-free conversational speech with zero latency.</p>
+                <h3 className="text-sm font-bold text-white">Voice Mode</h3>
+                <p className="text-xs text-[#A7A7B0]">Hands-free conversational speech with zero latency.</p>
               </div>
             </motion.div>
 
-
             {/* =========================================================
-                PHONE 2 (CENTER) — IMAGE SHARING & MULTIMODAL VISION (HERO CENTERPIECE)
+                PHONE 2 (CENTER) — IMAGE SHARING & MULTIMODAL VISION
             ========================================================= */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -366,81 +358,73 @@ export default function MobileShowcaseSection() {
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-4 flex flex-col items-center order-1 lg:order-2 z-30 w-full"
-              style={{
-                WebkitFontSmoothing: 'antialiased',
-                backfaceVisibility: 'hidden',
-                transform: 'translateZ(0)',
-              }}
             >
-              {/* Center Hero Phone Outer Chassis - High-Fidelity Lavender Rim */}
-              <div className="group relative w-full max-w-[350px] xs:max-w-[375px] sm:max-w-[390px] lg:max-w-[415px] rounded-[54px] p-[4px] bg-gradient-to-b from-[#F0E8FA] via-[#D8C6F2] to-[#BFA6E5] shadow-[0_32px_85px_rgba(124,92,184,0.22),0_2px_8px_rgba(0,0,0,0.05)] border-2 border-purple-300/80 transition-all duration-300 hover:shadow-[0_38px_100px_rgba(124,92,184,0.28)]">
-                {/* Inner Screen Surface - Crisp High-Contrast White Surface */}
-                <div className="relative w-full rounded-[50px] bg-white p-4 sm:p-5 flex flex-col justify-between min-h-[690px] sm:min-h-[730px] lg:min-h-[750px] text-[#1E162D] overflow-hidden border border-purple-200/70">
-                  
+              {/* Center Hero Phone Outer Chassis */}
+              <div className="group relative w-full max-w-[315px] xs:max-w-[350px] sm:max-w-[390px] lg:max-w-[415px] rounded-[46px] xs:rounded-[50px] sm:rounded-[54px] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#2E1242] via-[#1A092A] to-[#0A0212] shadow-[0_32px_85px_rgba(0,0,0,0.85)] border-2 border-pink-500/35 transition-all duration-300 hover:border-pink-300/60">
+                {/* Inner Screen Surface */}
+                <div className="relative w-full rounded-[42px] xs:rounded-[46px] sm:rounded-[50px] bg-[#050208] p-3.5 sm:p-5 flex flex-col justify-between min-h-[580px] xs:min-h-[640px] sm:min-h-[730px] lg:min-h-[750px] text-white overflow-hidden border border-pink-500/20">
                   {/* Status Bar & Dynamic Island Pill */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2.5">
-                    <span className="text-[11px] font-mono font-semibold text-[#554D66]">9:41</span>
-                    <div className="h-5 w-34 rounded-full bg-[#241C35] text-white flex items-center justify-between px-2.5 shadow-xs border border-purple-400/30">
+                    <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
+                    <div className="h-5 w-30 xs:w-34 rounded-full bg-black/80 text-white flex items-center justify-between px-2.5 shadow-xs border border-pink-400/30">
                       <div className="flex items-center gap-1">
-                        <Flame className="h-2.5 w-2.5 text-amber-400 fill-amber-400" />
+                        <Flame className="h-2.5 w-2.5 text-[#FF4FA3] fill-[#FF4FA3]" />
                         <span className="text-[8.5px] font-mono font-bold text-emerald-400">Vision 60fps</span>
                       </div>
                       <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     </div>
-                    <div className="flex items-center gap-1.5 text-[#554D66]">
+                    <div className="flex items-center gap-1.5 text-pink-300/80">
                       <Wifi className="h-3 w-3" />
                       <Battery className="h-3.5 w-3.5" />
                     </div>
                   </div>
 
                   {/* App Header */}
-                  <div className="flex items-center justify-between px-1 pb-3 border-b border-purple-100">
+                  <div className="flex items-center justify-between px-1 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-[#7C5CB8] to-[#6B4BA8] flex items-center justify-center shadow-2xs border border-purple-300/40">
+                      <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-[#E52A83] to-[#B31372] flex items-center justify-center shadow-2xs border border-pink-300/40">
                         <ImageIcon className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <h4 className="text-xs sm:text-sm font-bold text-[#1E162D]">Nyra Vision Studio</h4>
-                        <p className="text-[9.5px] text-emerald-700 font-mono font-medium">● Qwen 2.5 Vision &bull; Active</p>
+                        <h4 className="text-xs sm:text-sm font-bold text-white">Nyra Vision Studio</h4>
+                        <p className="text-[9.5px] text-emerald-400 font-mono font-medium">● Qwen 2.5 Vision &bull; Active</p>
                       </div>
                     </div>
                     <button
                       onClick={() => router.push('/chat-ui')}
-                      className="px-3 py-1 rounded-lg bg-[#F4EFFC] hover:bg-[#EDE6FA] text-[10.5px] font-mono font-bold text-[#6B52A3] transition-colors cursor-pointer border border-purple-200/80 shadow-2xs"
+                      className="px-2.5 sm:px-3 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] text-[10px] sm:text-[10.5px] font-mono font-bold text-pink-200 transition-colors cursor-pointer border border-pink-400/30 shadow-2xs"
                     >
                       Launch
                     </button>
                   </div>
 
-                  {/* Clean Chat Thread: Image Upload & Vision Reasoning */}
-                  <div className="flex-1 overflow-y-auto space-y-3.5 px-0.5 py-3.5 text-xs">
-                    
+                  {/* Chat Thread: Image Upload & Vision Reasoning */}
+                  <div className="flex-1 overflow-y-auto space-y-3 px-0.5 py-2.5 sm:py-3.5 text-xs">
                     {/* User Shared Image Message Bubble */}
                     <div className="flex justify-end">
-                      <div className="rounded-2xl rounded-tr-xs bg-gradient-to-r from-[#7C5CB8] to-[#6B4BA8] p-3 text-white max-w-[90%] text-[11.5px] shadow-xs leading-relaxed space-y-2 border border-purple-400/30">
-                        
+                      <div className="rounded-2xl rounded-tr-xs bg-gradient-to-r from-[#B31372] to-[#800A4C] p-2.5 sm:p-3 text-white max-w-[92%] sm:max-w-[90%] text-[11px] sm:text-[11.5px] shadow-xs leading-relaxed space-y-2 border border-pink-400/30">
                         {/* Image Attachment Card */}
-                        <div className="rounded-xl bg-[#1E1438]/90 p-2.5 border border-purple-300/40 text-left space-y-2">
-                          <div className="flex items-center justify-between text-[9.5px] font-mono text-purple-200">
+                        <div className="rounded-xl bg-[#0F0418] p-2 sm:p-2.5 border border-pink-300/30 text-left space-y-1.5 sm:space-y-2">
+                          <div className="flex items-center justify-between text-[9px] sm:text-[9.5px] font-mono text-pink-200">
                             <span className="flex items-center gap-1.5 font-bold truncate">
-                              <ImageIcon className="h-3.5 w-3.5 text-purple-300 shrink-0" />
+                              <ImageIcon className="h-3.5 w-3.5 text-[#FF4FA3] shrink-0" />
                               <span className="truncate">architecture_flow.png</span>
                             </span>
-                            <span className="text-[8.5px] bg-white/10 px-1.5 py-0.5 rounded text-purple-200">2.4 MB</span>
+                            <span className="text-[8px] sm:text-[8.5px] bg-white/10 px-1.5 py-0.5 rounded text-pink-200 shrink-0">2.4 MB</span>
                           </div>
 
                           {/* Architecture Diagram Visual Preview */}
-                          <div className="rounded-lg bg-[#0F081F] p-2 border border-purple-500/20 text-[9px] font-mono space-y-1.5">
-                            <div className="flex items-center justify-between text-[8px] text-purple-300/80">
+                          <div className="rounded-lg bg-[#050109] p-2 border border-pink-500/20 text-[9px] font-mono space-y-1.5 overflow-hidden">
+                            <div className="flex items-center justify-between text-[8px] text-pink-300/80">
                               <span>DIAGRAM PREVIEW</span>
                               <span className="text-emerald-400">● 1920x1080</span>
                             </div>
-                            <div className="flex items-center justify-center gap-1.5 py-1 text-[8.5px] text-slate-200">
-                              <span className="px-1.5 py-0.5 rounded bg-purple-900/60 border border-purple-400/40">App Client</span>
-                              <ArrowRight className="h-2.5 w-2.5 text-purple-400" />
-                              <span className="px-1.5 py-0.5 rounded bg-indigo-900/60 border border-indigo-400/40">V8 Edge</span>
-                              <ArrowRight className="h-2.5 w-2.5 text-purple-400" />
-                              <span className="px-1.5 py-0.5 rounded bg-emerald-900/60 border border-emerald-400/40">PostgreSQL</span>
+                            <div className="flex flex-wrap xs:flex-nowrap items-center justify-center gap-1 xs:gap-1.5 py-1 text-[8px] xs:text-[8.5px] text-slate-200">
+                              <span className="px-1.5 py-0.5 rounded bg-pink-950/80 border border-pink-400/40 shrink-0">App Client</span>
+                              <ArrowRight className="h-2.5 w-2.5 text-pink-400 shrink-0" />
+                              <span className="px-1.5 py-0.5 rounded bg-purple-950/80 border border-purple-400/40 shrink-0">V8 Edge</span>
+                              <ArrowRight className="h-2.5 w-2.5 text-pink-400 shrink-0" />
+                              <span className="px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-400/40 shrink-0">PostgreSQL</span>
                             </div>
                           </div>
                         </div>
@@ -453,43 +437,42 @@ export default function MobileShowcaseSection() {
 
                     {/* AI Vision Analysis Response */}
                     <div className="flex items-start gap-2.5">
-                      <div className="h-7.5 w-7.5 rounded-xl bg-[#F4EFFC] border border-purple-200/80 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                        <Bot className="h-4 w-4 text-[#7C5CB8]" />
+                      <div className="h-7.5 w-7.5 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                        <Bot className="h-4 w-4 text-[#FF4FA3]" />
                       </div>
 
-                      <div className="flex-1 rounded-2xl rounded-tl-xs border border-purple-200/80 bg-[#FBF9FE] p-3 text-[#1E162D] space-y-2.5 shadow-2xs">
-                        
+                      <div className="flex-1 rounded-2xl rounded-tl-xs border border-pink-400/25 bg-[#0D0416] p-3 text-pink-100 space-y-2.5 shadow-2xs">
                         {/* Inspection Verification Badge */}
-                        <div className="flex items-center justify-between text-[9px] font-mono text-[#6B52A3] pb-1.5 border-b border-purple-100">
-                          <span className="flex items-center gap-1 text-emerald-700 font-bold">
-                            <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                        <div className="flex items-center justify-between text-[9px] font-mono text-pink-300 pb-1.5 border-b border-white/10">
+                          <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                             99.8% Vision Accuracy
                           </span>
-                          <span className="text-[#7C5CB8] font-semibold">Qwen 2.5 Vision</span>
+                          <span className="text-pink-300 font-semibold">Qwen 2.5 Vision</span>
                         </div>
 
-                        <p className="text-[11px] text-[#4A425A] leading-snug">
+                        <p className="text-[11px] text-[#A7A7B0] leading-snug">
                           Diagram scanned successfully. Here are the 3 architecture findings:
                         </p>
 
                         {/* Visual Breakdown Points */}
                         <div className="space-y-1.5">
-                          <div className="p-2 rounded-lg bg-white border border-purple-200/70 text-[10.5px] space-y-0.5">
-                            <div className="flex items-center gap-1.5 font-bold text-[#1E162D]">
-                              <Database className="h-3 w-3 text-[#7C5CB8]" />
+                          <div className="p-2 rounded-lg bg-[#160722] border border-pink-400/20 text-[10.5px] space-y-0.5">
+                            <div className="flex items-center gap-1.5 font-bold text-white">
+                              <Database className="h-3 w-3 text-[#FF4FA3]" />
                               <span>1. Database Read Replica Pool</span>
                             </div>
-                            <p className="text-[10px] text-[#554D66] pl-4.5">
+                            <p className="text-[10px] text-[#A7A7B0] pl-4.5">
                               Add 2 read replicas to reduce primary PostgreSQL load by 45%.
                             </p>
                           </div>
 
-                          <div className="p-2 rounded-lg bg-white border border-purple-200/70 text-[10.5px] space-y-0.5">
-                            <div className="flex items-center gap-1.5 font-bold text-[#1E162D]">
-                              <Server className="h-3 w-3 text-[#7C5CB8]" />
+                          <div className="p-2 rounded-lg bg-[#160722] border border-pink-400/20 text-[10.5px] space-y-0.5">
+                            <div className="flex items-center gap-1.5 font-bold text-white">
+                              <Server className="h-3 w-3 text-[#FF4FA3]" />
                               <span>2. Edge Redis Caching</span>
                             </div>
-                            <p className="text-[10px] text-[#554D66] pl-4.5">
+                            <p className="text-[10px] text-[#A7A7B0] pl-4.5">
                               Place Redis cache layer before V8 edge for sub-5ms repeated queries.
                             </p>
                           </div>
@@ -499,7 +482,7 @@ export default function MobileShowcaseSection() {
                         <div className="pt-1 flex items-center gap-1.5">
                           <button
                             onClick={() => router.push('/chat-ui')}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F4EFFC] hover:bg-[#EDE6FA] text-[10px] font-semibold text-[#6B52A3] border border-purple-200 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.08] hover:bg-white/[0.15] text-[10px] font-semibold text-pink-200 border border-pink-400/30 transition-colors cursor-pointer"
                           >
                             <span>Generate Terraform Schema</span>
                             <ArrowRight className="h-2.5 w-2.5" />
@@ -509,24 +492,24 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* Input Bar with Image Upload Attachment Icon */}
-                  <div className="pt-3 pb-1 border-t border-purple-100 flex items-center gap-2 px-0.5">
+                  {/* Input Bar */}
+                  <div className="pt-3 pb-1 border-t border-white/10 flex items-center gap-2 px-0.5">
                     <button
                       onClick={() => router.push('/chat-ui')}
-                      className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-[#F4EFFC] border border-purple-200/80 text-[#7C5CB8] hover:bg-[#EDE6FA] transition-colors cursor-pointer"
+                      className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] border border-pink-400/30 text-pink-200 hover:bg-white/[0.15] transition-colors cursor-pointer"
                       title="Attach Image / Screenshot"
                     >
                       <ImageIcon className="h-4 w-4" />
                     </button>
 
-                    <div className="flex-1 flex items-center gap-2 rounded-full border border-purple-200/80 bg-[#FAF8FE] px-3 py-2 text-[11.5px] text-[#1E162D] truncate shadow-2xs">
-                      <Search className="h-3.5 w-3.5 text-[#7C5CB8] shrink-0" />
-                      <span className="text-[#7A728A] truncate">Drop image or ask Nyra vision...</span>
+                    <div className="flex-1 flex items-center gap-2 rounded-full border border-white/10 bg-[#0E0416] px-3 py-2 text-[11.5px] text-white truncate shadow-2xs">
+                      <Search className="h-3.5 w-3.5 text-pink-300 shrink-0" />
+                      <span className="text-pink-300/50 truncate">Drop image or ask Nyra vision...</span>
                     </div>
 
                     <button
                       onClick={() => router.push('/chat-ui')}
-                      className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#7C5CB8] to-[#6B4BA8] hover:from-[#6B4BA8] hover:to-[#5B3E96] text-white cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-xs"
+                      className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:from-[#FF4FA3] hover:to-[#E52A83] text-white cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-md shadow-pink-950/50"
                       title="Send"
                     >
                       <Send className="h-3.5 w-3.5" />
@@ -537,11 +520,10 @@ export default function MobileShowcaseSection() {
 
               {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
-                <h3 className="text-sm font-bold text-[#1E162D]">Vision & Image Sharing</h3>
-                <p className="text-xs text-[#554D66]">Upload diagrams, UI mockups, and charts for instant visual reasoning.</p>
+                <h3 className="text-sm font-bold text-white">Vision & Image Sharing</h3>
+                <p className="text-xs text-[#A7A7B0]">Upload diagrams, UI mockups, and charts for instant visual reasoning.</p>
               </div>
             </motion.div>
-
 
             {/* =========================================================
                 PHONE 3 (RIGHT) — PROMPT MESH (Supporting Flank)
@@ -559,38 +541,37 @@ export default function MobileShowcaseSection() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
               className="lg:col-span-4 flex flex-col items-center order-3 w-full lg:-ml-5 z-10"
             >
-              {/* Phone Outer Chassis - Clean Titanium Lavender Border */}
-              <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#F2ECFB] via-[#DDD0F2] to-[#CBB8E8] shadow-[0_18px_45px_rgba(124,92,184,0.12),0_1px_3px_rgba(0,0,0,0.04)] border border-purple-200/90 transition-all duration-300 hover:shadow-[0_24px_60px_rgba(124,92,184,0.18)]">
-                {/* Inner Screen Surface - Crisp White with Refined Screen Border */}
-                <div className="relative w-full rounded-[44px] bg-white p-4 flex flex-col justify-between min-h-[550px] text-[#1E162D] overflow-hidden border border-purple-200/60">
-                  
+              {/* Phone Outer Chassis - Dark Titanium Border */}
+              <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-pink-500/25 transition-all duration-300 hover:border-pink-300/50">
+                {/* Inner Screen Surface */}
+                <div className="relative w-full rounded-[44px] bg-[#0A0410] p-4 flex flex-col justify-between min-h-[550px] text-white overflow-hidden border border-pink-500/15">
                   {/* Status Bar */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2">
-                    <span className="text-[11px] font-mono font-semibold text-[#554D66]">9:41</span>
-                    <div className="h-4.5 w-24 rounded-full bg-[#F4EFFC] flex items-center justify-center border border-purple-200/80">
-                      <span className="text-[8.5px] font-mono text-[#6B52A3] flex items-center gap-1 font-bold">
-                        <Zap className="h-2.5 w-2.5 fill-[#7C5CB8] text-[#7C5CB8]" />
+                    <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
+                    <div className="h-4.5 w-24 rounded-full bg-white/[0.08] flex items-center justify-center border border-pink-400/25">
+                      <span className="text-[8.5px] font-mono text-pink-200 flex items-center gap-1 font-bold">
+                        <Zap className="h-2.5 w-2.5 fill-pink-300 text-pink-300" />
                         Prompts
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[#554D66]">
+                    <div className="flex items-center gap-1.5 text-pink-300/80">
                       <Wifi className="h-3 w-3" />
                       <Battery className="h-3.5 w-3.5" />
                     </div>
                   </div>
 
                   {/* App Header */}
-                  <div className="flex items-center justify-between px-1 pb-2 border-b border-purple-100">
+                  <div className="flex items-center justify-between px-1 pb-2 border-b border-white/10">
                     <div className="flex items-center gap-2">
-                      <div className="h-7 w-7 rounded-xl bg-[#F4EFFC] border border-purple-200/80 flex items-center justify-center shadow-2xs">
-                        <Zap className="h-3.5 w-3.5 text-[#7C5CB8]" />
+                      <div className="h-7 w-7 rounded-xl bg-pink-500/15 border border-pink-400/30 flex items-center justify-center shadow-2xs">
+                        <Zap className="h-3.5 w-3.5 text-[#FF4FA3]" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-[#1E162D]">Prompt Mesh</h4>
-                        <p className="text-[9px] text-[#7C5CB8] font-mono">1-Click Launchpad</p>
+                        <h4 className="text-xs font-bold text-white">Prompt Mesh</h4>
+                        <p className="text-[9px] text-pink-300 font-mono">1-Click Launchpad</p>
                       </div>
                     </div>
-                    <span className="text-[9px] font-mono text-[#6B52A3] font-semibold">50+ Templates</span>
+                    <span className="text-[9px] font-mono text-pink-300 font-semibold">50+ Templates</span>
                   </div>
 
                   {/* Category Filter Pills */}
@@ -603,8 +584,8 @@ export default function MobileShowcaseSection() {
                           onClick={() => setActiveCategory(cat)}
                           className={`px-2.5 py-1 rounded-lg text-[9.5px] font-semibold transition-all cursor-pointer ${
                             isActive
-                              ? 'bg-[#241C35] text-white shadow-2xs'
-                              : 'bg-[#F4EFFC] text-[#554D66] hover:bg-[#EDE6FA] border border-purple-200/80'
+                              ? 'bg-gradient-to-r from-[#E52A83] to-[#B31372] text-white shadow-xs'
+                              : 'bg-white/[0.06] text-[#A7A7B0] hover:bg-white/[0.12] hover:text-white border border-white/10'
                           }`}
                         >
                           {cat}
@@ -613,7 +594,7 @@ export default function MobileShowcaseSection() {
                     })}
                   </div>
 
-                  {/* 4 Prompt Cards in Clean White */}
+                  {/* 4 Prompt Cards in Dark Theme */}
                   <div className="flex-1 overflow-y-auto space-y-2 py-1.5 px-0.5">
                     {filteredPrompts.map((p) => {
                       const Icon = p.icon;
@@ -624,18 +605,18 @@ export default function MobileShowcaseSection() {
                           onClick={() => handleLaunchPrompt(p)}
                           className={`group p-2.5 rounded-xl border transition-all cursor-pointer ${
                             isLaunching
-                              ? 'border-emerald-500 bg-emerald-50 scale-[0.98]'
-                              : 'border-purple-200/80 bg-[#FBF9FE] hover:border-[#8B6FC9] hover:bg-white shadow-2xs'
+                              ? 'border-emerald-400 bg-emerald-500/20 scale-[0.98]'
+                              : 'border-white/10 bg-[#12051A] hover:border-pink-400/40 hover:bg-[#1A0724] shadow-2xs'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Icon className="h-3.5 w-3.5 text-[#7C5CB8]" />
-                              <span className="text-[11.5px] font-medium text-[#1E162D] group-hover:text-[#6B52A3] transition-colors">
+                              <Icon className="h-3.5 w-3.5 text-[#FF4FA3]" />
+                              <span className="text-[11.5px] font-medium text-white group-hover:text-pink-200 transition-colors">
                                 {p.title}
                               </span>
                             </div>
-                            <ChevronRight className="h-3.5 w-3.5 text-[#8A819C] group-hover:text-[#6B52A3] group-hover:translate-x-0.5 transition-all" />
+                            <ChevronRight className="h-3.5 w-3.5 text-pink-300/60 group-hover:text-pink-200 group-hover:translate-x-0.5 transition-all" />
                           </div>
                         </div>
                       );
@@ -643,10 +624,10 @@ export default function MobileShowcaseSection() {
                   </div>
 
                   {/* Action Button */}
-                  <div className="pt-2 border-t border-purple-100">
+                  <div className="pt-2 border-t border-white/10">
                     <button
                       onClick={() => router.push('/chat-ui')}
-                      className="w-full py-2.5 rounded-lg bg-gradient-to-r from-[#7C5CB8] via-[#6B4BA8] to-[#5B3E96] hover:opacity-95 text-xs font-bold text-white text-center flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-all hover:scale-101"
+                      className="w-full py-2.5 rounded-lg bg-gradient-to-r from-[#E52A83] via-[#B31372] to-[#960E5B] hover:opacity-95 text-xs font-bold text-white text-center flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-pink-950/50 transition-all hover:scale-101"
                     >
                       <span>Explore All Prompts</span>
                       <ChevronRight className="h-3.5 w-3.5" />
@@ -657,11 +638,10 @@ export default function MobileShowcaseSection() {
 
               {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
-                <h3 className="text-sm font-bold text-[#1E162D]">Prompt Mesh</h3>
-                <p className="text-xs text-[#554D66]">Pre-configured multimodal templates for rapid exploration.</p>
+                <h3 className="text-sm font-bold text-white">Prompt Mesh</h3>
+                <p className="text-xs text-[#A7A7B0]">Pre-configured multimodal templates for rapid exploration.</p>
               </div>
             </motion.div>
-
           </div>
         </div>
       </div>

@@ -7,31 +7,26 @@ type Props = {
 };
 
 const prompts = [
-
   {
-    title: 'Build UI',
-    text: 'Create a modern SaaS dashboard in React',
-    icon: '✦',
-  },
-
-  {
-    title: 'Debug Code',
-    text: 'Fix my TypeScript state management issue',
-    icon: '⚡',
-  },
-
-  {
-    title: 'Learn Faster',
-    text: 'Explain React hooks simply with examples',
-    icon: '🧠',
-  },
-
-  {
-    title: 'Creative Ideas',
-    text: 'Give me startup ideas for AI products',
+    title: 'Turn an idea into a project',
+    text: 'I have an idea for a project. Help me structure it into a clear architecture, tech stack, and step-by-step roadmap.',
     icon: '🚀',
   },
-
+  {
+    title: 'Explain something I’m stuck on',
+    text: 'I am stuck on a concept. Explain it step-by-step with clear real-world examples and analogies.',
+    icon: '💡',
+  },
+  {
+    title: 'Brainstorm something weird',
+    text: 'Help me brainstorm fresh, unconventional, and creative ideas for an innovative product.',
+    icon: '✨',
+  },
+  {
+    title: 'Let’s build something',
+    text: 'Write a clean, production-grade implementation with modern best practices.',
+    icon: '💻',
+  },
 ];
 
 export default function PromptCards({

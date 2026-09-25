@@ -12,8 +12,11 @@ export default function Providers({
   useEffect(() => {
     initTheme();
 
-    const savedAccent = localStorage.getItem('nyra_accent') || 'blue';
+    const savedAccent = localStorage.getItem('nyra_accent') || 'purple';
     document.documentElement.setAttribute('data-accent', savedAccent);
+
+    const savedFontSize = localStorage.getItem('nyra_font_size') || 'normal';
+    document.documentElement.setAttribute('data-font-size', savedFontSize);
   }, []);
 
   return <ToastProvider>{children}</ToastProvider>;

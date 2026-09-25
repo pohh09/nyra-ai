@@ -40,6 +40,7 @@ import MessageBubble from '@/components/chat/MessageBubble';
 import ImagePreview from '@/components/chat/ImagePreview';
 import ModelSelector, { AI_MODELS, DEFAULT_MODEL_ID } from '@/components/chat/ModelSelector';
 import { DEFAULT_VISION_MODEL_ID, getModelConfig, validateModelCapabilities } from '@/lib/models';
+import { incrementLocalUsage } from '@/lib/usage/clientUsage';
 import InChatSearch from '@/components/chat/InChatSearch';
 import SettingsModal from '@/components/modals/SettingsModal';
 import RightPanel from '@/components/layout/RightPanel';
@@ -57,6 +58,7 @@ import {
   loadProjects,
   getActiveProjectId,
   setActiveProjectId as storeActiveProjectId,
+  clearAllChats,
 } from '@/lib/storage';
 import FilePreview from '@/components/chat/FilePreview';
 import { analyzeIntentForToolCalls } from '@/lib/services/toolService';
@@ -85,7 +87,7 @@ import {
 } from '@/lib/supabase/chatService';
 
 export default function ChatPage() {
-  const { user, profile, preferences, updatePreferences } = useAuth();
+  const { user, profile, preferences, updatePreferences, isGuest } = useAuth();
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
@@ -628,6 +630,7 @@ export default function ChatPage() {
     let isMounted = true;
 
     async function initChats() {
+      // 1. Authenticated User flow:
       if (user?.id) {
         setMemoryActiveUser(user.id);
         syncMemoriesWithCloud(user.id).catch(() => {});
@@ -638,8 +641,9 @@ export default function ChatPage() {
             setChats(cloudChats);
             setCurrentChatId(cloudChats[0].id);
 
-            // Check if local chats exist to offer or trigger migration
-            const localSaved = localStorage.getItem('nyra_chats');
+            // Check if local chats exist for this user to migrate
+            const userLocalKey = `nyra_chats_${user.id}`;
+            const localSaved = localStorage.getItem(userLocalKey);
             if (localSaved) {
               try {
                 const localParsed: Chat[] = JSON.parse(localSaved);
@@ -658,26 +662,52 @@ export default function ChatPage() {
         } catch (e) {
           console.warn('Could not load cloud conversations:', e);
         }
+
+        // Fallback to user-specific local storage
+        const userSaved = localStorage.getItem(`nyra_chats_${user.id}`);
+        if (userSaved) {
+          try {
+            const parsed = JSON.parse(userSaved);
+            if (parsed.length > 0 && isMounted) {
+              setChats(
+                parsed.map((chat: Chat) => ({
+                  ...chat,
+                  createdAt: chat.createdAt || Date.now(),
+                  updatedAt: chat.updatedAt || Date.now(),
+                }))
+              );
+              setCurrentChatId(parsed[0].id);
+              return;
+            }
+          } catch { }
+        }
       }
 
-      const saved = localStorage.getItem('nyra_chats');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed.length > 0 && isMounted) {
-            setChats(
-              parsed.map((chat: Chat) => ({
-                ...chat,
-                createdAt: chat.createdAt || Date.now(),
-                updatedAt: chat.updatedAt || Date.now(),
-              }))
-            );
-            setCurrentChatId(parsed[0].id);
-            return;
-          }
-        } catch { }
+      // 2. Guest User flow:
+      // When in guest mode, NEVER display chats from other accounts or old sessions.
+      // Only load from the current isolated guest storage if active.
+      const isGuestMode = isGuest || (typeof window !== 'undefined' && localStorage.getItem('nyra_is_guest') === 'true');
+      if (isGuestMode) {
+        const guestSaved = localStorage.getItem('nyra_chats_guest');
+        if (guestSaved) {
+          try {
+            const parsed = JSON.parse(guestSaved);
+            if (parsed.length > 0 && isMounted) {
+              setChats(
+                parsed.map((chat: Chat) => ({
+                  ...chat,
+                  createdAt: chat.createdAt || Date.now(),
+                  updatedAt: chat.updatedAt || Date.now(),
+                }))
+              );
+              setCurrentChatId(parsed[0].id);
+              return;
+            }
+          } catch { }
+        }
       }
 
+      // Default: Initialize brand new clean chat
       if (isMounted) {
         const firstChat: Chat = {
           id: Date.now().toString(),
@@ -695,9 +725,9 @@ export default function ChatPage() {
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user, isGuest]);
 
-  // Save Chats (Sanitize attachments before persisting to localStorage)
+  // Save Chats (Sanitize attachments before persisting to localStorage with strict user/guest isolation)
   useEffect(() => {
     if (chats.length > 0) {
       const sanitized = chats.map((c) => ({
@@ -707,9 +737,17 @@ export default function ChatPage() {
           attachments: m.attachments ? m.attachments.map(sanitizeAttachmentForStorage) : undefined,
         })),
       }));
-      localStorage.setItem('nyra_chats', JSON.stringify(sanitized));
+
+      const isGuestMode = isGuest || (typeof window !== 'undefined' && localStorage.getItem('nyra_is_guest') === 'true');
+      const storageKey = user?.id
+        ? `nyra_chats_${user.id}`
+        : isGuestMode
+        ? 'nyra_chats_guest'
+        : 'nyra_chats';
+
+      localStorage.setItem(storageKey, JSON.stringify(sanitized));
     }
-  }, [chats]);
+  }, [chats, user?.id, isGuest]);
 
   const handleToggleDesktopSidebar = () => {
     setDesktopSidebarOpen((prev) => {
@@ -858,6 +896,63 @@ export default function ChatPage() {
     if (!targetChat || !targetChat.messages || targetChat.messages.length === 0) {
       setGreetingData(getDynamicGreeting());
     }
+  };
+
+  const handleClearAllHistory = async () => {
+    // 1. Abort any active AI response generation / stream
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    // 2. Stop speech synthesis if active
+    stopSpeaking();
+
+    // 3. Reset loading and thinking states
+    setIsLoading(false);
+    setThinking(false);
+
+    // 4. Clear in-memory chat list
+    setChats([]);
+
+    // 5. Clear all local storage chat entries across guest, user, and legacy keys
+    clearAllChats(user?.id);
+
+    // 6. Clear cloud conversations and messages if authenticated with Supabase
+    if (user?.id) {
+      try {
+        await clearAllUserConversations(user.id);
+      } catch (err) {
+        console.warn('Failed to clear cloud conversations:', err);
+      }
+    }
+
+    // 7. Clear bookmarked message IDs
+    setBookmarkedIds([]);
+
+    // 8. Close in-chat search if open
+    setIsInChatSearchOpen(false);
+    setInChatSearchQuery('');
+    setCurrentMatchIndex(0);
+
+    // 9. Reset composer input, attachments, and start a fresh conversation draft
+    const freshDraftId = Date.now().toString();
+    setCurrentChatId(freshDraftId);
+    setGreetingData(getDynamicGreeting());
+    setInput('');
+    setSelectedImages([]);
+    setAttachedPdfs([]);
+    setPdfText('');
+    setPdfName('');
+    setPdfPages(0);
+    setWebSearch(false);
+    setDeepResearch(false);
+    setSidebarOpen(false);
+
+    // 10. Close settings modal if open
+    setIsSettingsOpen(false);
+
+    addToast({ type: 'success', title: 'All chat history cleared' });
   };
 
   const handleBranchFromMessage = (msgId: string) => {
@@ -1023,6 +1118,22 @@ export default function ChatPage() {
               return curProj?.notes || undefined;
             })(),
             userMemories: formatMemoriesForPrompt() || undefined,
+            userOnboardingPreferences: (() => {
+              if (profile?.interests?.length || profile?.goals?.length || profile?.preferredResponseStyle?.length || profile?.experienceLevel) {
+                return {
+                  interests: profile.interests,
+                  goals: profile.goals,
+                  workStyle: profile.preferredResponseStyle,
+                  experienceLevel: profile.experienceLevel,
+                };
+              }
+              try {
+                const local = localStorage.getItem('nyra_onboarding_prefs');
+                return local ? JSON.parse(local) : undefined;
+              } catch (e) {
+                return undefined;
+              }
+            })(),
           }),
           signal: controller.signal,
         });
@@ -1038,6 +1149,16 @@ export default function ChatPage() {
           throw new Error(errorMsg || 'API request failed');
         }
         if (!response.body) throw new Error('No response body');
+
+        // Increment local client usage counters
+        try {
+          incrementLocalUsage('aiRequests', 1);
+          if (webSearch || deepResearch) incrementLocalUsage('webSearches', 1);
+          if (selectedImages && selectedImages.length > 0) incrementLocalUsage('imageRequests', 1);
+          if (targetPdfText || (targetPdfs && targetPdfs.length > 0)) incrementLocalUsage('pdfRequests', 1);
+        } catch (e) {
+          console.warn('Failed to record local usage:', e);
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -1408,8 +1529,8 @@ export default function ChatPage() {
 
   if (appLoading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#F8F7FB] dark:bg-[#07050d] transition-colors">
-        <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#8B6FC9] to-[#7E9AC7] dark:from-purple-600 dark:to-sky-400 animate-pulse flex items-center justify-center text-white shadow-2xl">
+      <div className="flex h-screen w-screen items-center justify-center bg-[#FAF8FB] dark:bg-[#050505] transition-colors">
+        <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#E52A83] to-[#B31372] animate-pulse flex items-center justify-center text-white shadow-2xl shadow-pink-500/30">
           <span className="text-lg font-bold">✦</span>
         </div>
       </div>
@@ -1421,15 +1542,15 @@ export default function ChatPage() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="relative flex h-[100dvh] w-full max-w-full overflow-hidden bg-[#F8F7FB] dark:bg-[#07050d] text-[#292633] dark:text-[#ede7f3] transition-colors"
+      className="relative flex h-[100dvh] w-full max-w-full overflow-hidden bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-[#ede7f3] transition-colors"
     >
       {/* DRAG AND DROP OVERLAY */}
       {isDraggingOver && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md border-2 border-dashed border-purple-400/50">
-          <div className="text-center p-6 sm:p-8 rounded-2xl bg-[#130f24] border border-purple-400/25 max-w-[90vw]">
-            <UploadCloud size={40} className="mx-auto text-purple-400 mb-3 animate-bounce" />
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md border-2 border-dashed border-pink-500/50">
+          <div className="text-center p-6 sm:p-8 rounded-2xl bg-[#16091F] border border-pink-500/30 max-w-[90vw] shadow-2xl shadow-pink-500/20">
+            <UploadCloud size={40} className="mx-auto text-pink-400 mb-3 animate-bounce" />
             <h3 className="text-base font-bold text-white">Drop File to Attach</h3>
-            <p className="text-xs text-slate-400 mt-1">Images & PDFs supported</p>
+            <p className="text-xs text-pink-200/70 mt-1">Images & PDFs supported</p>
           </div>
         </div>
       )}
@@ -1448,7 +1569,7 @@ export default function ChatPage() {
 
         {/* Mobile Slide-in Drawer */}
         <div
-          className={`relative z-10 flex h-full w-[285px] sm:w-[300px] max-w-[85vw] flex-col bg-[#f8f6fc] dark:bg-[#07050d] border-r border-purple-200 dark:border-purple-400/20 shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`relative z-10 flex h-full w-[285px] sm:w-[300px] max-w-[85vw] flex-col bg-[#FAF8FB] dark:bg-[#08020D] border-r border-[#E7B8CF] dark:border-pink-500/20 shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
         >
           <Sidebar
@@ -1511,6 +1632,7 @@ export default function ChatPage() {
             onOpenFavorites={() => setIsFavoritesOpen(true)}
             onOpenVoiceMode={() => setIsVoiceModeOpen(true)}
             onOpenExport={() => setIsExportOpen(true)}
+            onClearHistory={handleClearAllHistory}
             onCloseMobile={() => setSidebarOpen(false)}
             onToggleCollapse={() => setSidebarOpen(false)}
             favoritesCount={bookmarkedIds.length}
@@ -1582,6 +1704,7 @@ export default function ChatPage() {
             onOpenFavorites={() => setIsFavoritesOpen(true)}
             onOpenVoiceMode={() => setIsVoiceModeOpen(true)}
             onOpenExport={() => setIsExportOpen(true)}
+            onClearHistory={handleClearAllHistory}
             onCloseMobile={() => setDesktopSidebarOpen(false)}
             onToggleCollapse={() => setDesktopSidebarOpen(false)}
             favoritesCount={bookmarkedIds.length}
@@ -1592,32 +1715,32 @@ export default function ChatPage() {
       {/* =========================================================
           CURVED CHAT SCREEN CONTAINER (Edge-to-edge on Mobile/Tablet, Floating rounded workspace on Desktop)
       ========================================================= */}
-      <main className="flex-1 p-0 md:p-3 relative z-10 overflow-hidden flex flex-col min-w-0 h-full w-full bg-[#F8F7FB] dark:bg-[#07050d] transition-colors">
+      <main className="flex-1 p-0 md:p-3 relative z-10 overflow-hidden flex flex-col min-w-0 h-full w-full bg-[#FAF8FB] dark:bg-[#050505] transition-colors">
         {/* THE WORKSPACE CANVAS (Full viewport on Mobile, Curved on Desktop) */}
-        <div className="relative flex-1 w-full h-full rounded-none md:rounded-[32px] overflow-hidden flex flex-col bg-[#FFFFFF] dark:bg-[linear-gradient(180deg,#1c1335_0%,#130c26_28%,#0a0715_60%,#000000_100%)] border-0 md:border md:border-[#E8E4EF] dark:md:border-purple-400/20 md:shadow-[0_12px_40px_rgba(41,38,51,0.04)] dark:md:shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(168,85,247,0.08)] transition-colors">
+        <div className="relative flex-1 w-full h-full rounded-none md:rounded-[32px] overflow-hidden flex flex-col bg-[#FFFFFF] dark:bg-[linear-gradient(180deg,#16091F_0%,#0E0514_30%,#08020D_65%,#050505_100%)] border-0 md:border md:border-[#E8E4EF] dark:md:border-pink-500/20 md:shadow-[0_12px_40px_rgba(38,24,39,0.04)] dark:md:shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(229,42,131,0.08)] transition-colors">
 
 
-          {/* FLOATING TOP CONTROLS (Transparent, No Static Bar) */}
-          <header className="relative z-30 flex items-center justify-between px-3 sm:px-4 md:px-5 h-13 sm:h-14 bg-transparent shrink-0 w-full">
-            {/* TOP LEFT: Sidebar Collapse Trigger + New Chat + Model Selector Pill */}
-            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-              {/* Mobile Sidebar Trigger */}
+          {/* FLOATING TOP NAVBAR (Responsive, Modern & Clean) */}
+          <header className="relative z-30 flex items-center justify-between px-3.5 sm:px-5 md:px-6 pt-2 sm:pt-2.5 md:pt-3 pb-1.5 sm:pb-2 md:pb-2.5 min-h-[52px] sm:min-h-[56px] bg-transparent shrink-0 w-full select-none">
+            {/* TOP LEFT: Sidebar Trigger + New Chat + Model Selector Pill */}
+            <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+              {/* Mobile Sidebar Drawer Trigger */}
               <button
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open sidebar"
-                className="md:hidden flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/20 text-[#292633] dark:text-zinc-300 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                className="md:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 transition cursor-pointer active:scale-95"
               >
-                <PanelLeft size={15} />
+                <PanelLeft size={18} />
               </button>
 
-              {/* Mobile New Chat Quick Trigger */}
+              {/* Mobile New Chat Trigger */}
               <button
                 onClick={() => handleNewChat()}
                 aria-label="New chat"
                 title="New chat"
-                className="md:hidden flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/20 text-[#292633] dark:text-zinc-300 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                className="md:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 transition cursor-pointer active:scale-95"
               >
-                <SquarePen size={14} />
+                <SquarePen size={17} />
               </button>
 
               {/* Desktop Re-Open Sidebar Trigger & New Chat */}
@@ -1627,78 +1750,77 @@ export default function ChatPage() {
                     onClick={handleToggleDesktopSidebar}
                     aria-label="Open sidebar"
                     title="Open sidebar (Ctrl+B)"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/25 text-[#292633] dark:text-zinc-300 hover:border-[#8B6FC9]/40 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer animate-[fadeIn_0.15s_ease-out]"
+                    className="flex h-8.5 w-8.5 items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer active:scale-95"
                   >
-                    <PanelLeft size={15} />
+                    <PanelLeft size={16} />
                   </button>
                   <button
                     onClick={() => handleNewChat()}
                     aria-label="New chat"
                     title="New chat (Ctrl+N)"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/25 text-[#292633] dark:text-zinc-300 hover:border-[#8B6FC9]/40 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer animate-[fadeIn_0.15s_ease-out]"
+                    className="flex h-8.5 w-8.5 items-center justify-center rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer active:scale-95"
                   >
-                    <SquarePen size={15} />
+                    <SquarePen size={16} />
                   </button>
                 </div>
               )}
 
-              {/* Model Selector Dropdown (ChatGPT 4o Style) */}
+              {/* Model Selector Dropdown */}
               <ModelSelector
                 selectedModelId={selectedModelId}
                 onSelectModel={handleSelectModel}
                 variant="navbar"
               />
 
-              {/* Active Workspace Indicator Pill */}
+              {/* Active Workspace Indicator Pill (Desktop Only) */}
               {(() => {
                 const currentProj = projects.find((p) => p.id === activeProjectId);
                 if (!currentProj) return null;
                 return (
                   <button
                     onClick={() => setIsProjectModalOpen(true)}
-                    className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EEE8FA] dark:bg-purple-500/15 hover:bg-[#E2D8F7] dark:hover:bg-purple-500/25 border border-[#E8E4EF] dark:border-purple-400/30 text-xs font-semibold text-[#6B52A3] dark:text-purple-200 hover:text-[#292633] dark:hover:text-white transition cursor-pointer shadow-xs backdrop-blur-sm"
+                    className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F4DCE9] dark:bg-pink-500/15 hover:bg-[#E7B8CF] dark:hover:bg-pink-500/25 border border-[#E8E4EF] dark:border-pink-400/30 text-xs font-semibold text-[#B31372] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white transition cursor-pointer shadow-xs backdrop-blur-sm"
                     title="Active Workspace: Click to switch or manage"
                   >
-                    <Layers size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                    <Layers size={13} className="text-[#E52A83] dark:text-pink-400" />
                     <span className="max-w-[120px] truncate">{currentProj.name}</span>
                   </button>
                 );
               })()}
             </div>
 
-
-            {/* TOP RIGHT: ChatGPT Signature Share Pill, Search, More Menu & Profile */}
-            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
-              {/* Right-Side Prompts Screen Button */}
+            {/* TOP RIGHT: Clean Action Buttons (Desktop & Mobile Optimized) */}
+            <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
+              {/* Desktop Prompts Screen Pill */}
               <button
                 onClick={() => setIsPromptLibraryOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-purple-400/25 bg-[#F5F3F9] dark:bg-purple-500/10 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 text-xs font-semibold text-[#292633] dark:text-purple-200 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer shadow-xs"
-                title="Open Prompts & Starters (Right Side)"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
+                title="Open Prompts & Starters"
               >
-                <BookOpen size={13} className="text-[#8B6FC9] dark:text-purple-300" />
-                <span className="hidden sm:inline">Prompts</span>
+                <BookOpen size={13} className="text-[#E52A83] dark:text-pink-300" />
+                <span>Prompts</span>
               </button>
 
-              {/* ChatGPT Signature Share Button Pill */}
+              {/* Desktop Share Button Pill */}
               <button
                 onClick={handleShareConversation}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-purple-400/25 bg-[#F5F3F9] dark:bg-purple-500/10 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 text-xs font-semibold text-[#292633] dark:text-purple-100 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer shadow-xs"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
                 title="Share conversation"
               >
-                <Share2 size={13} className="text-[#8B6FC9] dark:text-purple-300" />
+                <Share2 size={13} className="text-[#E52A83] dark:text-pink-300" />
                 <span>Share</span>
               </button>
 
               {/* Search in Chat Trigger */}
               <button
                 onClick={() => setIsInChatSearchOpen(!isInChatSearchOpen)}
-                className="h-8 w-8 rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/20 text-[#292633] dark:text-zinc-300 hover:text-[#8B6FC9] dark:hover:text-white transition flex items-center justify-center cursor-pointer"
+                className="flex h-9 w-9 sm:h-8.5 sm:w-8.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition items-center justify-center cursor-pointer active:scale-95"
                 title="Search conversation (Ctrl+F)"
               >
-                <Search size={14} />
+                <Search size={16} />
               </button>
 
-              {/* Light / Dark Mode Quick Switcher */}
+              {/* Desktop Light / Dark Mode Switcher */}
               <button
                 onClick={() => {
                   const next: ThemeMode = themeMode === 'light' ? 'dark' : 'light';
@@ -1709,29 +1831,29 @@ export default function ChatPage() {
                     title: next === 'light' ? 'Light mode enabled' : 'Dark mode enabled',
                   });
                 }}
-                className="h-8 w-8 rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/20 text-[#292633] dark:text-zinc-300 hover:text-[#8B6FC9] dark:hover:text-white transition flex items-center justify-center cursor-pointer"
+                className="hidden sm:flex h-8.5 w-8.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition items-center justify-center cursor-pointer active:scale-95"
                 title={themeMode === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme'}
                 aria-label="Toggle light/dark theme"
               >
                 {themeMode === 'light' ? (
-                  <Moon size={14} className="text-[#6B52A3]" />
+                  <Moon size={15} className="text-[#B31372]" />
                 ) : (
-                  <Sun size={14} className="text-[#C49A5A]" />
+                  <Sun size={15} className="text-amber-400" />
                 )}
               </button>
 
-              {/* ChatGPT More Options Dropdown (...) */}
+              {/* More Options Dropdown (...) */}
               <div className="relative" ref={navMoreRef}>
                 <button
                   onClick={() => setIsNavMoreOpen(!isNavMoreOpen)}
-                  className="h-8 w-8 rounded-lg bg-[#F5F3F9] dark:bg-purple-950/40 hover:bg-[#EEE8FA] dark:hover:bg-purple-900/60 border border-[#E8E4EF] dark:border-purple-400/20 text-[#292633] dark:text-zinc-300 hover:text-[#8B6FC9] dark:hover:text-white transition flex items-center justify-center cursor-pointer"
+                  className="flex h-9 w-9 sm:h-8.5 sm:w-8.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition items-center justify-center cursor-pointer active:scale-95"
                   title="More conversation options"
                 >
-                  <MoreHorizontal size={15} />
+                  <MoreHorizontal size={17} />
                 </button>
 
                 {isNavMoreOpen && (
-                  <div className="absolute right-0 top-10 w-52 sm:w-56 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF] dark:bg-[#130f24]/98 shadow-2xl p-1.5 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-xl">
+                  <div className="absolute right-0 top-11 sm:top-10 w-56 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-white dark:bg-[#12051B] shadow-2xl p-1.5 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-2xl">
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
@@ -1743,9 +1865,9 @@ export default function ChatPage() {
                           title: next === 'light' ? 'Light mode enabled' : 'Dark mode enabled',
                         });
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      {themeMode === 'light' ? <Moon size={13} className="text-[#6B52A3]" /> : <Sun size={13} className="text-[#C49A5A]" />}
+                      {themeMode === 'light' ? <Moon size={14} className="text-[#B31372]" /> : <Sun size={14} className="text-amber-400" />}
                       <span>{themeMode === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme'}</span>
                     </button>
 
@@ -1754,9 +1876,9 @@ export default function ChatPage() {
                         setIsNavMoreOpen(false);
                         handleShareConversation();
                       }}
-                      className="sm:hidden w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <Share2 size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <Share2 size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Share conversation</span>
                     </button>
 
@@ -1765,9 +1887,9 @@ export default function ChatPage() {
                         setIsNavMoreOpen(false);
                         handleCopyConversation();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <Copy size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <Copy size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Copy conversation</span>
                     </button>
 
@@ -1776,9 +1898,9 @@ export default function ChatPage() {
                         setIsNavMoreOpen(false);
                         setIsExportOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <Download size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <Download size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Export conversation</span>
                     </button>
 
@@ -1787,9 +1909,9 @@ export default function ChatPage() {
                         setIsNavMoreOpen(false);
                         setIsFavoritesOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <Star size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <Star size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Bookmarks ({bookmarkedIds.length})</span>
                     </button>
 
@@ -1798,22 +1920,22 @@ export default function ChatPage() {
                         setIsNavMoreOpen(false);
                         setIsPromptLibraryOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <BookOpen size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <BookOpen size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Prompt Library</span>
                     </button>
 
-                    <div className="h-[1px] bg-[#E8E4EF] dark:bg-white/[0.08] my-1" />
+                    <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
 
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
                         setIsSettingsOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#292633] dark:text-slate-200 hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 hover:text-[#8B6FC9] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
                     >
-                      <Settings size={13} className="text-[#8B6FC9] dark:text-purple-400" />
+                      <Settings size={14} className="text-[#E52A83] dark:text-pink-400" />
                       <span>Configuration</span>
                     </button>
                   </div>
@@ -1823,7 +1945,7 @@ export default function ChatPage() {
               {/* User Profile Avatar */}
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="h-8 w-8 rounded-full bg-[#8B6FC9] text-white font-bold text-xs flex items-center justify-center ring-1 ring-[#E8E4EF] dark:ring-purple-300/40 shadow-xs transition hover:scale-105 active:scale-95 cursor-pointer ml-0.5"
+                className="h-8 w-8 sm:h-8.5 sm:w-8.5 rounded-full bg-gradient-to-tr from-[#E52A83] to-[#B31372] text-white font-bold text-xs flex items-center justify-center ring-1 ring-black/5 dark:ring-white/15 shadow-xs transition hover:scale-105 active:scale-95 cursor-pointer ml-1"
                 title={profile?.displayName || user?.email ? `${profile?.displayName || user?.email} (Settings)` : 'Account Settings'}
               >
                 {profile?.displayName
@@ -2006,11 +2128,11 @@ export default function ChatPage() {
                               behavior: 'smooth',
                             });
                           }}
-                          className="group h-8 w-8 rounded-full border border-[#E8E4EF] dark:border-purple-400/35 bg-[#FFFFFF]/95 dark:bg-[#130f24]/95 hover:bg-[#F5F3F9] dark:hover:bg-[#1c1533] hover:border-[#8B6FC9]/40 text-[#6B52A3] dark:text-purple-200 hover:text-[#292633] dark:hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(41,38,51,0.08)] dark:shadow-[0_8px_20px_rgba(10,5,20,0.85)] backdrop-blur-xl transition-all duration-150 hover:scale-110 active:scale-95 cursor-pointer"
+                          className="group h-8 w-8 rounded-full border border-[#E8E4EF] dark:border-pink-500/35 bg-[#FFFFFF]/95 dark:bg-[#16091F]/95 hover:bg-[#F7F3FA] dark:hover:bg-[#24103A] hover:border-[#B31372]/40 text-[#B31372] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(38,24,39,0.08)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all duration-150 hover:scale-110 active:scale-95 cursor-pointer"
                           title="Scroll to recent messages"
                           aria-label="Scroll to recent messages"
                         >
-                          <ArrowDown size={15} className="text-[#8B6FC9] dark:text-purple-300 group-hover:text-[#292633] dark:group-hover:text-white transition-colors" />
+                          <ArrowDown size={15} className="text-[#E52A83] dark:text-pink-300 group-hover:text-[#261827] dark:group-hover:text-white transition-colors" />
                         </button>
                       </motion.div>
                     )}
@@ -2031,13 +2153,13 @@ export default function ChatPage() {
                   {/* Structured Chat Input Bar */}
                   <div
                     className={`chat-composer-box rounded-[22px] sm:rounded-[28px] border transition-all px-3 sm:px-4 py-2.5 sm:py-3 backdrop-blur-2xl ${isDraggingOver
-                      ? 'border-[#8B6FC9] bg-[#EEE8FA]/98 ring-2 ring-[#8B6FC9]/50 shadow-[0_0_40px_rgba(139,111,201,0.2)]'
-                      : 'border-[#E8E4EF] hover:border-[#8B6FC9]/40 focus-within:border-[#8B6FC9]/60 focus-within:ring-2 focus-within:ring-[#8B6FC9]/20 bg-[#FFFFFF] dark:border-purple-400/30 dark:hover:border-purple-400/50 dark:focus-within:border-purple-400/60 dark:bg-gradient-to-b dark:from-[#1c1335]/95 dark:via-[#140d28]/95 dark:to-[#0e091d]/95 shadow-[0_8px_30px_rgba(41,38,51,0.04)] dark:shadow-[0_20px_50px_rgba(10,5,20,0.7)]'
+                      ? 'border-[#E52A83] bg-[#F4DCE9]/98 ring-2 ring-[#E52A83]/50 shadow-[0_0_40px_rgba(229,42,131,0.2)]'
+                      : 'border-[#E8E4EF] hover:border-[#B31372]/40 focus-within:border-[#B31372]/60 focus-within:ring-2 focus-within:ring-[#B31372]/20 bg-[#FFFFFF] dark:border-pink-500/25 dark:hover:border-pink-500/40 dark:focus-within:border-pink-500/60 dark:bg-gradient-to-b dark:from-[#16091F]/95 dark:via-[#0E0514]/95 dark:to-[#08020D]/95 shadow-[0_8px_30px_rgba(38,24,39,0.04)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)]'
                       }`}
                   >
                     {/* Drag-over indicator overlay text */}
                     {isDraggingOver && (
-                      <div className="mb-2 text-center text-xs font-semibold text-[#8B6FC9] dark:text-purple-300 animate-pulse">
+                      <div className="mb-2 text-center text-xs font-semibold text-[#E52A83] dark:text-pink-300 animate-pulse">
                         ✦ Drop images or PDF documents here to attach to Nyra
                       </div>
                     )}
@@ -2085,12 +2207,12 @@ export default function ChatPage() {
                               ? 'Ask a question about the attached image(s)...'
                               : 'Message Nyra...'
                         }
-                        className="chat-composer-textarea w-full bg-transparent outline-none resize-none min-h-[36px] sm:min-h-[40px] max-h-36 sm:max-h-48 pt-0.5 sm:pt-1 text-[14px] sm:text-[15.5px] placeholder:text-[#92909B] dark:placeholder:text-purple-200/50 text-[#292633] dark:text-white leading-relaxed custom-scrollbar"
+                        className="chat-composer-textarea w-full bg-transparent outline-none resize-none min-h-[36px] sm:min-h-[40px] max-h-36 sm:max-h-48 pt-0.5 sm:pt-1 text-[14px] sm:text-[15.5px] placeholder:text-[#9E93A2] dark:placeholder:text-pink-200/50 text-[#261827] dark:text-white leading-relaxed custom-scrollbar"
                       />
                     </div>
 
                     {/* Bottom Tools Row */}
-                    <div className="mt-2 pt-2 border-t border-[#E8E4EF] dark:border-purple-400/20 flex items-center justify-between gap-1.5 sm:gap-2">
+                    <div className="mt-2 pt-2 border-t border-[#E8E4EF] dark:border-pink-500/20 flex items-center justify-between gap-1.5 sm:gap-2">
                       {/* Left Action Toolbar */}
                       <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 flex-nowrap overflow-x-auto no-scrollbar sm:overflow-visible">
                         {/* ChatGPT '+' Attach Button with Popover */}
@@ -2098,20 +2220,20 @@ export default function ChatPage() {
                           <button
                             type="button"
                             onClick={() => setShowToolsMenu((v) => !v)}
-                            className="h-8 w-8 rounded-full border border-[#E8E4EF] dark:border-purple-400/30 bg-[#F5F3F9] dark:bg-purple-500/10 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 text-[#6B52A3] dark:text-purple-200 hover:text-[#292633] dark:hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                            className="h-8 w-8 rounded-full border border-[#E8E4EF] dark:border-pink-400/30 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-[#B31372] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
                             title="Add attachments or prompts"
                             aria-label="Add attachments"
                           >
-                            <Plus size={16} strokeWidth={2.2} className="text-[#8B6FC9] dark:text-purple-300" />
+                            <Plus size={16} strokeWidth={2.2} className="text-[#E52A83] dark:text-pink-300" />
                           </button>
 
                           {showToolsMenu && (
-                            <div className="absolute bottom-10 left-0 w-52 sm:w-56 max-w-[calc(100vw-32px)] rounded-2xl border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF] dark:bg-[#130f24]/98 shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-xl animate-[fadeIn_0.12s_ease-out]">
-                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 transition text-[#292633] dark:text-purple-100 hover:text-[#8B6FC9] dark:hover:text-white">
+                            <div className="absolute bottom-10 left-0 w-52 sm:w-56 max-w-[calc(100vw-32px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/30 bg-[#FFFFFF] dark:bg-[#12051B]/98 shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-xl animate-[fadeIn_0.12s_ease-out]">
+                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white">
                                 <span className="text-base">🖼️</span>
                                 <div className="flex flex-col">
                                   <span className="text-xs font-semibold">Upload Images</span>
-                                  <span className="text-[10.5px] text-[#92909B] dark:text-purple-300/70">PNG, JPG, WEBP</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">PNG, JPG, WEBP</span>
                                 </div>
                                 <input
                                   ref={fileInputRef}
@@ -2126,11 +2248,11 @@ export default function ChatPage() {
                                 />
                               </label>
 
-                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 transition text-[#292633] dark:text-purple-100 hover:text-[#8B6FC9] dark:hover:text-white">
+                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white">
                                 <span className="text-base">📄</span>
                                 <div className="flex flex-col">
                                   <span className="text-xs font-semibold">Upload PDF</span>
-                                  <span className="text-[10.5px] text-[#92909B] dark:text-purple-300/70">Analyze document</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Analyze document</span>
                                 </div>
                                 <input
                                   ref={pdfInputRef}
@@ -2145,7 +2267,7 @@ export default function ChatPage() {
                                 />
                               </label>
 
-                              <div className="h-[1px] bg-[#E8E4EF] dark:bg-purple-400/20 my-1" />
+                              <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
 
                               <button
                                 type="button"
@@ -2153,12 +2275,12 @@ export default function ChatPage() {
                                   setIsPromptLibraryOpen(true);
                                   setShowToolsMenu(false);
                                 }}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 transition text-[#292633] dark:text-purple-100 hover:text-[#8B6FC9] dark:hover:text-white text-left"
+                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white text-left"
                               >
                                 <span className="text-base">📚</span>
                                 <div className="flex flex-col">
                                   <span className="text-xs font-semibold">Prompt Library</span>
-                                  <span className="text-[10.5px] text-[#92909B] dark:text-purple-300/70">Pre-built templates</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Pre-built templates</span>
                                 </div>
                               </button>
 
@@ -2170,12 +2292,12 @@ export default function ChatPage() {
                                     setIsPromptLibraryOpen(true);
                                     setShowToolsMenu(false);
                                   }}
-                                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F5F3F9] dark:hover:bg-purple-500/20 transition text-[#292633] dark:text-purple-100 hover:text-[#8B6FC9] dark:hover:text-white text-left"
+                                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white text-left"
                                 >
                                   <span className="text-base">💾</span>
                                   <div className="flex flex-col">
                                     <span className="text-xs font-semibold">Save Prompt</span>
-                                    <span className="text-[10.5px] text-[#92909B] dark:text-purple-300/70">Save current input</span>
+                                    <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Save current input</span>
                                   </div>
                                 </button>
                               )}
@@ -2207,12 +2329,12 @@ export default function ChatPage() {
                           }}
                           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer select-none active:scale-95 ${deepResearch
                             ? 'bg-[#F9F4EB] dark:bg-gradient-to-r dark:from-amber-500/25 dark:via-orange-500/20 dark:to-amber-500/25 border border-[#C49A5A] dark:border-amber-400/60 text-[#9C773E] dark:text-amber-200 shadow-[0_0_15px_rgba(196,154,90,0.15)] ring-1 ring-[#C49A5A]/40'
-                            : 'bg-[#F5F3F9] hover:bg-[#EEE8FA] dark:bg-purple-500/10 dark:hover:bg-purple-500/20 border border-[#E8E4EF] dark:border-purple-400/20 text-[#686477] dark:text-purple-200 hover:text-[#292633] dark:hover:text-white'
+                            : 'bg-[#F7F3FA] hover:bg-[#F4DCE9] dark:bg-pink-500/10 dark:hover:bg-pink-500/20 border border-[#E8E4EF] dark:border-pink-500/20 text-[#6E6072] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white'
                             }`}
                           title={deepResearch ? 'Deep Research is active (click to turn off)' : 'Turn on Deep Research for this prompt'}
                           aria-pressed={deepResearch}
                         >
-                          <Search size={13} className={deepResearch ? 'text-[#C49A5A] dark:text-amber-300 stroke-[2.5]' : 'text-[#8B6FC9] dark:text-purple-300'} />
+                          <Search size={13} className={deepResearch ? 'text-[#C49A5A] dark:text-amber-300 stroke-[2.5]' : 'text-[#E52A83] dark:text-pink-300'} />
                           <span>Deep Research</span>
                           {deepResearch && (
                             <span className="w-1.5 h-1.5 rounded-full bg-[#C49A5A] dark:bg-amber-400 animate-pulse" />
@@ -2226,10 +2348,10 @@ export default function ChatPage() {
                             setPromptToSave(undefined);
                             setIsPromptLibraryOpen(true);
                           }}
-                          className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-[#686477] hover:text-[#292633] dark:text-purple-200 dark:hover:text-white bg-[#F5F3F9] hover:bg-[#EEE8FA] dark:bg-purple-500/10 dark:hover:bg-purple-500/20 border border-[#E8E4EF] dark:border-purple-400/20 transition cursor-pointer"
+                          className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-[#6E6072] hover:text-[#261827] dark:text-pink-200 dark:hover:text-white bg-[#F7F3FA] hover:bg-[#F4DCE9] dark:bg-pink-500/10 dark:hover:bg-pink-500/20 border border-[#E8E4EF] dark:border-pink-500/20 transition cursor-pointer"
                           title="Open Prompt Library"
                         >
-                          <BookOpen size={13} className="text-[#8B6FC9] dark:text-purple-300" />
+                          <BookOpen size={13} className="text-[#E52A83] dark:text-pink-300" />
                           <span>Prompts</span>
                         </button>
 
@@ -2241,10 +2363,10 @@ export default function ChatPage() {
                               setPromptToSave(input.trim());
                               setIsPromptLibraryOpen(true);
                             }}
-                            className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-[#6B52A3] hover:text-[#292633] dark:text-purple-300 dark:hover:text-white bg-[#EEE8FA] hover:bg-[#E2D8F7] dark:bg-purple-500/15 dark:hover:bg-purple-500/25 border border-[#E8E4EF] dark:border-purple-400/30 transition cursor-pointer"
+                            className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium text-[#B31372] hover:text-[#261827] dark:text-pink-300 dark:hover:text-white bg-[#F4DCE9] hover:bg-[#E7B8CF] dark:bg-pink-500/15 dark:hover:bg-pink-500/25 border border-[#E8E4EF] dark:border-pink-500/30 transition cursor-pointer"
                             title="Save current prompt to Library"
                           >
-                            <Bookmark size={12} className="text-[#8B6FC9] dark:text-purple-300" />
+                            <Bookmark size={12} className="text-[#E52A83] dark:text-pink-300" />
                             <span>Save</span>
                           </button>
                         )}
@@ -2274,7 +2396,7 @@ export default function ChatPage() {
                           }}
                           className={`h-8 w-8 rounded-full border flex items-center justify-center transition cursor-pointer shadow-xs ${isListening
                             ? 'bg-[#C77B7B] border-[#C77B7B] text-white shadow-rose-500/50 animate-pulse ring-2 ring-[#C77B7B]/60'
-                            : 'bg-[#F5F3F9] dark:bg-purple-500/15 border-[#E8E4EF] dark:border-purple-400/30 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/30 text-[#6B52A3] dark:text-purple-200 hover:text-[#292633] dark:hover:text-white'
+                            : 'bg-[#F7F3FA] dark:bg-pink-500/15 border-[#E8E4EF] dark:border-pink-500/30 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/30 text-[#B31372] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white'
                             }`}
                           title={isListening ? 'Stop voice input' : 'Voice Mode (Speech to Text)'}
                         >
@@ -2294,7 +2416,7 @@ export default function ChatPage() {
                             ? 'chat-stop-button active:scale-95 cursor-pointer shadow-md'
                             : input.trim() || selectedImages.length > 0 || attachedPdfs.length > 0
                               ? 'chat-accent-button text-white font-bold active:scale-95 cursor-pointer hover:scale-105'
-                              : 'bg-[#F5F3F9] dark:bg-purple-500/10 border border-[#E8E4EF] dark:border-purple-400/20 text-[#92909B] dark:text-purple-300/30 cursor-not-allowed'
+                              : 'bg-[#F7F3FA] dark:bg-pink-500/10 border border-[#E8E4EF] dark:border-pink-500/20 text-[#9E93A2] dark:text-pink-300/30 cursor-not-allowed'
                             }`}
                           title={
                             isLoading
@@ -2316,7 +2438,7 @@ export default function ChatPage() {
                   </div>
 
                   {/* ChatGPT Signature Footer Disclaimer */}
-                  <p className="mt-1.5 sm:mt-2 text-center text-[10.5px] sm:text-[11.5px] text-[#92909B] dark:text-purple-300/60 select-none tracking-tight font-normal">
+                  <p className="mt-1.5 sm:mt-2 text-center text-[10.5px] sm:text-[11.5px] text-[#9E93A2] dark:text-pink-300/60 select-none tracking-tight font-normal">
                     Nyra can make mistakes. Check important info.
                   </p>
                 </div>
@@ -2373,14 +2495,7 @@ export default function ChatPage() {
           localStorage.setItem('nyra_font_size', size);
           document.documentElement.setAttribute('data-font-size', size);
         }}
-        onClearHistory={() => {
-          setChats([]);
-          localStorage.removeItem('nyra_chats');
-          if (user?.id) {
-            clearAllUserConversations(user.id);
-          }
-          handleNewChat();
-        }}
+        onClearHistory={handleClearAllHistory}
       />
 
       <ExportModal

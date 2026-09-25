@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import React from 'react';
 
 type Props = {
   children: React.ReactNode;
@@ -9,20 +9,14 @@ type Props = {
 
 export default function StreamingText({ children, streaming }: Props) {
   return (
-    <>
+    <div className="chatgpt-streaming-wrapper relative">
       {children}
       {streaming && (
-        <motion.span
-          className="inline-block w-[2px] h-4 ml-1 rounded-full bg-sky-400 align-middle shadow-[0_0_8px_rgba(56,189,248,0.85)]"
-          animate={{
-            opacity: [1, 0, 1],
-          }}
-          transition={{
-            duration: 0.75,
-            repeat: Infinity,
-          }}
+        <span
+          aria-hidden="true"
+          className="chatgpt-cursor inline-block w-2 sm:w-2.5 h-[1.15em] ml-1 align-[-0.15em] rounded-[2px] bg-[#292633] dark:bg-white shadow-[0_0_8px_rgba(139,92,246,0.4)] select-none"
         />
       )}
-    </>
+    </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -32,8 +33,9 @@ import {
   CareerSession,
 } from '@/lib/services/careerService';
 import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/lib/auth/AuthContext';
 
-export const SAMPLE_RESUME_TEXT = `ALEX MORGAN
+const SAMPLE_RESUME_TEXT = `ALEX MORGAN
 Full Stack Software Engineer | San Francisco, CA | alex.morgan@email.com | (555) 234-5678 | github.com/alexmorgan | linkedin.com/in/alexmorgan
 
 PROFESSIONAL SUMMARY
@@ -58,9 +60,9 @@ Software Engineer | Apex Cloud Labs, Austin, TX | 2020 – 2022
 - Wrote comprehensive unit and integration test suites using Jest and React Testing Library, achieving 88% code coverage.
 
 EDUCATION
-Bachelor of Science in Computer Science | University of Texas at Austin | Graduated 2020`;
+B.S. in Computer Science | University of California, Berkeley | 2016 – 2020`;
 
-export const SAMPLE_JOB_DESCRIPTION = `Senior Full Stack Engineer
+const SAMPLE_JOB_DESCRIPTION = `Senior Full Stack Engineer
 Company: CloudScale AI
 Location: Remote / San Francisco, CA
 
@@ -77,7 +79,16 @@ Key Requirements:
 type CareerTab = 'audit' | 'job_match' | 'cover_letter' | 'interview';
 
 export default function CareerPage() {
+  const router = useRouter();
   const { addToast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [activeTab, setActiveTab] = useState<CareerTab>('audit');
@@ -339,6 +350,13 @@ Generate:
     handleStreamAIAction(prompt, setInterviewResult);
   };
 
+  const handleRunCurrentAnalysis = () => {
+    if (activeTab === 'audit') handleRunAudit();
+    if (activeTab === 'job_match') handleRunJobMatch();
+    if (activeTab === 'cover_letter') handleRunCoverLetter();
+    if (activeTab === 'interview') handleRunInterviewPrep();
+  };
+
   const handleCopy = (text: string | null) => {
     if (!text) return;
     navigator.clipboard.writeText(text);
@@ -366,7 +384,7 @@ Generate:
       : 'Interview Prep & Q&A';
 
   return (
-    <div className="career-page-root min-h-screen w-full bg-[#07050d] text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
+    <div className="career-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
       {/* Workspace Container matching Tasks & Documents */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         
@@ -500,9 +518,177 @@ Generate:
           </div>
         </div>
 
-        {/* Feature Tabs & Action Button */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin w-full sm:w-auto">
+        {/* =========================================================
+            MOBILE RESPONSIVE SECTION (Active strictly on mobile < 640px)
+        ========================================================= */}
+        <div className="block sm:hidden space-y-0">
+          {/* 1. Mobile Section Header */}
+          <h2 className="career-card-title text-[17px] font-semibold text-white tracking-tight mb-3.5">
+            Resume Analysis
+          </h2>
+
+          {/* 2. Analysis Mode Selector (Segmented Control) */}
+          <div className="w-full p-1 rounded-xl bg-black/40 border border-purple-400/20 career-input h-[42px] mb-3">
+            <div className="grid grid-cols-3 gap-1 w-full h-full">
+              {[
+                { id: 'audit', label: 'Resume Strength' },
+                { id: 'job_match', label: 'Job Match' },
+                { id: 'cover_letter', label: 'Tailor' },
+              ].map((tab) => {
+                const isSelected = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as CareerTab)}
+                    className={`h-full rounded-lg text-xs transition-all flex items-center justify-center px-1 truncate cursor-pointer ${
+                      isSelected
+                        ? 'career-tab-active bg-purple-600 text-white font-semibold shadow-xs'
+                        : 'text-zinc-400 hover:text-zinc-200 font-medium career-text-subtle'
+                    }`}
+                  >
+                    <span className="truncate">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* If interview prep was active, show graceful indicator so user is informed */}
+          {activeTab === 'interview' && (
+            <div className="mb-3 px-3 py-1.5 rounded-lg bg-purple-600/20 border border-purple-400/30 flex items-center justify-between text-xs text-purple-200">
+              <span className="truncate font-medium">Mode: Interview Prep & Q&A</span>
+              <button
+                onClick={() => setActiveTab('job_match')}
+                className="text-purple-300 font-semibold underline text-[11px] ml-2 shrink-0 cursor-pointer"
+              >
+                Switch
+              </button>
+            </div>
+          )}
+
+          {/* 3. Run Analysis Button (Primary Action) */}
+          <button
+            onClick={handleRunCurrentAnalysis}
+            disabled={isAnalyzing}
+            className="career-btn-primary w-full h-[46px] rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-sm font-semibold transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30 cursor-pointer active:scale-[0.98] mb-6"
+          >
+            {isAnalyzing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            <span>{isAnalyzing ? 'Analyzing...' : 'Run Analysis'}</span>
+          </button>
+
+          {/* 4. Section Divider & Analysis Results Header */}
+          <div className="border-t border-purple-400/15 career-border-subtle pt-5 mb-3">
+            <h3 className="career-card-title text-[15px] font-semibold text-white tracking-tight">
+              Analysis Results
+            </h3>
+          </div>
+
+          {/* 5. Mobile Results Card */}
+          <div className="career-card p-4 rounded-2xl bg-[#130c26]/90 border border-purple-400/25 shadow-lg space-y-3.5">
+            {/* Card Header: ✓ {currentTabName} */}
+            <div className="career-border-subtle flex items-center justify-between pb-3 border-b border-purple-400/15">
+              <div className="flex items-center gap-2 min-w-0">
+                <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+                <h4 className="career-card-title text-sm font-semibold text-white truncate">
+                  {currentTabName}
+                </h4>
+              </div>
+
+              {activeResult && (
+                <button
+                  onClick={() => handleCopy(activeResult)}
+                  className="career-copy-btn px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs text-zinc-300 hover:text-white transition flex items-center gap-1.5 shrink-0 cursor-pointer"
+                >
+                  {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                </button>
+              )}
+            </div>
+
+            {/* Analysis Content & State Displays */}
+            <div>
+              {isAnalyzing && (
+                <div className="career-loading-banner p-3 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center gap-2.5 text-xs text-purple-200">
+                  <Loader2 size={15} className="animate-spin text-purple-400 shrink-0" />
+                  <span className="leading-snug">AI is analyzing your resume structure & computing match...</span>
+                </div>
+              )}
+
+              {errorMessage && !isAnalyzing && (
+                <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-200 flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <AlertTriangle size={15} className="text-rose-400 shrink-0" />
+                    <span className="truncate">{errorMessage}</span>
+                  </div>
+                  <button
+                    onClick={handleRunCurrentAnalysis}
+                    className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-semibold shrink-0 cursor-pointer"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {activeResult ? (
+                <div className="career-markdown-body max-w-none text-xs text-zinc-200 leading-relaxed space-y-3">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({ children }) => <h1 className="text-sm font-bold text-white mt-3 mb-1.5 pb-1 border-b border-purple-400/20">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-xs font-bold text-purple-200 mt-3 mb-1">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-xs font-semibold text-purple-300 mt-2 mb-1">{children}</h3>,
+                      p: ({ children }) => <p className="mb-2 leading-relaxed">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc pl-4 space-y-1 mb-2.5">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal pl-4 space-y-1 mb-2.5">{children}</ol>,
+                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                      strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-2 border-purple-400 pl-2.5 italic text-purple-200 my-2 bg-purple-500/5 py-1 rounded-r">
+                          {children}
+                        </blockquote>
+                      ),
+                    }}
+                  >
+                    {activeResult}
+                  </ReactMarkdown>
+                </div>
+              ) : !isAnalyzing ? (
+                /* Empty State (Requirement 5 & 6) */
+                <div className="career-empty-box py-5 px-2 text-center flex flex-col items-center justify-center">
+                  <div className="career-empty-icon w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center text-purple-300 mb-2.5">
+                    <FileText size={18} />
+                  </div>
+
+                  <h5 className="career-card-title text-sm font-semibold text-white mb-1">
+                    Ready for {currentTabName}
+                  </h5>
+
+                  <p className="career-text-subtle text-xs text-zinc-400 max-w-[260px] mx-auto leading-relaxed mb-4">
+                    {resumeText
+                      ? 'Tap "Run Analysis" above to generate your evaluation.'
+                      : 'Upload your resume or load a sample to start the analysis.'}
+                  </p>
+
+                  {!resumeText && (
+                    <button
+                      onClick={handleLoadSample}
+                      className="career-btn-primary h-11 px-5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition cursor-pointer shadow-md shadow-purple-600/25 inline-flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <Sparkles size={14} />
+                      <span>Load Sample Resume & Test</span>
+                    </button>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================
+            DESKTOP VIEW: Feature Tabs & Action Button (100% Unchanged)
+        ========================================================= */}
+        <div className="hidden sm:flex flex-row items-center justify-between gap-3 pt-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin w-auto">
             {[
               { id: 'audit', label: 'Resume Strength Audit', icon: <TrendingUp size={13} /> },
               { id: 'job_match', label: 'Resume vs. Job Match', icon: <Target size={13} /> },
@@ -528,22 +714,19 @@ Generate:
           </div>
 
           <button
-            onClick={() => {
-              if (activeTab === 'audit') handleRunAudit();
-              if (activeTab === 'job_match') handleRunJobMatch();
-              if (activeTab === 'cover_letter') handleRunCoverLetter();
-              if (activeTab === 'interview') handleRunInterviewPrep();
-            }}
+            onClick={handleRunCurrentAnalysis}
             disabled={isAnalyzing}
-            className="career-btn-primary w-full sm:w-auto px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-semibold transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30 cursor-pointer active:scale-95 shrink-0"
+            className="career-btn-primary w-auto px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-semibold transition flex items-center justify-center gap-2 shadow-md shadow-purple-600/30 cursor-pointer active:scale-95 shrink-0"
           >
             {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
             <span>{isAnalyzing ? 'Analyzing...' : 'Run Analysis'}</span>
           </button>
         </div>
 
-        {/* Results Card */}
-        <div className="career-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 shadow-xl space-y-4">
+        {/* =========================================================
+            DESKTOP VIEW: Results Card (100% Unchanged)
+        ========================================================= */}
+        <div className="hidden sm:block career-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 shadow-xl space-y-4">
           <div className="career-border-subtle flex items-center justify-between pb-3 border-b border-purple-400/15">
             <div className="flex items-center gap-2">
               <CheckCircle2 size={16} className="text-emerald-400" />
@@ -581,12 +764,7 @@ Generate:
                   <span>{errorMessage}</span>
                 </div>
                 <button
-                  onClick={() => {
-                    if (activeTab === 'audit') handleRunAudit();
-                    if (activeTab === 'job_match') handleRunJobMatch();
-                    if (activeTab === 'cover_letter') handleRunCoverLetter();
-                    if (activeTab === 'interview') handleRunInterviewPrep();
-                  }}
+                  onClick={handleRunCurrentAnalysis}
                   className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-semibold shrink-0 cursor-pointer"
                 >
                   Try Again

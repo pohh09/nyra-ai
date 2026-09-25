@@ -102,10 +102,13 @@ const GREETINGS_DEEP_NIGHT = [
 
 const SUBTITLES = [
   'What’s on your mind?',
-  'What are we working on?',
-  'Where should we start?',
-  'Ask anything.',
-  'Let’s figure it out.',
+  'Let’s make something.',
+  'Got an idea?',
+  'Give Nyra something interesting.',
+  'Ready when you are.',
+  'Let’s build.',
+  'Turn thoughts into real progress.',
+  'Ask anything or build a project.',
 ];
 
 let lastGreeting = '';

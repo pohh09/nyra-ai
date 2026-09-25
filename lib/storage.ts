@@ -1,65 +1,128 @@
 import { Chat, WorkspaceProject, PromptItem } from './types';
 
-const CHATS_KEY = 'nyra_chats';
-const PROJECTS_KEY = 'nyra_projects';
-const ACTIVE_PROJECT_KEY = 'nyra_active_project_id';
+function getChatKey(userId?: string | null): string {
+  if (userId) return `nyra_chats_${userId}`;
+  if (typeof window !== 'undefined' && localStorage.getItem('nyra_is_guest') === 'true') {
+    return 'nyra_chats_guest';
+  }
+  return 'nyra_chats';
+}
 
-export const saveChats = (chats: Chat[]) => {
+function getProjectsKey(userId?: string | null): string {
+  return userId ? `nyra_projects_${userId}` : 'nyra_projects';
+}
+
+function getActiveProjectKey(userId?: string | null): string {
+  return userId ? `nyra_active_project_${userId}` : 'nyra_active_project_id';
+}
+
+function getPromptsKey(userId?: string | null): string {
+  return userId ? `nyra_prompts_${userId}` : 'nyra_prompts';
+}
+
+function getRecentPromptsKey(userId?: string | null): string {
+  return userId ? `nyra_recent_prompts_${userId}` : 'nyra_recent_prompts';
+}
+
+export const saveChats = (chats: Chat[], userId?: string | null) => {
   try {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(CHATS_KEY, JSON.stringify(chats));
+      const key = getChatKey(userId);
+      localStorage.setItem(key, JSON.stringify(chats));
     }
   } catch (e) {
     console.error('Failed to save chats:', e);
   }
 };
 
-export const loadChats = (): Chat[] => {
+export const loadChats = (userId?: string | null): Chat[] => {
   try {
     if (typeof window === 'undefined') return [];
-    const raw = localStorage.getItem(CHATS_KEY) || localStorage.getItem('ai_chats');
+    const key = getChatKey(userId);
+    const raw = localStorage.getItem(key) || (userId ? null : localStorage.getItem('ai_chats'));
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 };
 
-export const saveProjects = (projects: WorkspaceProject[]) => {
+export const clearAllChats = (userId?: string | null) => {
   try {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (
+          k &&
+          (k.startsWith('nyra_chats') ||
+            k === 'ai_chats' ||
+            k.startsWith('nyra_share_') ||
+            k === 'nyra_current_chat_id' ||
+            k === 'nyra_active_chat_id' ||
+            k === 'nyra_pinned_chats' ||
+            k === 'nyra_bookmarked_ids')
+        ) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+      try {
+        sessionStorage.removeItem('nyra_initial_prompt');
+      } catch {}
+
+      // Explicitly set active key and fallback keys to empty arrays
+      if (userId) {
+        localStorage.setItem(`nyra_chats_${userId}`, JSON.stringify([]));
+      }
+      localStorage.setItem('nyra_chats_guest', JSON.stringify([]));
+      localStorage.setItem('nyra_chats', JSON.stringify([]));
+    }
+  } catch (e) {
+    console.error('Failed to clear all chats:', e);
+  }
+};
+
+export const saveProjects = (projects: WorkspaceProject[], userId?: string | null) => {
+  try {
+    if (typeof window !== 'undefined') {
+      const key = getProjectsKey(userId);
+      localStorage.setItem(key, JSON.stringify(projects));
     }
   } catch (e) {
     console.error('Failed to save projects:', e);
   }
 };
 
-export const loadProjects = (): WorkspaceProject[] => {
+export const loadProjects = (userId?: string | null): WorkspaceProject[] => {
   try {
     if (typeof window === 'undefined') return [];
-    const raw = localStorage.getItem(PROJECTS_KEY);
+    const key = getProjectsKey(userId);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 };
 
-export const getActiveProjectId = (): string | null => {
+export const getActiveProjectId = (userId?: string | null): string | null => {
   try {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem(ACTIVE_PROJECT_KEY);
+    const key = getActiveProjectKey(userId);
+    return localStorage.getItem(key);
   } catch {
     return null;
   }
 };
 
-export const setActiveProjectId = (id: string | null) => {
+export const setActiveProjectId = (id: string | null, userId?: string | null) => {
   try {
     if (typeof window !== 'undefined') {
+      const key = getActiveProjectKey(userId);
       if (id) {
-        localStorage.setItem(ACTIVE_PROJECT_KEY, id);
+        localStorage.setItem(key, id);
       } else {
-        localStorage.removeItem(ACTIVE_PROJECT_KEY);
+        localStorage.removeItem(key);
       }
     }
   } catch (e) {
@@ -67,28 +130,25 @@ export const setActiveProjectId = (id: string | null) => {
   }
 };
 
-const PROMPTS_KEY = 'nyra_prompts';
-const LEGACY_PROMPTS_KEY = 'nyra_custom_prompts';
-const RECENT_PROMPTS_KEY = 'nyra_recent_prompts';
-
-export const saveCustomPrompts = (prompts: PromptItem[]) => {
+export const saveCustomPrompts = (prompts: PromptItem[], userId?: string | null) => {
   try {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(PROMPTS_KEY, JSON.stringify(prompts));
+      const key = getPromptsKey(userId);
+      localStorage.setItem(key, JSON.stringify(prompts));
     }
   } catch (e) {
     console.error('Failed to save prompts:', e);
   }
 };
 
-export const loadCustomPrompts = (): PromptItem[] => {
+export const loadCustomPrompts = (userId?: string | null): PromptItem[] => {
   try {
     if (typeof window === 'undefined') return [];
-    const raw = localStorage.getItem(PROMPTS_KEY) || localStorage.getItem(LEGACY_PROMPTS_KEY);
+    const key = getPromptsKey(userId);
+    const raw = localStorage.getItem(key) || (userId ? null : localStorage.getItem('nyra_custom_prompts'));
     if (!raw) return [];
     const parsed: PromptItem[] = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    // Ensure only genuine user-created prompts are returned (filter out legacy built-in/seeded prompts)
     return parsed.filter(
       (p) =>
         p &&
@@ -100,20 +160,22 @@ export const loadCustomPrompts = (): PromptItem[] => {
   }
 };
 
-export const saveRecentPrompts = (prompts: PromptItem[]) => {
+export const saveRecentPrompts = (prompts: PromptItem[], userId?: string | null) => {
   try {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(RECENT_PROMPTS_KEY, JSON.stringify(prompts.slice(0, 20)));
+      const key = getRecentPromptsKey(userId);
+      localStorage.setItem(key, JSON.stringify(prompts.slice(0, 20)));
     }
   } catch (e) {
     console.error('Failed to save recent prompts:', e);
   }
 };
 
-export const loadRecentPrompts = (): PromptItem[] => {
+export const loadRecentPrompts = (userId?: string | null): PromptItem[] => {
   try {
     if (typeof window === 'undefined') return [];
-    const raw = localStorage.getItem(RECENT_PROMPTS_KEY);
+    const key = getRecentPromptsKey(userId);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

@@ -95,48 +95,48 @@ export default function SharePage() {
 
   if (!conversation) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#040a17] text-white">
+      <div className="flex min-h-screen items-center justify-center dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-400 animate-pulse flex items-center justify-center">
+          <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-[#8B6FC9] to-[#7E9AC7] animate-pulse flex items-center justify-center text-white">
             <span className="text-lg font-bold">✦</span>
           </div>
-          <p className="text-xs text-slate-400">Loading shared conversation...</p>
+          <p className="text-xs dark:text-white/50 text-[#686477]">Loading shared conversation...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#040a17] text-slate-100 flex flex-col selection:bg-sky-500/30 selection:text-white">
+    <div className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-slate-100 text-[#292633] flex flex-col selection:bg-[#8B6FC9]/30 transition-colors">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 border-b border-sky-400/15 bg-[#08152e]/90 backdrop-blur-xl px-4 md:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 border-b dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14]/90 bg-white/90 backdrop-blur-xl px-4 md:px-8 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
           <Link
             href="/chat-ui"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-sky-400/20 bg-sky-950/40 hover:bg-sky-900/60 text-xs font-semibold text-sky-200 hover:text-white transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/5 bg-[#F5F3F9] dark:hover:bg-white/10 hover:bg-[#EAE7F2] text-xs font-semibold dark:text-white text-[#292633] transition"
           >
             <ArrowLeft size={14} />
             <span>Nyra AI</span>
           </Link>
-          <div className="h-4 w-[1px] bg-sky-400/20" />
-          <h1 className="text-xs md:text-sm font-bold text-white truncate max-w-[200px] sm:max-w-md">
+          <div className="h-4 w-[1px] dark:bg-white/10 bg-[#E8E4EF]" />
+          <h1 className="text-xs md:text-sm font-bold dark:text-white text-[#292633] truncate max-w-[110px] 2xs:max-w-[150px] xs:max-w-[220px] sm:max-w-md">
             {conversation.title}
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-sky-400/20 bg-sky-950/40 hover:bg-sky-900/60 text-xs font-semibold text-sky-200 hover:text-white transition cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/5 bg-[#F5F3F9] dark:hover:bg-white/10 hover:bg-[#EAE7F2] text-xs font-semibold dark:text-white text-[#292633] transition cursor-pointer"
             title="Copy share link"
           >
-            {copied ? <Check size={13} className="text-emerald-400" /> : <Share2 size={13} />}
+            {copied ? <Check size={13} className="text-emerald-500 dark:text-emerald-400" /> : <Share2 size={13} />}
             <span className="hidden sm:inline">Share</span>
           </button>
 
           <button
             onClick={() => setIsExportOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-sky-400/20 bg-sky-950/40 hover:bg-sky-900/60 text-xs font-semibold text-sky-200 hover:text-white transition cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-white/5 bg-[#F5F3F9] dark:hover:bg-white/10 hover:bg-[#EAE7F2] text-xs font-semibold dark:text-white text-[#292633] transition cursor-pointer"
             title="Export conversation"
           >
             <Download size={13} />
@@ -145,24 +145,25 @@ export default function SharePage() {
 
           <Link
             href="/chat-ui"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-xs font-bold text-white shadow-lg shadow-sky-500/20 transition"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-xs font-bold text-white shadow-md transition"
           >
             <Sparkles size={13} />
-            <span>Open in Nyra</span>
+            <span className="hidden xs:inline">Open in Nyra</span>
+            <span className="xs:hidden">App</span>
           </Link>
         </div>
       </header>
 
       {/* Main Conversation Stream */}
-      <main className="flex-1 max-w-3xl w-full mx-auto px-4 md:px-8 py-8 space-y-6">
-        <div className="rounded-2xl border border-sky-400/20 bg-sky-950/30 p-4 mb-6 flex items-center justify-between text-xs text-sky-200">
+      <main className="flex-1 max-w-3xl w-full mx-auto px-3 sm:px-4 md:px-8 py-6 sm:py-8 space-y-6">
+        <div className="rounded-2xl border dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14] bg-white p-3.5 sm:p-4 mb-6 flex items-center justify-between text-xs dark:text-white/70 text-[#686477] shadow-sm">
           <div>
-            <p className="font-bold text-white mb-0.5">{conversation.title}</p>
-            <p className="text-[11px] text-slate-400">
+            <p className="font-bold dark:text-white text-[#292633] mb-0.5">{conversation.title}</p>
+            <p className="text-[11px] dark:text-white/40 text-[#686477]">
               Shared on {new Date(conversation.createdAt).toLocaleDateString()} &bull; Read-only view
             </p>
           </div>
-          <span className="px-2 py-0.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-[10px] font-mono text-sky-300">
+          <span className="px-2 py-0.5 rounded-full dark:bg-purple-500/20 bg-purple-100 border dark:border-purple-500/30 border-purple-200 text-[10px] font-mono dark:text-purple-300 text-purple-700">
             Public Share
           </span>
         </div>
@@ -173,21 +174,21 @@ export default function SharePage() {
           return (
             <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full`}>
               {!isUser && (
-                <div className="w-7 h-7 shrink-0 mr-3 mt-1 rounded-xl bg-gradient-to-br from-blue-600 via-sky-500 to-cyan-400 flex items-center justify-center text-[11px] font-bold shadow-[0_0_15px_rgba(56,189,248,0.35)] text-slate-950">
+                <div className="w-7 h-7 shrink-0 mr-2 sm:mr-3 mt-1 rounded-xl bg-gradient-to-br from-[#8B6FC9] to-[#7E9AC7] flex items-center justify-center text-[11px] font-bold shadow-sm text-white">
                   ✦
                 </div>
               )}
 
-              <div className="relative group max-w-[85%] md:max-w-[82%]">
+              <div className="relative group max-w-[92%] sm:max-w-[85%] md:max-w-[82%]">
                 <div className={`mb-1.5 flex items-center gap-2 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                  <span className="text-xs font-semibold text-slate-200">{isUser ? 'User' : '✦ Nyra'}</span>
+                  <span className="text-xs font-semibold dark:text-white/80 text-[#292633]">{isUser ? 'User' : '✦ Nyra'}</span>
                   {!isUser && msg.modelId && (
-                    <span className="px-1.5 py-0.5 rounded-md bg-sky-950/70 border border-sky-400/25 text-[9px] text-sky-300 font-mono">
+                    <span className="px-1.5 py-0.5 rounded-md dark:bg-white/5 bg-[#F5F3F9] border dark:border-white/10 border-[#E8E4EF] text-[9px] dark:text-purple-300 text-purple-700 font-mono">
                       {msg.modelId.split('/').pop() || msg.modelId}
                     </span>
                   )}
                   <span
-                    className="text-[10px] text-slate-400/70 font-mono"
+                    className="text-[10px] dark:text-white/40 text-[#686477] font-mono"
                     title={getFullTimestamp(msg.timestamp || Date.now())}
                   >
                     {getRelativeTime(msg.timestamp || Date.now())}
@@ -195,11 +196,11 @@ export default function SharePage() {
                 </div>
 
                 {isUser ? (
-                  <div className="rounded-[20px] px-4 py-3 text-[14px] leading-relaxed bg-gradient-to-r from-[#1d4ed8]/95 via-[#0284c7]/95 to-[#0ea5e9]/95 text-white shadow-md border border-[rgba(125,211,252,0.25)]">
+                  <div className="rounded-[20px] px-4 py-3 text-[14px] leading-relaxed dark:bg-[#1E1B2E] bg-[#EAE5F5] dark:text-white text-[#292633] shadow-sm border dark:border-white/10 border-[#DDD7EB]">
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 ) : (
-                  <div className="text-[14.5px] leading-relaxed text-slate-100 font-normal">
+                  <div className="text-[14.5px] leading-relaxed dark:text-slate-100 text-[#292633] font-normal">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
@@ -210,7 +211,7 @@ export default function SharePage() {
                           return !isInline ? (
                             <CodeBlock language={match ? match[1] : 'text'} value={String(children).replace(/\n$/, '')} />
                           ) : (
-                            <code className="bg-sky-950/80 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-xs border border-sky-400/20" {...rest}>
+                            <code className="dark:bg-white/10 bg-[#F5F3F9] dark:text-purple-300 text-purple-700 px-1.5 py-0.5 rounded font-mono text-xs border dark:border-white/10 border-[#E8E4EF]" {...rest}>
                               {children}
                             </code>
                           );

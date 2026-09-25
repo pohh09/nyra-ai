@@ -63,6 +63,7 @@ type Props = {
   streaming?: boolean;
   isGrouped: boolean;
   thinking?: boolean;
+  thinkingText?: string;
   sources?: WebSource[];
   suggestedFollowUps?: string[];
   toolCalls?: ToolCallRecord[];
@@ -135,6 +136,7 @@ export default function MessageBubble({
   streaming,
   isGrouped,
   thinking,
+  thinkingText,
   sources,
   suggestedFollowUps,
   toolCalls,
@@ -245,6 +247,7 @@ export default function MessageBubble({
     status === 'error' ||
     content.startsWith('✦ Error') ||
     content.startsWith('Error:') ||
+    content.includes('hit a snag') ||
     content.toLowerCase().includes('document or request is too large');
 
   // Extract inline sources if present
@@ -437,9 +440,9 @@ export default function MessageBubble({
 
             {/* USER HOVER ACTIONS (ChatGPT style subtle toolbar) */}
             {!editing && (
-              <div className="mt-1 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 px-1">
+              <div className="mt-1.5 flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 px-0.5">
                 <span
-                  className="text-[10.5px] text-[#686477] dark:text-slate-400 font-mono select-none mr-1"
+                  className="text-[10px] sm:text-[10.5px] text-[#686477] dark:text-slate-400 font-mono select-none mr-1"
                   title={getFullTimestamp(timestamp || Date.now())}
                 >
                   {getRelativeTime(timestamp || Date.now())}
@@ -447,19 +450,25 @@ export default function MessageBubble({
                 {content && content.trim().length > 0 && (
                   <button
                     title="Edit message"
+                    aria-label="Edit message"
                     onClick={() => setEditing(true)}
-                    className="p-1 rounded-md text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 transition cursor-pointer"
+                    className="h-7 w-7 rounded-lg text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 active:scale-90 transition flex items-center justify-center cursor-pointer"
                   >
-                    <Pencil size={12} />
+                    <Pencil size={13} strokeWidth={1.75} />
                   </button>
                 )}
                 {content && content.trim().length > 0 && (
                   <button
                     title="Copy message"
+                    aria-label="Copy message"
                     onClick={handleCopy}
-                    className="p-1 rounded-md text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 transition cursor-pointer"
+                    className="h-7 w-7 rounded-lg text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/20 active:scale-90 transition flex items-center justify-center cursor-pointer"
                   >
-                    {copied ? <Check size={12} className="text-[#6FA58A] dark:text-emerald-400" /> : <Copy size={12} />}
+                    {copied ? (
+                      <Check size={13} strokeWidth={2.5} className="text-[#6FA58A] dark:text-emerald-400 animate-in zoom-in-75 duration-150" />
+                    ) : (
+                      <Copy size={13} strokeWidth={1.75} />
+                    )}
                   </button>
                 )}
               </div>
@@ -469,10 +478,10 @@ export default function MessageBubble({
           /* =========================================================
              ASSISTANT MESSAGE ROW (ChatGPT Structure + Nyra Theme)
           ========================================================= */
-          <div className="w-full flex items-start gap-3 sm:gap-4 group">
+          <div className="w-full flex items-start gap-2.5 sm:gap-3.5 group">
             {/* AVATAR COLUMN (Fixed on Left) */}
             <div className="shrink-0 pt-0.5 select-none">
-              <div className="h-7 w-7 sm:h-7.5 sm:w-7.5 rounded-full bg-gradient-to-br from-[#8B6FC9] via-[#7E9AC7] to-[#795BB8] dark:from-purple-600 dark:via-violet-500 dark:to-fuchsia-500 flex items-center justify-center text-[11px] font-bold text-white shadow-sm">
+              <div className="h-6 w-6 sm:h-7.5 sm:w-7.5 rounded-full bg-gradient-to-br from-[#E52A83] via-[#B31372] to-[#800F52] flex items-center justify-center text-[10px] sm:text-[11px] font-bold text-white shadow-sm transition-transform duration-200 hover:scale-105 cursor-default">
                 ✦
               </div>
             </div>
@@ -481,9 +490,14 @@ export default function MessageBubble({
             <div className="flex-1 min-w-0 flex flex-col chat-assistant-container">
               {/* ASSISTANT HEADER */}
               <div className="mb-1 flex items-center gap-2">
-                <span className="text-xs font-semibold text-[#292633] dark:text-white tracking-tight">Nyra</span>
+                <span className="text-[12px] sm:text-xs font-semibold text-[#261827] dark:text-white tracking-tight flex items-center gap-1.5">
+                  <span>Nyra</span>
+                  {streaming && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#E52A83] dark:bg-pink-400 animate-pulse" />
+                  )}
+                </span>
                 <span
-                  className="text-[10.5px] text-[#686477] dark:text-slate-400 font-mono select-none"
+                  className="text-[10px] sm:text-[10.5px] text-[#6E6072] dark:text-slate-400 font-mono select-none"
                   title={getFullTimestamp(timestamp || Date.now())}
                 >
                   {getRelativeTime(timestamp || Date.now())}
@@ -491,13 +505,13 @@ export default function MessageBubble({
               </div>
 
               {/* MAIN AI RESPONSE BODY */}
-              <div className="w-full text-[15px] sm:text-[15.5px] leading-[1.75] text-[#292633] dark:text-[#f1eff7] chat-assistant-body">
+              <div className="w-full text-[14.5px] sm:text-[15.5px] leading-[1.68] sm:leading-[1.75] text-[#261827] dark:text-[#f1eff7] chat-assistant-body">
                 {/* PDF Context Info if any */}
                 {pdfName && (
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#E8E4EF] dark:border-purple-500/30 bg-[#F5F3F9] dark:bg-[#160f2b] px-3 py-1.5 text-[#686477] dark:text-purple-200 text-xs shadow-sm">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#E8E4EF] dark:border-pink-500/30 bg-[#F7F3FA] dark:bg-[#16091F] px-3 py-1.5 text-[#6E6072] dark:text-pink-200 text-xs shadow-sm max-w-full truncate">
                     <span>📄</span>
-                    <span className="font-medium text-[#292633] dark:text-purple-100">{pdfName}</span>
-                    <span className="text-[10.5px] text-[#92909B] dark:text-slate-400">({pdfPages} pages loaded)</span>
+                    <span className="font-medium text-[#261827] dark:text-pink-100 truncate">{pdfName}</span>
+                    <span className="text-[10.5px] text-[#9E93A2] dark:text-slate-400 shrink-0">({pdfPages} pages loaded)</span>
                   </div>
                 )}
 
@@ -506,15 +520,18 @@ export default function MessageBubble({
 
                 {/* ERROR STATE */}
                 {status === 'error' && (
-                  <div className="my-2 p-3 rounded-xl border border-[#C77B7B]/30 bg-[#F9ECEC] dark:bg-rose-950/40 text-xs text-[#A85A5A] dark:text-rose-200 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <AlertCircle size={15} className="text-[#C77B7B] dark:text-rose-400 shrink-0" />
-                      <span>Response generation encountered a network or model error.</span>
+                  <div className="my-2 p-3 sm:p-3.5 rounded-xl border border-[#C77B7B]/30 bg-[#F9ECEC] dark:bg-rose-950/40 text-xs text-[#A85A5A] dark:text-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle size={16} className="text-[#C77B7B] dark:text-rose-400 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-[13px] text-[#A85A5A] dark:text-rose-200">Hmm, Nyra hit a snag.</p>
+                        <p className="text-[11.5px] opacity-90 mt-0.5">Response generation encountered a network or model issue.</p>
+                      </div>
                     </div>
                     {onRegenerate && (
                       <button
                         onClick={onRegenerate}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#C77B7B]/15 hover:bg-[#C77B7B]/25 text-[#A85A5A] dark:text-rose-200 font-semibold border border-[#C77B7B]/30 transition cursor-pointer shrink-0"
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#C77B7B]/15 hover:bg-[#C77B7B]/25 text-[#A85A5A] dark:text-rose-200 font-semibold text-xs border border-[#C77B7B]/30 transition active:scale-95 cursor-pointer shrink-0 self-end sm:self-auto"
                       >
                         <RefreshCw size={12} />
                         <span>Retry</span>
@@ -525,15 +542,15 @@ export default function MessageBubble({
 
                 {/* AI TOOL CALL BADGES */}
                 {toolCalls && toolCalls.length > 0 && (
-                  <div className="mb-3 flex flex-wrap gap-2">
+                  <div className="mb-2.5 sm:mb-3 flex flex-wrap gap-1.5 sm:gap-2">
                     {toolCalls.map((tc) => (
                       <div
                         key={tc.id}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#EEE8FA] dark:bg-purple-500/15 border border-[#E8E4EF] dark:border-purple-400/30 text-xs text-[#8B6FC9] dark:text-purple-200 shadow-sm backdrop-blur-sm"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/30 text-xs text-[#B31372] dark:text-pink-200 shadow-sm backdrop-blur-sm"
                       >
-                        <Sparkles size={13} className="text-[#8B6FC9] dark:text-purple-300 animate-pulse" />
-                        <span className="font-bold text-[#292633] dark:text-white uppercase text-[10px] font-mono">Action:</span>
-                        <span>{tc.message || `Executed ${tc.name}`}</span>
+                        <Sparkles size={12} className="text-[#E52A83] dark:text-pink-300 animate-pulse shrink-0" />
+                        <span className="font-bold text-[#261827] dark:text-white uppercase text-[9.5px] sm:text-[10px] font-mono">Action:</span>
+                        <span className="truncate max-w-[200px] sm:max-w-none">{tc.message || `Executed ${tc.name}`}</span>
                       </div>
                     ))}
                   </div>
@@ -549,7 +566,7 @@ export default function MessageBubble({
                           const match = /language-(\w+)/.exec(className || '');
                           if (!match) {
                             return (
-                              <code className="chat-inline-code bg-[#EEE8FA] dark:bg-[#241a42] text-[#8B6FC9] dark:text-purple-200 border border-[#E8E4EF] dark:border-purple-500/25 px-1.5 py-0.5 rounded-md font-mono text-[13px] font-normal">
+                              <code className="chat-inline-code bg-[#F4DCE9] dark:bg-[#1E0B2B] text-[#B31372] dark:text-pink-200 border border-[#E8E4EF] dark:border-pink-500/25 px-1.5 py-0.5 rounded-md font-mono text-[12.5px] sm:text-[13px] font-normal break-all sm:break-normal">
                                 {highlightChildren(children, searchQuery)}
                               </code>
                             );
@@ -563,25 +580,25 @@ export default function MessageBubble({
                           );
                         },
                         p({ children }) {
-                          return <p className="chat-message-text mb-4 last:mb-0 text-[#292633] dark:text-[#f1eff7] leading-[1.75] transition-all duration-200">{highlightChildren(children, searchQuery)}</p>;
+                          return <p className="chat-message-text chat-markdown-p mb-3 sm:mb-4 last:mb-0 text-[#261827] dark:text-[#f1eff7] leading-[1.68] sm:leading-[1.75] transition-all duration-200 break-words">{highlightChildren(children, searchQuery)}</p>;
                         },
                         h1({ children }) {
-                          return <h1 className="text-xl sm:text-2xl font-bold text-[#292633] dark:text-white mt-5 mb-2.5 tracking-tight">{highlightChildren(children, searchQuery)}</h1>;
+                          return <h1 className="chat-markdown-h1 text-lg sm:text-2xl font-bold text-[#261827] dark:text-white mt-4 sm:mt-5 mb-2 sm:mb-2.5 tracking-tight">{highlightChildren(children, searchQuery)}</h1>;
                         },
                         h2({ children }) {
-                          return <h2 className="text-lg sm:text-xl font-bold text-[#292633] dark:text-white mt-4.5 mb-2 tracking-tight">{highlightChildren(children, searchQuery)}</h2>;
+                          return <h2 className="chat-markdown-h2 text-base sm:text-xl font-bold text-[#261827] dark:text-white mt-3.5 sm:mt-4 mb-1.5 sm:mb-2 tracking-tight">{highlightChildren(children, searchQuery)}</h2>;
                         },
                         h3({ children }) {
-                          return <h3 className="text-base sm:text-lg font-semibold text-[#8B6FC9] dark:text-purple-200 mt-3.5 mb-1.5">{highlightChildren(children, searchQuery)}</h3>;
+                          return <h3 className="chat-markdown-h3 text-[14.5px] sm:text-lg font-semibold text-[#B31372] dark:text-pink-200 mt-3 sm:mt-3.5 mb-1 sm:mb-1.5">{highlightChildren(children, searchQuery)}</h3>;
                         },
                         ul({ children }) {
-                          return <ul className="list-disc pl-6 my-3 space-y-1.5 text-[#292633] dark:text-[#f1eff7]">{children}</ul>;
+                          return <ul className="list-disc pl-4.5 sm:pl-6 my-2.5 sm:my-3 space-y-1 sm:space-y-1.5 text-[#261827] dark:text-[#f1eff7]">{children}</ul>;
                         },
                         ol({ children }) {
-                          return <ol className="list-decimal pl-6 my-3 space-y-1.5 text-[#292633] dark:text-[#f1eff7]">{children}</ol>;
+                          return <ol className="list-decimal pl-4.5 sm:pl-6 my-2.5 sm:my-3 space-y-1 sm:space-y-1.5 text-[#261827] dark:text-[#f1eff7]">{children}</ol>;
                         },
                         li({ children }) {
-                          return <li className="chat-message-text leading-[1.7] pl-1 transition-all duration-200 text-[#292633] dark:text-[#f1eff7]">{highlightChildren(children, searchQuery)}</li>;
+                          return <li className="chat-message-text chat-markdown-li leading-[1.65] sm:leading-[1.7] pl-0.5 transition-all duration-200 text-[#261827] dark:text-[#f1eff7]">{highlightChildren(children, searchQuery)}</li>;
                         },
                         a({ href, children }) {
                           return (
@@ -589,7 +606,7 @@ export default function MessageBubble({
                               href={href}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-[#8B6FC9] hover:text-[#795BB8] dark:text-purple-400 dark:hover:text-purple-300 underline underline-offset-2 font-medium transition-colors"
+                              className="text-[#B31372] hover:text-[#9E1064] dark:text-pink-400 dark:hover:text-pink-300 underline underline-offset-2 font-medium transition-colors"
                             >
                               {highlightChildren(children, searchQuery)}
                             </a>
@@ -597,23 +614,23 @@ export default function MessageBubble({
                         },
                         blockquote({ children }) {
                           return (
-                            <blockquote className="chat-blockquote border-l-[3px] border-[#8B6FC9] dark:border-purple-400 pl-4 py-1.5 my-3 text-[#686477] dark:text-purple-200/90 italic text-[14.5px]">
+                            <blockquote className="chat-blockquote border-l-[3px] border-[#B31372] dark:border-pink-500 pl-3 sm:pl-4 py-1 sm:py-1.5 my-2.5 sm:my-3 text-[#6E6072] dark:text-pink-200/90 italic bg-[#B31372]/5 dark:bg-pink-500/5 rounded-r-lg">
                               {highlightChildren(children, searchQuery)}
                             </blockquote>
                           );
                         },
                         table({ children }) {
                           return (
-                            <div className="chat-table-wrapper overflow-x-auto my-4 rounded-xl border border-[#E8E4EF] dark:border-purple-500/25 bg-[#FFFFFF] dark:bg-[#120d22] shadow-sm">
-                              <table className="w-full text-left text-xs border-collapse">{children}</table>
+                            <div className="chat-table-wrapper overflow-x-auto my-3 sm:my-4 rounded-xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#0E0514] shadow-sm -mx-0.5 sm:mx-0 touch-pan-x">
+                              <table className="w-full text-left border-collapse">{children}</table>
                             </div>
                           );
                         },
                         th({ children }) {
-                          return <th className="chat-table-th border-b border-[#E8E4EF] dark:border-purple-500/25 bg-[#F5F3F9] dark:bg-[#1c1438] px-4 py-2.5 font-semibold text-[#292633] dark:text-purple-100">{children}</th>;
+                          return <th className="chat-table-th border-b border-[#E8E4EF] dark:border-pink-500/25 bg-[#F7F3FA] dark:bg-[#16091F] px-3.5 sm:px-4 py-2 sm:py-2.5 font-semibold text-[#261827] dark:text-pink-100 whitespace-nowrap">{children}</th>;
                         },
                         td({ children }) {
-                          return <td className="chat-table-td border-b border-[#F0EDF5] dark:border-purple-500/15 px-4 py-2.5 text-[#292633] dark:text-[#f1eff7]">{children}</td>;
+                          return <td className="chat-table-td border-b border-[#F0EDF5] dark:border-pink-500/15 px-3.5 sm:px-4 py-2 sm:py-2.5 text-[#261827] dark:text-[#f1eff7]">{children}</td>;
                         },
                       }}
                     >
@@ -621,58 +638,87 @@ export default function MessageBubble({
                     </ReactMarkdown>
                   </StreamingText>
                 ) : loading ? (
-                  <div className="chat-message-text text-[15px] sm:text-[15.5px] leading-[1.75] text-[#92909B] dark:text-purple-300/70 italic font-normal tracking-normal select-none transition-opacity duration-150">
-                    Thinking…
+                  <div className="flex items-center gap-2 py-1.5 select-none animate-[fadeIn_0.15s_ease-out]">
+                    <span className="relative flex h-3 w-3 items-center justify-center">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E52A83]/50 dark:bg-pink-400/50 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E52A83] dark:bg-pink-400 shadow-[0_0_8px_rgba(229,42,131,0.8)] chatgpt-thinking-dot" />
+                    </span>
+                    <span className="text-[13px] sm:text-[14px] text-[#7A6E8C] dark:text-pink-300/70 font-medium tracking-tight">
+                      {thinkingText || 'Thinking...'}
+                    </span>
                   </div>
                 ) : null}
 
                 {/* SUGGESTED FOLLOW UP PILLS (Only for non-error completed response) */}
                 {!isErrorMessage && !isUser && isLast && !loading && !streaming && !hideFollowUps && suggestedFollowUps && suggestedFollowUps.length > 0 && (
-                  <SuggestedFollowUps followUps={suggestedFollowUps} onSelect={onSelectFollowUp} />
+                  <div className="animate-[fadeIn_0.3s_ease-out]">
+                    <SuggestedFollowUps followUps={suggestedFollowUps} onSelect={onSelectFollowUp} />
+                  </div>
                 )}
 
-                {/* ASSISTANT ACTION TOOLBAR (ChatGPT Style Minimal Icon Row) */}
+                {/* ASSISTANT ACTION TOOLBAR (Redesigned Modern ChatGPT Style Icon Row) */}
                 {!editing && displayContent && !isErrorMessage && (
-                  <div className="mt-2.5 flex items-center gap-1 text-[#686477] dark:text-slate-400 opacity-90 group-hover:opacity-100 transition-opacity duration-150">
-                    {/* Copy */}
+                  <div className="mt-3 flex items-center gap-1 sm:gap-1.5 text-[#686477] dark:text-slate-400 opacity-90 group-hover:opacity-100 transition-opacity duration-150 animate-[fadeIn_0.25s_ease-out] -ml-1 select-none flex-wrap">
+                    {/* Copy Button */}
                     <button
-                      title="Copy response"
+                      title={copied ? "Copied to clipboard" : "Copy response"}
+                      aria-label="Copy response"
                       onClick={handleCopy}
-                      className="h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 hover:text-[#292633] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+                      className={`h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
+                        copied
+                          ? 'text-[#6FA58A] dark:text-emerald-400 bg-[#6FA58A]/15 dark:bg-emerald-500/20'
+                          : 'text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15'
+                      }`}
                     >
-                      {copied ? <Check size={13} className="text-[#6FA58A] dark:text-emerald-400" /> : <Copy size={13} />}
+                      {copied ? (
+                        <Check size={14} strokeWidth={2.5} className="animate-in zoom-in-75 duration-150" />
+                      ) : (
+                        <Copy size={14} strokeWidth={1.75} />
+                      )}
                     </button>
 
-                    {/* Like */}
+                    {/* Like Button */}
                     <button
                       title="Good response"
+                      aria-label="Good response"
                       onClick={handleLike}
-                      className={`h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 flex items-center justify-center transition cursor-pointer ${liked ? 'text-[#6FA58A] bg-[#6FA58A]/10 dark:text-emerald-400 dark:bg-emerald-500/10' : 'hover:text-[#6FA58A] dark:hover:text-emerald-400'
-                        }`}
+                      className={`h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
+                        liked
+                          ? 'text-[#6FA58A] bg-[#6FA58A]/15 dark:text-emerald-400 dark:bg-emerald-500/20 shadow-xs'
+                          : 'text-[#686477] dark:text-slate-400 hover:text-[#6FA58A] dark:hover:text-emerald-400 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15'
+                      }`}
                     >
-                      <ThumbsUp size={13} />
+                      <ThumbsUp size={14} strokeWidth={1.75} className={liked ? 'fill-current' : ''} />
                     </button>
 
-                    {/* Dislike */}
+                    {/* Dislike Button */}
                     <button
                       title="Poor response"
+                      aria-label="Poor response"
                       onClick={handleDislike}
-                      className={`h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 flex items-center justify-center transition cursor-pointer ${disliked ? 'text-[#C77B7B] bg-[#C77B7B]/10 dark:text-rose-400 dark:bg-rose-500/10' : 'hover:text-[#C77B7B] dark:hover:text-rose-400'
-                        }`}
+                      className={`h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
+                        disliked
+                          ? 'text-[#C77B7B] bg-[#C77B7B]/15 dark:text-rose-400 dark:bg-rose-500/20 shadow-xs'
+                          : 'text-[#686477] dark:text-slate-400 hover:text-[#C77B7B] dark:hover:text-rose-400 hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15'
+                      }`}
                     >
-                      <ThumbsDown size={13} />
+                      <ThumbsDown size={14} strokeWidth={1.75} className={disliked ? 'fill-current' : ''} />
                     </button>
 
-                    {/* Read Aloud / Stop Speaking */}
+                    {/* Read Aloud / Stop Speaking Button */}
                     {!loading && !streaming && (
                       isSpeaking ? (
                         <button
-                          aria-label="Stop speaking"
-                          title="Stop speaking"
+                          aria-label="Stop reading response"
+                          title="Stop reading response"
                           onClick={onStopSpeak}
-                          className="h-7 px-2 rounded-lg border border-[#8B6FC9]/40 bg-[#EEE8FA] dark:border-purple-400/50 dark:bg-purple-500/20 flex items-center gap-1 text-[11px] text-[#8B6FC9] dark:text-purple-300 font-medium transition cursor-pointer animate-pulse"
+                          className="h-8 px-2.5 rounded-lg border border-[#8B6FC9]/40 bg-[#EEE8FA] dark:border-purple-400/50 dark:bg-purple-500/20 flex items-center gap-1.5 text-[11.5px] text-[#8B6FC9] dark:text-purple-300 font-medium transition active:scale-90 cursor-pointer shadow-xs"
                         >
-                          <VolumeX size={12} className="text-[#8B6FC9] dark:text-purple-300" />
+                          <div className="flex items-center gap-0.5 h-3">
+                            <span className="w-0.5 h-3 bg-[#8B6FC9] dark:bg-purple-300 rounded-full animate-pulse" />
+                            <span className="w-0.5 h-2 bg-[#8B6FC9] dark:bg-purple-300 rounded-full animate-pulse delay-75" />
+                            <span className="w-0.5 h-3 bg-[#8B6FC9] dark:bg-purple-300 rounded-full animate-pulse delay-150" />
+                          </div>
                           <span>Speaking</span>
                         </button>
                       ) : onSpeak ? (
@@ -680,22 +726,22 @@ export default function MessageBubble({
                           aria-label="Read response aloud"
                           title="Read response aloud"
                           onClick={onSpeak}
-                          className="h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 hover:text-[#292633] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+                          className="h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer"
                         >
-                          <Volume2 size={13} />
+                          <Volume2 size={14} strokeWidth={1.75} />
                         </button>
                       ) : null
                     )}
 
-                    {/* Regenerate / Retry */}
+                    {/* Regenerate Button */}
                     {onRegenerate && (
                       <button
                         aria-label="Regenerate response"
                         title="Regenerate response"
                         onClick={onRegenerate}
-                        className="h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 hover:text-[#292633] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+                        className="h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer group/regen"
                       >
-                        <RotateCcw size={13} />
+                        <RotateCcw size={14} strokeWidth={1.75} className="group-hover/regen:-rotate-45 transition-transform duration-200" />
                       </button>
                     )}
 
@@ -703,14 +749,19 @@ export default function MessageBubble({
                     <div className="relative" ref={moreMenuRef}>
                       <button
                         title="More actions"
+                        aria-label="More actions"
                         onClick={() => setShowMoreMenu(!showMoreMenu)}
-                        className="h-7 w-7 rounded-lg hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15 hover:text-[#292633] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+                        className={`h-8 w-8 sm:h-7.5 sm:w-7.5 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 cursor-pointer ${
+                          showMoreMenu
+                            ? 'bg-[#EEE8FA] dark:bg-purple-500/25 text-[#292633] dark:text-white'
+                            : 'text-[#686477] dark:text-slate-400 hover:text-[#292633] dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-purple-500/15'
+                        }`}
                       >
-                        <MoreHorizontal size={14} />
+                        <MoreHorizontal size={15} strokeWidth={1.75} />
                       </button>
 
                       {showMoreMenu && (
-                        <div className="absolute bottom-8 left-0 w-52 rounded-2xl border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF] dark:bg-[#130f24]/98 shadow-xl p-1.5 z-50 animate-[fadeIn_0.1s_ease-out] backdrop-blur-xl">
+                        <div className="absolute bottom-9 left-0 w-56 rounded-2xl border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF]/98 dark:bg-[#130f24]/98 shadow-xl p-1.5 z-50 animate-[fadeIn_0.1s_ease-out] backdrop-blur-xl">
                           {/* Branch */}
                           {id && onBranch && (
                             <button

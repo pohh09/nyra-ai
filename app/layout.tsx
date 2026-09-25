@@ -5,10 +5,15 @@ import { AuthProvider } from '@/lib/auth/AuthContext';
 import Providers from './providers';
 
 export const viewport: Viewport = {
-  themeColor: '#040a17',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAF8FB' },
+    { media: '(prefers-color-scheme: dark)', color: '#050505' },
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
 };
 
 export const metadata: Metadata = {

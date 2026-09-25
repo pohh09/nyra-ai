@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     const pdfDocuments: any[] = body?.pdfDocuments || [];
     const workspaceFiles: any[] = body?.workspaceFiles || [];
     const userMemories: string = body?.userMemories || '';
+    const userOnboardingPreferences = body?.userOnboardingPreferences;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response('No messages provided.', { status: 400 });
@@ -95,43 +96,31 @@ export async function POST(req: Request) {
       workspaceFiles.length > 0
     );
 
-    // 1. Check AI Request Limit
-    const aiCheck = await checkAndIncrementUsage(supabase, userId, 'aiRequests', 1);
-    if (!aiCheck.allowed) {
-      return new Response(
-        `Daily AI request limit reached (${aiCheck.limit}/${aiCheck.limit}). Your allowance resets at 00:00 UTC.`,
-        { status: 429, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
+    // Fast-path parallelized usage checking
+    const usageChecks: Promise<{ allowed: boolean; limit?: number; feature: string }>[] = [
+      checkAndIncrementUsage(supabase, userId, 'aiRequests', 1).then((r) => ({ ...r, feature: 'AI request' })),
+    ];
+    if (webSearch) {
+      usageChecks.push(
+        checkAndIncrementUsage(supabase, userId, 'webSearches', 1).then((r) => ({ ...r, feature: 'Web Search' }))
+      );
+    }
+    if (hasImages) {
+      usageChecks.push(
+        checkAndIncrementUsage(supabase, userId, 'imageRequests', 1).then((r) => ({ ...r, feature: 'image analysis' }))
+      );
+    }
+    if (hasPdfs) {
+      usageChecks.push(
+        checkAndIncrementUsage(supabase, userId, 'pdfRequests', 1).then((r) => ({ ...r, feature: 'PDF document analysis' }))
       );
     }
 
-    // 2. Check Web Search Limit if enabled
-    if (webSearch) {
-      const webCheck = await checkAndIncrementUsage(supabase, userId, 'webSearches', 1);
-      if (!webCheck.allowed) {
+    const usageResults = await Promise.all(usageChecks);
+    for (const check of usageResults) {
+      if (!check.allowed) {
         return new Response(
-          `Daily Web Search limit reached (${webCheck.limit}/${webCheck.limit}). Your allowance resets at 00:00 UTC.`,
-          { status: 429, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
-        );
-      }
-    }
-
-    // 3. Check Image Request Limit if images present
-    if (hasImages) {
-      const imgCheck = await checkAndIncrementUsage(supabase, userId, 'imageRequests', 1);
-      if (!imgCheck.allowed) {
-        return new Response(
-          `Daily image analysis limit reached (${imgCheck.limit}/${imgCheck.limit}). Your allowance resets at 00:00 UTC.`,
-          { status: 429, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
-        );
-      }
-    }
-
-    // 4. Check PDF Request Limit if PDF present
-    if (hasPdfs) {
-      const pdfCheck = await checkAndIncrementUsage(supabase, userId, 'pdfRequests', 1);
-      if (!pdfCheck.allowed) {
-        return new Response(
-          `Daily PDF document analysis limit reached (${pdfCheck.limit}/${pdfCheck.limit}). Your allowance resets at 00:00 UTC.`,
+          `Daily ${check.feature} limit reached (${check.limit}/${check.limit}). Your allowance resets at 00:00 UTC.`,
           { status: 429, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
         );
       }
@@ -143,40 +132,46 @@ export async function POST(req: Request) {
 
     if (webSearch && tvly && lastUserMessage?.content) {
       try {
-        const search = await tvly.search(lastUserMessage.content, {
+        const searchPromise = tvly.search(lastUserMessage.content, {
           maxResults: 5,
-          searchDepth: 'advanced',
+          searchDepth: isDeepResearch ? 'advanced' : 'basic',
         });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Search timeout')), 3500)
+        );
+        const search: any = await Promise.race([searchPromise, timeoutPromise]);
 
-        webSources = search.results.map((r: any) => {
-          let domain = '';
-          try {
-            domain = new URL(r.url).hostname.replace(/^www\./, '');
-          } catch {
-            domain = r.url;
-          }
-          return {
-            title: r.title,
-            url: r.url,
-            domain,
-            snippet: r.content?.slice(0, 180) || '',
-          };
-        });
+        if (search?.results && Array.isArray(search.results)) {
+          webSources = search.results.map((r: any) => {
+            let domain = '';
+            try {
+              domain = new URL(r.url).hostname.replace(/^www\./, '');
+            } catch {
+              domain = r.url;
+            }
+            return {
+              title: r.title,
+              url: r.url,
+              domain,
+              snippet: r.content?.slice(0, 180) || '',
+            };
+          });
 
-        webContext = search.results
-          .map(
-            (r: any, i: number) =>
-              `[${i + 1}] Title: ${r.title}\nSource URL: ${r.url}\nContent: ${r.content}`
-          )
-          .join('\n\n');
+          webContext = search.results
+            .map(
+              (r: any, i: number) =>
+                `[${i + 1}] Title: ${r.title}\nSource URL: ${r.url}\nContent: ${r.content}`
+            )
+            .join('\n\n');
+        }
       } catch (searchErr) {
-        console.error('Tavily search error:', searchErr);
+        console.warn('Tavily search notice:', searchErr);
       }
     }
 
     // Prepare system messages
     const systemPrompts: string[] = [
-      'You are Nyra AI, an intelligent, high-capability AI workspace assistant designed for reasoning, research, deep coding, and creative problem solving.',
+      'You are Nyra AI, an intelligent, high-capability AI workspace assistant designed for fast reasoning, deep coding, and creative problem solving. Deliver direct, immediate, and high-quality responses.',
     ];
 
     if (projectInstructions) {
@@ -283,6 +278,77 @@ ${workspaceNotes.trim()}
 ${userMemories.trim()}
 ==========================================
 `);
+    }
+
+    if (userOnboardingPreferences) {
+      const prefLines: string[] = [];
+      const directives: string[] = [];
+
+      if (Array.isArray(userOnboardingPreferences.interests) && userOnboardingPreferences.interests.length > 0) {
+        prefLines.push(`- Domains of Interest: ${userOnboardingPreferences.interests.join(', ')}`);
+        directives.push(`- Contextual Alignment: Tailor analogies, examples, and technical suggestions to the user's focus domains (${userOnboardingPreferences.interests.join(', ')}).`);
+      }
+      if (Array.isArray(userOnboardingPreferences.goals) && userOnboardingPreferences.goals.length > 0) {
+        prefLines.push(`- Stated Goals: ${userOnboardingPreferences.goals.join(', ')}`);
+      }
+
+      // Handle technical depth / experience level
+      const expLevel = (userOnboardingPreferences.experienceLevel || '').toLowerCase();
+      if (expLevel.includes('beginner')) {
+        prefLines.push(`- Technical Level: Beginner`);
+        directives.push(`- Tone & Depth: Explain concepts using clear, intuitive analogies. Avoid unexplained jargon and guide the user gently step-by-step.`);
+      } else if (expLevel.includes('advanced')) {
+        prefLines.push(`- Technical Level: Advanced`);
+        directives.push(`- Tone & Depth: Provide deep architectural insights, performance considerations, edge cases, and robust implementations.`);
+      } else if (expLevel.includes('expert')) {
+        prefLines.push(`- Technical Level: Expert`);
+        directives.push(`- Tone & Depth: Deliver high-density, concise, professional responses focusing on internal mechanics, optimization, and production best practices. Skip beginner introductory fluff.`);
+      } else if (expLevel.includes('comfortable')) {
+        prefLines.push(`- Technical Level: Comfortable / Intermediate`);
+        directives.push(`- Tone & Depth: Provide practical, balanced, and clear explanations with clean real-world code examples.`);
+      }
+
+      // Handle work style directives
+      const rawStyles: string[] = Array.isArray(userOnboardingPreferences.workStyle)
+        ? userOnboardingPreferences.workStyle
+        : Array.isArray(userOnboardingPreferences.preferredResponseStyle)
+        ? userOnboardingPreferences.preferredResponseStyle
+        : [];
+
+      if (rawStyles.length > 0) {
+        prefLines.push(`- Collaboration Style: ${rawStyles.join(', ')}`);
+        for (const st of rawStyles) {
+          const s = st.toLowerCase();
+          if (s.includes('just give me the answer')) {
+            directives.push(`- Directness: The user wants IMMEDIATE direct answers. Be ultra-concise, skipping conversational pleasantries and preamble.`);
+          } else if (s.includes('teach me') || s.includes('step-by-step')) {
+            directives.push(`- Pedagogy: Structure answers into logical step-by-step progressions, explaining the rationale behind decisions.`);
+          } else if (s.includes('go deeper')) {
+            directives.push(`- Depth: Dive deeply into underlying mechanisms, potential pitfalls, and advanced architectural nuances.`);
+          } else if (s.includes('brainstorm')) {
+            directives.push(`- Creative Exploration: Offer multiple distinct solutions, creative variations, and trade-off evaluations.`);
+          } else if (s.includes('build with me')) {
+            directives.push(`- Pair Programming: Act as a proactive senior software architect, providing modular, copy-paste-ready code and implementation guidance.`);
+          }
+        }
+      }
+
+      if (userOnboardingPreferences.customInstructions && userOnboardingPreferences.customInstructions.trim()) {
+        prefLines.push(`- Custom User Directives: ${userOnboardingPreferences.customInstructions.trim()}`);
+        directives.push(`- User Directive: ${userOnboardingPreferences.customInstructions.trim()}`);
+      }
+
+      if (prefLines.length > 0 || directives.length > 0) {
+        systemPrompts.push(`
+=== ACTIVE USER PERSONALIZATION CONTEXT (Build Your Nyra) ===
+${prefLines.join('\n')}
+
+MANDATORY BEHAVIORAL DIRECTIVES:
+${directives.join('\n')}
+==============================================================
+You MUST actively embody these user personalization preferences in your responses.
+`);
+      }
     }
 
     // Extract PDF text and document names using unified multimodal extractor

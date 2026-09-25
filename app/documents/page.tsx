@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
@@ -36,6 +37,7 @@ import {
 import { extractPdfText } from '@/lib/extractPdfText';
 import { DocumentRecord } from '@/lib/types';
 import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/lib/auth/AuthContext';
 
 const EXAMPLE_QUESTIONS = [
   '✨ Give me a 3-bullet point summary',
@@ -45,7 +47,15 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 export default function DocumentsPage() {
+  const router = useRouter();
   const { addToast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
@@ -317,7 +327,7 @@ CRITICAL RULES:
   };
 
   return (
-    <div className="docs-page-root min-h-screen w-full bg-[#f8f6fc] dark:bg-[#07050d] text-zinc-900 dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
+    <div className="docs-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
       {/* Full Screen Main Container */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         {/* Top Header */}

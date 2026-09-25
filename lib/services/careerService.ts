@@ -3,7 +3,7 @@
 export interface ResumeAnalysisResult {
   candidateName?: string;
   summary: string;
-  overallScore: number; // 0 - 100 estimated
+  overallScore: number;
   topSkills: string[];
   strengths: string[];
   improvements: string[];
@@ -12,7 +12,7 @@ export interface ResumeAnalysisResult {
 }
 
 export interface JobMatchResult {
-  matchScore: number; // 0 - 100 estimated
+  matchScore: number;
   scoreRationale: string;
   matchingSkills: string[];
   missingSkills: string[];
@@ -38,10 +38,22 @@ export interface CareerSession {
 
 const CAREER_STORAGE_KEY = 'nyra_career_sessions';
 
-export function getCareerSessions(): CareerSession[] {
+let cachedUserId: string | null = null;
+
+function getStorageKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_career_${uid}` : CAREER_STORAGE_KEY;
+}
+
+export function setCareerActiveUser(userId: string | null): void {
+  cachedUserId = userId;
+}
+
+export function getCareerSessions(userId?: string): CareerSession[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(CAREER_STORAGE_KEY);
+    const key = getStorageKey(userId);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.error('Failed to load career sessions:', e);
@@ -49,23 +61,24 @@ export function getCareerSessions(): CareerSession[] {
   }
 }
 
-export function saveCareerSessions(sessions: CareerSession[]): void {
+export function saveCareerSessions(sessions: CareerSession[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(CAREER_STORAGE_KEY, JSON.stringify(sessions));
+    const key = getStorageKey(userId);
+    localStorage.setItem(key, JSON.stringify(sessions));
     window.dispatchEvent(new CustomEvent('nyra_career_updated', { detail: sessions }));
   } catch (e) {
     console.error('Failed to save career sessions:', e);
   }
 }
 
-export function saveCareerSession(session: CareerSession): void {
-  const all = getCareerSessions().filter((s) => s.id !== session.id);
-  saveCareerSessions([session, ...all]);
+export function saveCareerSession(session: CareerSession, userId?: string): void {
+  const all = getCareerSessions(userId).filter((s) => s.id !== session.id);
+  saveCareerSessions([session, ...all], userId);
 }
 
-export function deleteCareerSession(id: string): boolean {
-  const all = getCareerSessions().filter((s) => s.id !== id);
-  saveCareerSessions(all);
+export function deleteCareerSession(id: string, userId?: string): boolean {
+  const all = getCareerSessions(userId).filter((s) => s.id !== id);
+  saveCareerSessions(all, userId);
   return true;
 }

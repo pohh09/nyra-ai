@@ -9,6 +9,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        '2xs': '360px',
+        'xs': '480px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
       animation: {
         'loading-bar': 'loading 1.5s ease-in-out infinite',
         'fade-in': 'fadeIn 0.6s ease-out',

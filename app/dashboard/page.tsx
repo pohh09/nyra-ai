@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   MessageSquare,
@@ -30,8 +31,15 @@ import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [memories, setMemories] = useState<MemoryItem[]>([]);
@@ -120,21 +128,21 @@ export default function DashboardPage() {
   const completedTasks = tasks.filter((t) => t.status === 'completed');
 
   return (
-    <div className="min-h-screen bg-[#F8F7FB] dark:bg-[#07050d] text-[#292633] dark:text-white flex flex-col selection:bg-[#EEE8FA] selection:text-[#8B6FC9] dark:selection:text-purple-200 transition-colors duration-200">
+    <div className="min-h-screen bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-white flex flex-col selection:bg-[#F4DCE9] selection:text-[#B31372] dark:selection:text-pink-200 transition-colors duration-200">
       {/* Ambient Top Glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[500px] w-[1000px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,111,201,0.08),transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.18),transparent_75%)]" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[500px] w-[1000px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.08),transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.18),transparent_75%)]" />
       </div>
 
       {/* Top Navigation Bar */}
-      <header className="relative z-20 border-b border-[#E8E4EF] dark:border-purple-400/15 bg-white/80 dark:bg-[#0d081b]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      <header className="relative z-20 border-b border-[#E7B8CF] dark:border-pink-500/15 bg-white/80 dark:bg-[#16091F]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#8B6FC9] to-[#7E9AC7] flex items-center justify-center text-white shadow-md shadow-[#8B6FC9]/25 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#E52A83] to-[#B31372] flex items-center justify-center text-white shadow-md shadow-pink-500/25 group-hover:scale-105 transition-transform">
               <Sparkles size={16} />
             </div>
-            <span className="font-bold text-base tracking-tight text-[#292633] dark:text-white group-hover:text-[#8B6FC9] dark:group-hover:text-purple-200 transition-colors">
-              NYRA <span className="text-xs font-mono text-[#8B6FC9] dark:text-purple-400 font-semibold px-2 py-0.5 rounded-full bg-[#EEE8FA] dark:bg-purple-500/15 border border-[#E8E4EF] dark:border-purple-400/25 ml-1">Workspace</span>
+            <span className="font-bold text-base tracking-tight text-[#261827] dark:text-white group-hover:text-[#B31372] dark:group-hover:text-pink-200 transition-colors">
+              NYRA <span className="text-xs font-mono text-[#B31372] dark:text-pink-400 font-semibold px-2 py-0.5 rounded-full bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E7B8CF] dark:border-pink-500/25 ml-1">Workspace</span>
             </span>
           </Link>
         </div>
@@ -180,7 +188,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Workspace Metrics Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {[
             { label: 'Active Tasks', value: pendingTasks.length, icon: <CheckSquare size={16} />, color: 'from-[#8B6FC9] to-[#7E9AC7]', href: '/tasks' },
             { label: 'Stored Memories', value: memories.length, icon: <Brain size={16} />, color: 'from-[#8B6FC9] to-[#6B52A3]', href: '/memory' },

@@ -324,10 +324,27 @@ export function extractExactPageText(
   return { found: false, text: '', pageNumber };
 }
 
-export function getIndexedDocuments(): DocumentRecord[] {
+let cachedUserId: string | null = null;
+
+function getDocumentsKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_rag_documents_${uid}` : DOCUMENTS_STORAGE_KEY;
+}
+
+function getChunksKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_rag_chunks_${uid}` : CHUNKS_STORAGE_KEY;
+}
+
+export function setRagActiveUser(userId: string | null): void {
+  cachedUserId = userId;
+}
+
+export function getIndexedDocuments(userId?: string): DocumentRecord[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(DOCUMENTS_STORAGE_KEY);
+    const key = getDocumentsKey(userId);
+    const raw = localStorage.getItem(key) || (userId || cachedUserId ? null : localStorage.getItem(DOCUMENTS_STORAGE_KEY));
     if (!raw) return [];
     const docs: DocumentRecord[] = JSON.parse(raw);
 
@@ -345,7 +362,7 @@ export function getIndexedDocuments(): DocumentRecord[] {
     }
 
     if (modified) {
-      localStorage.setItem(DOCUMENTS_STORAGE_KEY, JSON.stringify(docs));
+      localStorage.setItem(key, JSON.stringify(docs));
     }
 
     return docs;
@@ -355,20 +372,22 @@ export function getIndexedDocuments(): DocumentRecord[] {
   }
 }
 
-export function saveIndexedDocuments(docs: DocumentRecord[]): void {
+export function saveIndexedDocuments(docs: DocumentRecord[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(DOCUMENTS_STORAGE_KEY, JSON.stringify(docs));
+    const key = getDocumentsKey(userId);
+    localStorage.setItem(key, JSON.stringify(docs));
     window.dispatchEvent(new CustomEvent('nyra_docs_updated', { detail: docs }));
   } catch (e) {
     console.error('Failed to save indexed documents:', e);
   }
 }
 
-export function getAllChunks(): DocumentChunk[] {
+export function getAllChunks(userId?: string): DocumentChunk[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(CHUNKS_STORAGE_KEY);
+    const key = getChunksKey(userId);
+    const raw = localStorage.getItem(key) || (userId || cachedUserId ? null : localStorage.getItem(CHUNKS_STORAGE_KEY));
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.error('Failed to load chunks:', e);
@@ -376,10 +395,11 @@ export function getAllChunks(): DocumentChunk[] {
   }
 }
 
-export function saveAllChunks(chunks: DocumentChunk[]): void {
+export function saveAllChunks(chunks: DocumentChunk[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(CHUNKS_STORAGE_KEY, JSON.stringify(chunks));
+    const key = getChunksKey(userId);
+    localStorage.setItem(key, JSON.stringify(chunks));
   } catch (e) {
     console.error('Failed to save chunks:', e);
   }
@@ -395,7 +415,7 @@ export function indexDocument(params: {
   pages?: number;
   category?: string;
   pageMap?: DocumentPage[];
-}): { document: DocumentRecord; chunks: DocumentChunk[] } {
+}, userId?: string): { document: DocumentRecord; chunks: DocumentChunk[] } {
   const docId = `doc_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
 
   let effectivePageMap = params.pageMap;
@@ -425,12 +445,12 @@ export function indexDocument(params: {
     summary: params.text.slice(0, 160).replace(/\n/g, ' ') + '...',
   };
 
-  const existingDocs = getIndexedDocuments().filter((d) => d.name !== params.name);
-  saveIndexedDocuments([newDoc, ...existingDocs]);
+  const existingDocs = getIndexedDocuments(userId).filter((d) => d.name !== params.name);
+  saveIndexedDocuments([newDoc, ...existingDocs], userId);
 
   // Clean out any old chunks from this document name and save new chunks
-  const existingChunks = getAllChunks().filter((c) => c.documentName !== params.name);
-  saveAllChunks([...chunks, ...existingChunks]);
+  const existingChunks = getAllChunks(userId).filter((c) => c.documentName !== params.name);
+  saveAllChunks([...chunks, ...existingChunks], userId);
 
   return { document: newDoc, chunks };
 }
@@ -438,12 +458,12 @@ export function indexDocument(params: {
 /**
  * Delete a document and its indexed chunks.
  */
-export function deleteDocument(docId: string): boolean {
-  const docs = getIndexedDocuments().filter((d) => d.id !== docId);
-  saveIndexedDocuments(docs);
+export function deleteDocument(docId: string, userId?: string): boolean {
+  const docs = getIndexedDocuments(userId).filter((d) => d.id !== docId);
+  saveIndexedDocuments(docs, userId);
 
-  const chunks = getAllChunks().filter((c) => c.documentId !== docId);
-  saveAllChunks(chunks);
+  const chunks = getAllChunks(userId).filter((c) => c.documentId !== docId);
+  saveAllChunks(chunks, userId);
 
   return true;
 }
@@ -451,8 +471,8 @@ export function deleteDocument(docId: string): boolean {
 /**
  * Get chunks belonging to a specific document.
  */
-export function getChunksForDocument(docId: string): DocumentChunk[] {
-  return getAllChunks().filter((c) => c.documentId === docId);
+export function getChunksForDocument(docId: string, userId?: string): DocumentChunk[] {
+  return getAllChunks(userId).filter((c) => c.documentId === docId);
 }
 
 // ----------------------------------------------------

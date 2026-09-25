@@ -100,7 +100,7 @@ export default function FeaturesPage() {
   return (
     <main
       className={`relative min-h-screen overflow-hidden transition-all duration-500 ${
-        darkMode ? 'bg-[#050308] text-white' : 'bg-[#F8F7FB] text-[#292633]'
+        darkMode ? 'bg-[#050505] text-white' : 'bg-[#FAF8FB] text-[#261827]'
       }`}
     >
       {/* BACKGROUND */}
@@ -118,16 +118,16 @@ export default function FeaturesPage() {
         {/* LIGHT MODE GLOW */}
         {!darkMode && (
           <>
-            <div className="absolute top-[-220px] left-[-220px] h-[720px] w-[520px] rounded-full bg-[#8B6FC9]/10 blur-[160px]" />
-            <div className="absolute bottom-[-220px] right-[-180px] h-[720px] w-[520px] rounded-full bg-[#7E9AC7]/10 blur-[160px]" />
+            <div className="absolute top-[-220px] left-[-220px] h-[720px] w-[520px] rounded-full bg-[#E52A83]/10 blur-[160px]" />
+            <div className="absolute bottom-[-220px] right-[-180px] h-[720px] w-[520px] rounded-full bg-[#B31372]/10 blur-[160px]" />
           </>
         )}
 
         {/* DARK MODE GLOW */}
         {darkMode && (
           <>
-            <div className="absolute top-[-180px] left-[-180px] h-[700px] w-[500px] rounded-full bg-purple-500/10 blur-[180px]" />
-            <div className="absolute bottom-[-200px] right-[-180px] h-[720px] w-[520px] rounded-full bg-violet-600/10 blur-[180px]" />
+            <div className="absolute top-[-180px] left-[-180px] h-[700px] w-[500px] rounded-full bg-[#E52A83]/15 blur-[180px]" />
+            <div className="absolute bottom-[-200px] right-[-180px] h-[720px] w-[520px] rounded-full bg-[#B31372]/15 blur-[180px]" />
           </>
         )}
       </div>
@@ -142,20 +142,20 @@ export default function FeaturesPage() {
               <Link
                 href="/"
                 className={`flex h-11 w-11 items-center justify-center rounded-2xl border backdrop-blur-xl transition-all ${
-                  darkMode ? 'border-purple-400/15 bg-white/[0.03]' : 'border-[#E8E4EF] bg-white/80 text-[#292633]'
+                  darkMode ? 'border-pink-500/20 bg-white/[0.03]' : 'border-[#E7B8CF] bg-white/80 text-[#261827]'
                 }`}
               >
                 <ArrowLeft size={16} />
               </Link>
 
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8B6FC9] to-[#7E9AC7] text-white shadow-md shadow-[#8B6FC9]/25">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#E52A83] to-[#B31372] text-white shadow-md shadow-pink-500/25">
                   <Sparkles size={16} />
                 </div>
 
                 <div>
-                  <h1 className="text-[15px] font-semibold text-[#292633] dark:text-white">Nyra</h1>
-                  <p className={`text-[11px] ${darkMode ? 'text-purple-300/60 font-medium' : 'text-[#686477]'}`}>
+                  <h1 className="text-[15px] font-semibold text-[#261827] dark:text-white">Nyra</h1>
+                  <p className={`text-[11px] ${darkMode ? 'text-pink-300/60 font-medium' : 'text-[#6E6072]'}`}>
                     Features
                   </p>
                 </div>
@@ -168,8 +168,8 @@ export default function FeaturesPage() {
                 href="/login"
                 className={`hidden md:flex items-center justify-center rounded-2xl border px-5 py-2.5 text-sm font-medium backdrop-blur-xl transition-all ${
                   darkMode
-                    ? 'border-purple-400/15 bg-white/[0.03] hover:bg-white/[0.04]'
-                    : 'border-[#E8E4EF] bg-white/80 text-[#292633] hover:bg-white'
+                    ? 'border-pink-500/20 bg-white/[0.03] hover:bg-white/[0.04]'
+                    : 'border-[#E7B8CF] bg-white/80 text-[#261827] hover:bg-white'
                 }`}
               >
                 Login
@@ -177,15 +177,15 @@ export default function FeaturesPage() {
 
               <Link
                 href="/chat-ui"
-                className="hidden md:flex items-center justify-center rounded-2xl bg-[#8B6FC9] hover:bg-[#795BB8] px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-[#8B6FC9]/20 transition-all hover:scale-[1.02]"
+                className="hidden md:flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-pink-500/20 transition-all hover:scale-[1.02]"
               >
                 Get Started
               </Link>
 
               <button
                 onClick={toggleTheme}
-                className={`flex h-11 w-11 items-center justify-center rounded-2xl border backdrop-blur-xl transition-all ${
-                  darkMode ? 'border-purple-400/15 bg-white/[0.03]' : 'border-[#E8E4EF] bg-white/80 text-[#292633]'
+                className={`flex h-11 w-11 items-center justify-center rounded-2xl border backdrop-blur-xl transition-all cursor-pointer ${
+                  darkMode ? 'border-pink-500/20 bg-white/[0.03]' : 'border-[#E7B8CF] bg-white/80 text-[#261827]'
                 }`}
               >
                 {darkMode ? <Sun size={16} /> : <Moon size={16} />}
@@ -199,11 +199,11 @@ export default function FeaturesPage() {
           <div className="mx-auto max-w-[1450px]">
             {/* HERO TOP */}
             <div className="max-w-4xl">
-              <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#8B6FC9] dark:text-purple-400 md:text-sm uppercase">
+              <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
                 FEATURES
               </p>
 
-              <h1 className="text-[48px] sm:text-[72px] md:text-[110px] font-semibold tracking-[-0.08em] leading-[0.9] text-[#292633] dark:text-white">
+              <h1 className="text-3xl 2xs:text-4xl sm:text-6xl md:text-7xl lg:text-[100px] font-semibold tracking-[-0.08em] leading-[0.95] text-[#261827] dark:text-white break-words">
                 Powerful AI
                 <br />
                 tools built
@@ -211,8 +211,8 @@ export default function FeaturesPage() {
                 for modern work.
               </h1>
 
-              <p className={`mt-8 max-w-3xl text-[16px] leading-8 md:text-[20px] md:leading-9 ${
-                darkMode ? 'text-slate-300' : 'text-[#686477]'
+              <p className={`mt-8 max-w-3xl text-sm 2xs:text-base leading-7 md:text-[20px] md:leading-9 ${
+                darkMode ? 'text-slate-300' : 'text-[#6E6072]'
               }`}>
                 Nyra combines AI chat, intelligent workflows, image understanding and automation into one beautifully crafted workspace.
               </p>
@@ -221,7 +221,7 @@ export default function FeaturesPage() {
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/chat-ui"
-                  className="flex items-center justify-center rounded-2xl bg-[#8B6FC9] hover:bg-[#795BB8] px-7 py-4 text-sm font-bold text-white shadow-md shadow-[#8B6FC9]/25 transition-all hover:scale-[1.02]"
+                  className="flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 px-7 py-4 text-sm font-bold text-white shadow-md shadow-pink-500/25 transition-all hover:scale-[1.02]"
                 >
                   Get Started
                 </Link>
@@ -230,8 +230,8 @@ export default function FeaturesPage() {
                   href="/"
                   className={`flex items-center justify-center rounded-2xl border px-7 py-4 text-sm font-medium transition-all ${
                     darkMode
-                      ? 'border-purple-400/20 bg-white/[0.03] hover:bg-white/[0.04]'
-                      : 'border-[#E8E4EF] bg-[#F5F3F9] text-[#292633] hover:bg-[#EEE8FA]'
+                      ? 'border-pink-500/20 bg-white/[0.03] hover:bg-white/[0.04]'
+                      : 'border-[#E7B8CF] bg-[#FAF8FB] text-[#261827] hover:bg-[#F4DCE9]'
                   }`}
                 >
                   Learn More
@@ -249,23 +249,23 @@ export default function FeaturesPage() {
                     key={feature.title}
                     className={`rounded-[34px] border p-8 backdrop-blur-3xl transition-all duration-300 hover:translate-y-[-4px] ${
                       darkMode
-                        ? 'border-purple-400/15 bg-white/[0.03] hover:bg-white/[0.04]'
-                        : 'border-[#E8E4EF] bg-white shadow-[0_4px_24px_rgba(41,38,51,0.03)]'
+                        ? 'border-pink-500/20 bg-[#16091F]/40 hover:bg-[#16091F]/70'
+                        : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
                     }`}
                   >
                     {/* ICON */}
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EEE8FA] dark:bg-purple-500/20 text-[#8B6FC9] dark:text-purple-300 shadow-sm">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 shadow-sm">
                       <Icon size={22} />
                     </div>
 
                     {/* TITLE */}
-                    <h2 className="text-[28px] font-semibold tracking-[-0.04em] text-[#292633] dark:text-white">
+                    <h2 className="text-[28px] font-semibold tracking-[-0.04em] text-[#261827] dark:text-white">
                       {feature.title}
                     </h2>
 
                     {/* DESC */}
                     <p className={`mt-5 text-[16px] leading-8 ${
-                      darkMode ? 'text-slate-300' : 'text-[#686477]'
+                      darkMode ? 'text-slate-300' : 'text-[#6E6072]'
                     }`}>
                       {feature.desc}
                     </p>
@@ -283,21 +283,21 @@ export default function FeaturesPage() {
                   <div
                     key={stat.label}
                     className={`rounded-[34px] border p-7 backdrop-blur-3xl transition-all duration-300 hover:translate-y-[-4px] ${
-                      darkMode ? 'border-purple-400/15 bg-white/[0.03]' : 'border-[#E8E4EF] bg-white shadow-[0_4px_24px_rgba(41,38,51,0.03)]'
+                      darkMode ? 'border-pink-500/20 bg-[#16091F]/40' : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
                     }`}
                   >
                     {/* ICON */}
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EEE8FA] dark:bg-purple-500/20 text-[#8B6FC9] dark:text-purple-300 shadow-sm">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 shadow-sm">
                       <Icon size={18} />
                     </div>
 
                     {/* VALUE */}
-                    <h2 className="text-[44px] md:text-[54px] font-bold tracking-[-0.06em] text-[#292633] dark:text-white">
+                    <h2 className="text-[44px] md:text-[54px] font-bold tracking-[-0.06em] text-[#261827] dark:text-white">
                       {stat.value}
                     </h2>
 
                     {/* LABEL */}
-                    <p className={`mt-2 text-[14px] ${darkMode ? 'text-slate-400' : 'text-[#686477]'}`}>
+                    <p className={`mt-2 text-[14px] ${darkMode ? 'text-slate-400' : 'text-[#6E6072]'}`}>
                       {stat.label}
                     </p>
                   </div>
@@ -308,26 +308,26 @@ export default function FeaturesPage() {
             {/* BIG CTA */}
             <div
               className={`relative mt-24 overflow-hidden rounded-[42px] border p-8 md:p-14 backdrop-blur-3xl ${
-                darkMode ? 'border-purple-400/15 bg-white/[0.03]' : 'border-[#E8E4EF] bg-white shadow-[0_4px_24px_rgba(41,38,51,0.03)]'
+                darkMode ? 'border-pink-500/25 bg-gradient-to-b from-[#16091F]/80 to-[#08020D]/90 shadow-2xl shadow-pink-500/10' : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
               }`}
             >
               {/* GLOW */}
-              <div className="absolute right-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full bg-[#8B6FC9]/10 blur-[120px]" />
+              <div className="absolute right-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full bg-[#E52A83]/15 blur-[120px]" />
 
               {/* CONTENT */}
               <div className="relative z-10 max-w-4xl">
-                <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#8B6FC9] dark:text-purple-400 md:text-sm uppercase">
+                <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
                   START BUILDING TODAY
                 </p>
 
-                <h2 className="text-[40px] sm:text-[56px] md:text-[78px] font-semibold tracking-[-0.07em] leading-[0.95] text-[#292633] dark:text-white">
+                <h2 className="text-3xl 2xs:text-4xl sm:text-5xl md:text-[68px] font-semibold tracking-[-0.07em] leading-[1.05] text-[#261827] dark:text-white break-words">
                   AI tools designed
                   <br />
                   for the next generation.
                 </h2>
 
                 <p className={`mt-7 max-w-2xl text-[16px] leading-8 md:text-[19px] md:leading-9 ${
-                  darkMode ? 'text-slate-300' : 'text-[#686477]'
+                  darkMode ? 'text-slate-300' : 'text-[#6E6072]'
                 }`}>
                   Join creators, startups and modern teams using Nyra to build smarter workflows and better AI experiences.
                 </p>
@@ -336,7 +336,7 @@ export default function FeaturesPage() {
                 <div className="mt-10 flex flex-wrap gap-4">
                   <Link
                     href="/chat-ui"
-                    className="flex items-center gap-2 rounded-2xl bg-[#8B6FC9] hover:bg-[#795BB8] px-7 py-4 text-sm font-bold text-white shadow-md shadow-[#8B6FC9]/25 transition-all hover:scale-[1.02]"
+                    className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 px-7 py-4 text-sm font-bold text-white shadow-md shadow-pink-500/25 transition-all hover:scale-[1.02]"
                   >
                     Start Free
                     <ArrowRight size={16} />
@@ -346,8 +346,8 @@ export default function FeaturesPage() {
                     href="/pricing"
                     className={`flex items-center justify-center rounded-2xl border px-7 py-4 text-sm font-medium transition-all ${
                       darkMode
-                        ? 'border-purple-400/20 bg-white/[0.03] hover:bg-white/[0.04]'
-                        : 'border-[#E8E4EF] bg-[#F5F3F9] text-[#292633] hover:bg-[#EEE8FA]'
+                        ? 'border-pink-500/20 bg-white/[0.03] hover:bg-white/[0.04]'
+                        : 'border-[#E7B8CF] bg-[#FAF8FB] text-[#261827] hover:bg-[#F4DCE9]'
                     }`}
                   >
                     View Pricing

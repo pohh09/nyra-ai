@@ -167,11 +167,31 @@ export interface PromptItem {
   variables?: string[];
 }
 
-export interface UserProfile {
+export interface UserOnboardingPreferences {
+  interests: string[];
+  goals: string[];
+  preferredResponseStyle: string[];
+  experienceLevel: 'Beginner' | 'Comfortable' | 'Advanced' | 'Expert' | string;
+  customInstructions?: string;
+  onboardingCompleted: boolean;
+}
+
+export interface UserProfile extends Partial<UserOnboardingPreferences> {
   id: string;
   email: string;
   displayName?: string;
   avatarUrl?: string;
+  role?: string;
+  theme?: string;
+  accentColor?: string;
+  fontSize?: string;
+  defaultModel?: string;
+  interests?: string[];
+  goals?: string[];
+  preferredResponseStyle?: string[];
+  experienceLevel?: 'Beginner' | 'Comfortable' | 'Advanced' | 'Expert' | string;
+  customInstructions?: string;
+  onboardingCompleted?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

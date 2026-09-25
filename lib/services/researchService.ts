@@ -19,10 +19,22 @@ export interface ResearchBrief {
 
 const RESEARCH_STORAGE_KEY = 'nyra_research_briefs';
 
-export function getResearchBriefs(): ResearchBrief[] {
+let cachedUserId: string | null = null;
+
+function getStorageKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_research_${uid}` : RESEARCH_STORAGE_KEY;
+}
+
+export function setResearchActiveUser(userId: string | null): void {
+  cachedUserId = userId;
+}
+
+export function getResearchBriefs(userId?: string): ResearchBrief[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(RESEARCH_STORAGE_KEY);
+    const key = getStorageKey(userId);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.error('Failed to load research briefs:', e);
@@ -30,24 +42,25 @@ export function getResearchBriefs(): ResearchBrief[] {
   }
 }
 
-export function saveResearchBriefs(briefs: ResearchBrief[]): void {
+export function saveResearchBriefs(briefs: ResearchBrief[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(RESEARCH_STORAGE_KEY, JSON.stringify(briefs));
+    const key = getStorageKey(userId);
+    localStorage.setItem(key, JSON.stringify(briefs));
     window.dispatchEvent(new CustomEvent('nyra_research_updated', { detail: briefs }));
   } catch (e) {
     console.error('Failed to save research briefs:', e);
   }
 }
 
-export function saveResearchBrief(brief: ResearchBrief): void {
-  const all = getResearchBriefs().filter((b) => b.id !== brief.id);
-  saveResearchBriefs([brief, ...all]);
+export function saveResearchBrief(brief: ResearchBrief, userId?: string): void {
+  const all = getResearchBriefs(userId).filter((b) => b.id !== brief.id);
+  saveResearchBriefs([brief, ...all], userId);
 }
 
-export function deleteResearchBrief(id: string): boolean {
-  const all = getResearchBriefs().filter((b) => b.id !== id);
-  saveResearchBriefs(all);
+export function deleteResearchBrief(id: string, userId?: string): boolean {
+  const all = getResearchBriefs(userId).filter((b) => b.id !== id);
+  saveResearchBriefs(all, userId);
   return true;
 }
 

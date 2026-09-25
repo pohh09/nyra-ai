@@ -134,7 +134,7 @@ export default function HeroRobotVisual() {
   return (
     <div
       ref={robotContainerRef}
-      className="relative w-full max-w-[420px] xs:max-w-[480px] sm:max-w-[580px] lg:max-w-[680px] xl:max-w-[740px] mx-auto min-h-[460px] xs:min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center select-none"
+      className="relative w-full max-w-[340px] xs:max-w-[440px] sm:max-w-[560px] lg:max-w-[680px] xl:max-w-[740px] mx-auto min-h-[420px] xs:min-h-[480px] sm:min-h-[560px] lg:min-h-[640px] flex items-center justify-center select-none overflow-visible"
       style={{ perspective: 1200 }}
     >
       {/* =========================================================
@@ -142,7 +142,7 @@ export default function HeroRobotVisual() {
       ========================================================= */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         {/* Core Soft Ambient Violet Sphere */}
-        <div className="h-[340px] xs:h-[400px] sm:h-[480px] lg:h-[540px] w-[340px] xs:w-[400px] sm:w-[480px] lg:w-[540px] rounded-full bg-gradient-to-tr from-[#8B5CF6]/22 via-[#7C3AED]/14 to-[#38BDF8]/12 blur-[90px] sm:blur-[120px]" />
+        <div className="h-[280px] xs:h-[360px] sm:h-[460px] lg:h-[540px] w-[280px] xs:w-[360px] sm:w-[460px] lg:w-[540px] rounded-full bg-gradient-to-tr from-[#8B5CF6]/22 via-[#7C3AED]/14 to-[#38BDF8]/12 blur-[70px] sm:blur-[120px]" />
       </div>
 
       {/* =========================================================
@@ -155,7 +155,7 @@ export default function HeroRobotVisual() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.88 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="absolute -top-4 sm:-top-8 z-40 px-3.5 sm:px-4.5 py-2 sm:py-2.5 rounded-2xl bg-[#1E0F38]/95 border border-purple-300/40 shadow-[0_15px_35px_rgba(0,0,0,0.6)] backdrop-blur-2xl flex items-center gap-2 sm:gap-2.5 cursor-pointer hover:border-purple-200 transition-colors max-w-[90%]"
+            className="absolute -top-3 sm:-top-8 z-40 px-3 sm:px-4.5 py-1.5 sm:py-2.5 rounded-2xl bg-[#1E0F38]/95 border border-purple-300/40 shadow-[0_15px_35px_rgba(0,0,0,0.6)] backdrop-blur-2xl flex items-center gap-2 sm:gap-2.5 cursor-pointer hover:border-purple-200 transition-colors max-w-[95%] sm:max-w-[90%]"
             onClick={() => router.push('/chat-ui')}
           >
             <div className="flex h-5 w-5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#8B5CF6] to-[#6366F1] text-white shadow-inner">
@@ -202,7 +202,7 @@ export default function HeroRobotVisual() {
             repeat: Infinity,
             ease: 'easeInOut',
           }}
-          className="relative flex flex-col items-center scale-95 xs:scale-100 sm:scale-110 lg:scale-120"
+          className="relative flex flex-col items-center scale-[0.84] xs:scale-95 sm:scale-110 lg:scale-120"
           style={{ transformStyle: 'preserve-3d' }}
         >
           {/* =========================================================
@@ -258,248 +258,251 @@ export default function HeroRobotVisual() {
                   <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                 </linearGradient>
 
-                {/* Ear Pod Metallic Titanium Gradient */}
-                <linearGradient id="earPodTitanium" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="25%" stopColor="#E4DAF5" />
-                  <stop offset="65%" stopColor="#8A6EC7" />
-                  <stop offset="100%" stopColor="#4A2F82" />
+                {/* Ear Pod Rim Glowing Accent */}
+                <linearGradient id="earPodGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#C084FC" />
+                  <stop offset="50%" stopColor="#7C3AED" />
+                  <stop offset="100%" stopColor="#4C1D95" />
                 </linearGradient>
+
+                {/* Torso Ceramic Shell */}
+                <radialGradient id="torsoCeramic3D" cx="50%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="40%" stopColor="#F5F0FC" />
+                  <stop offset="75%" stopColor="#DDD2F2" />
+                  <stop offset="100%" stopColor="#9B84C8" />
+                </radialGradient>
+
+                {/* Core Reactor Glow */}
+                <radialGradient id="reactorCoreGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="25%" stopColor="#38BDF8" />
+                  <stop offset="60%" stopColor="#818CF8" />
+                  <stop offset="85%" stopColor="#A855F7" />
+                  <stop offset="100%" stopColor="#6D28D9" stopOpacity="0" />
+                </radialGradient>
               </defs>
 
-              {/* LEFT EAR SENSOR POD */}
-              <g>
-                <rect x="8" y="70" width="18" height="50" rx="9" fill="url(#earPodTitanium)" stroke="#E9D5FF" strokeWidth="1.2" />
-                <rect x="12" y="86" width="10" height="18" rx="5" fill="#1B0C36" />
-                <circle cx="17" cy="95" r="3.5" fill={isThinking ? '#38BDF8' : '#C084FC'} className={isThinking ? 'animate-pulse' : ''} />
-              </g>
+              {/* EAR POD (LEFT) with Glowing Ring */}
+              <circle cx="28" cy="100" r="22" fill="url(#helmetCeramic3D)" stroke="#9C87C9" strokeWidth="1.5" />
+              <circle cx="28" cy="100" r="16" fill="#1A0C33" />
+              <circle cx="28" cy="100" r="12" stroke="url(#earPodGlow)" strokeWidth="2.5" fill="none" />
+              <circle cx="28" cy="100" r="6" fill="#A855F7" className="animate-pulse" />
 
-              {/* RIGHT EAR SENSOR POD */}
-              <g>
-                <rect x="234" y="70" width="18" height="50" rx="9" fill="url(#earPodTitanium)" stroke="#E9D5FF" strokeWidth="1.2" />
-                <rect x="238" y="86" width="10" height="18" rx="5" fill="#1B0C36" />
-                <circle cx="243" cy="95" r="3.5" fill={isThinking ? '#38BDF8' : '#C084FC'} className={isThinking ? 'animate-pulse' : ''} />
-              </g>
+              {/* EAR POD (RIGHT) with Glowing Ring */}
+              <circle cx="232" cy="100" r="22" fill="url(#helmetCeramic3D)" stroke="#9C87C9" strokeWidth="1.5" />
+              <circle cx="232" cy="100" r="16" fill="#1A0C33" />
+              <circle cx="232" cy="100" r="12" stroke="url(#earPodGlow)" strokeWidth="2.5" fill="none" />
+              <circle cx="232" cy="100" r="6" fill="#A855F7" className="animate-pulse" />
 
-              {/* MAIN HELMET CHASSIS (Smooth rounded futuristic contour) */}
+              {/* MAIN CERAMIC HELMET SHELL */}
               <path
-                d="M36 92 C36 40 76 16 130 16 C184 16 224 40 224 92 C224 144 186 168 130 168 C74 168 36 144 36 92 Z"
+                d="M42 96 C42 44 80 14 130 14 C180 14 218 44 218 96 C218 140 184 172 130 172 C76 172 42 140 42 96 Z"
                 fill="url(#helmetCeramic3D)"
-                stroke="#FAF5FF"
-                strokeWidth="1.8"
+                stroke="#E9D8FD"
+                strokeWidth="2.5"
               />
 
-              {/* Top Specular Rim Glare */}
+              {/* TOP HELMET CREST (AERODYNAMIC RIDGE) */}
               <path
-                d="M56 60 C80 28 115 22 130 22 C145 22 180 28 204 60 C175 35 145 30 130 30 C115 30 85 35 56 60 Z"
+                d="M106 16 C118 13 142 13 154 16 L150 48 C140 46 120 46 110 48 Z"
+                fill="#805AD5"
+                stroke="#D6BCFA"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M112 18 C120 15 140 15 148 18 L145 42 C138 40 122 40 115 42 Z"
                 fill="url(#crestHighlight)"
               />
 
-              {/* TOP NEURAL INDICATOR JEWEL */}
-              <rect
-                x="120"
-                y="22"
-                width="20"
-                height="6"
-                rx="3"
-                fill={isThinking ? '#38BDF8' : isHovered ? '#E879F9' : '#A78BFA'}
-                className="transition-colors duration-300"
+              {/* OBSIDIAN VISOR RECESS HOUSING */}
+              <path
+                d="M58 96 C58 60 88 42 130 42 C172 42 202 60 202 96 C202 132 172 152 130 152 C88 152 58 132 58 96 Z"
+                fill="#0A0314"
+                stroke="#3B1D6E"
+                strokeWidth="2"
               />
 
-              {/* INNER RECESSED OBSIDIAN VISOR WITH BEVEL RIM */}
+              {/* DEEP OBSIDIAN VISOR GLASS */}
               <path
-                d="M52 88 C52 52 82 40 130 40 C178 40 208 52 208 88 C208 122 178 142 130 142 C82 142 52 122 52 88 Z"
+                d="M62 96 C62 64 90 46 130 46 C170 46 198 64 198 96 C198 128 170 148 130 148 C90 148 62 128 62 96 Z"
                 fill="url(#visorObsidianGrad)"
-                stroke="#4C1D95"
-                strokeWidth="1.8"
               />
 
-              {/* Visor Inner Ambient Glow Rim */}
+              {/* VISOR CURVED GLASS GLARE REFLECTION */}
               <path
-                d="M56 88 C56 56 85 44 130 44 C175 44 204 56 204 88 C204 118 175 138 130 138 C85 138 56 118 56 88 Z"
-                stroke="#8B5CF6"
-                strokeWidth="1"
-                strokeOpacity="0.45"
-                fill="none"
-              />
-
-              {/* VISOR SURFACE CURVED GLASS GLARE */}
-              <path
-                d="M56 84 C56 58 84 46 130 46 C165 46 188 54 200 68 C175 56 145 54 115 56 C82 58 64 72 56 84 Z"
+                d="M66 90 C70 68 96 52 130 52 C158 52 182 62 192 78 C176 68 148 62 124 64 C94 66 74 78 66 90 Z"
                 fill="url(#visorGlassGlare)"
+              />
+
+              {/* BOTTOM VISOR RIM ACCENT GLOW */}
+              <path
+                d="M80 140 C100 146 160 146 180 140"
+                stroke="#A855F7"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.6"
               />
             </svg>
 
             {/* =========================================================
-                DYNAMIC LED MATRIX EYES (Interactive Gaze inside Visor)
+                CYBERNETIC DYNAMIC DIGITAL EYES (INSIDE VISOR)
             ========================================================= */}
             <motion.div
               style={{
                 x: smoothEyeX,
                 y: smoothEyeY,
               }}
-              className="absolute top-[34%] left-[28%] w-[44%] h-[30%] flex items-center justify-between px-3 pointer-events-none"
+              className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
-              {/* LEFT EYE */}
-              <div className="relative flex items-center justify-center">
-                {isBlinking ? (
-                  <div className="w-7 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_#67e8f9]" />
-                ) : isThinking ? (
+              <div className="flex items-center gap-7 sm:gap-8 mt-[-10px]">
+                {/* LEFT EYE */}
+                <div className="relative flex items-center justify-center">
                   <motion.div
-                    animate={{ rotate: 360, scale: [1, 1.18, 1] }}
-                    transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
-                    className="w-7 h-7 rounded-full border-2 border-cyan-300 border-t-transparent shadow-[0_0_14px_#38bdf8]"
-                  />
-                ) : mood === 'curious' || mood === 'happy' ? (
-                  <div className="w-8 h-4.5 rounded-t-full border-t-[3.5px] border-l-2 border-r-2 border-purple-100 bg-gradient-to-b from-cyan-300 to-purple-400 shadow-[0_0_14px_#c084fc]" />
-                ) : (
-                  <div className="relative flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#A855F7] via-[#818CF8] to-[#38BDF8] p-[2.5px] shadow-[0_0_16px_rgba(168,85,247,0.9)]">
-                      <div className="w-full h-full rounded-full bg-[#0E0522] flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white opacity-90" />
-                        <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-cyan-300 to-white shadow-[0_0_8px_#67e8f9]" />
-                      </div>
+                    animate={{
+                      scaleY: isBlinking ? 0.05 : 1,
+                      scaleX: isHovered ? 1.15 : 1,
+                    }}
+                    transition={{ duration: 0.12 }}
+                    className={`relative rounded-full transition-all duration-300 ${mood === 'thinking'
+                        ? 'w-6 h-6 rounded-md bg-cyan-400 shadow-[0_0_20px_#38bdf8,0_0_40px_#0284c7]'
+                        : mood === 'happy'
+                          ? 'w-7 h-4 rounded-t-full bg-[#E9D5FF] shadow-[0_0_20px_#c084fc,0_0_40px_#9333ea]'
+                          : 'w-6 h-7 rounded-[12px] bg-gradient-to-b from-[#FFFFFF] via-[#DDD6FE] to-[#A78BFA] shadow-[0_0_18px_#c4b5fd,0_0_36px_#8b5cf6]'
+                      }`}
+                  >
+                    {/* Glowing Iris Core */}
+                    <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-[#7C3AED] via-[#8B5CF6] to-[#C084FC] flex items-center justify-center">
+                      <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
                     </div>
-                  </div>
-                )}
-              </div>
+                    {/* Pupil Light Glimmer */}
+                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white" />
+                  </motion.div>
+                </div>
 
-              {/* RIGHT EYE */}
-              <div className="relative flex items-center justify-center">
-                {isBlinking ? (
-                  <div className="w-7 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_#67e8f9]" />
-                ) : isThinking ? (
+                {/* RIGHT EYE */}
+                <div className="relative flex items-center justify-center">
                   <motion.div
-                    animate={{ rotate: -360, scale: [1, 1.18, 1] }}
-                    transition={{ duration: 1.1, repeat: Infinity, ease: 'linear' }}
-                    className="w-7 h-7 rounded-full border-2 border-cyan-300 border-t-transparent shadow-[0_0_14px_#38bdf8]"
-                  />
-                ) : mood === 'curious' || mood === 'happy' ? (
-                  <div className="w-8 h-4.5 rounded-t-full border-t-[3.5px] border-l-2 border-r-2 border-purple-100 bg-gradient-to-b from-cyan-300 to-purple-400 shadow-[0_0_14px_#c084fc]" />
-                ) : (
-                  <div className="relative flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#A855F7] via-[#818CF8] to-[#38BDF8] p-[2.5px] shadow-[0_0_16px_rgba(168,85,247,0.9)]">
-                      <div className="w-full h-full rounded-full bg-[#0E0522] flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white opacity-90" />
-                        <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-cyan-300 to-white shadow-[0_0_8px_#67e8f9]" />
-                      </div>
+                    animate={{
+                      scaleY: isBlinking ? 0.05 : 1,
+                      scaleX: isHovered ? 1.15 : 1,
+                    }}
+                    transition={{ duration: 0.12 }}
+                    className={`relative rounded-full transition-all duration-300 ${mood === 'thinking'
+                        ? 'w-6 h-6 rounded-md bg-cyan-400 shadow-[0_0_20px_#38bdf8,0_0_40px_#0284c7]'
+                        : mood === 'happy'
+                          ? 'w-7 h-4 rounded-t-full bg-[#E9D5FF] shadow-[0_0_20px_#c084fc,0_0_40px_#9333ea]'
+                          : 'w-6 h-7 rounded-[12px] bg-gradient-to-b from-[#FFFFFF] via-[#DDD6FE] to-[#A78BFA] shadow-[0_0_18px_#c4b5fd,0_0_36px_#8b5cf6]'
+                      }`}
+                  >
+                    {/* Glowing Iris Core */}
+                    <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-[#7C3AED] via-[#8B5CF6] to-[#C084FC] flex items-center justify-center">
+                      <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
                     </div>
-                  </div>
-                )}
+                    {/* Pupil Light Glimmer */}
+                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white" />
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           </motion.div>
 
           {/* =========================================================
-              2. SLEEK HUMANOID ROBOT TORSO & CHEST REACTOR
+              2. NECK ARTICULATION RING
           ========================================================= */}
-          <div className="relative -mt-6 z-20 flex flex-col items-center">
-            {/* Torso SVG Armor */}
+          <div className="relative -mt-3 z-20 flex flex-col items-center">
+            <div className="w-[84px] h-[16px] rounded-full bg-[#1A0A33] border border-[#5B21B6] flex items-center justify-center">
+              <div className="w-[60px] h-[4px] rounded-full bg-[#8B5CF6]/60 animate-pulse" />
+            </div>
+          </div>
+
+          {/* =========================================================
+              3. TORSO CERAMIC CHASSIS + QUANTUM REACTOR CORE
+          ========================================================= */}
+          <div className="relative -mt-2 z-10 flex flex-col items-center">
+            {/* TORSO SVG CHASSIS */}
             <svg
               width="210"
               height="150"
               viewBox="0 0 210 150"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="drop-shadow-[0_20px_35px_rgba(0,0,0,0.55)] w-[200px] xs:w-[230px] sm:w-[260px] md:w-[285px] h-auto"
+              className="drop-shadow-[0_20px_35px_rgba(0,0,0,0.55)] w-[190px] xs:w-[220px] sm:w-[245px] h-auto"
             >
-              <defs>
-                <radialGradient id="torsoCeramic3D" cx="50%" cy="25%" r="75%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="40%" stopColor="#F3EEFB" />
-                  <stop offset="75%" stopColor="#CEBFEA" />
-                  <stop offset="100%" stopColor="#876EB8" />
-                </radialGradient>
-
-                <linearGradient id="neckBallJoint" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#1A0C33" />
-                  <stop offset="50%" stopColor="#432677" />
-                  <stop offset="100%" stopColor="#1A0C33" />
-                </linearGradient>
-
-                <linearGradient id="shoulderJoint" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#DDD4F2" />
-                  <stop offset="70%" stopColor="#7E60B8" />
-                  <stop offset="100%" stopColor="#3C2169" />
-                </linearGradient>
-              </defs>
-
-              {/* ARTICULATED TITANIUM NECK JOINT */}
-              <rect x="88" y="2" width="34" height="16" rx="6" fill="url(#neckBallJoint)" stroke="#6D28D9" strokeWidth="1.2" />
-
-              {/* LEFT SHOULDER SOCKET */}
-              <circle cx="34" cy="42" r="16" fill="url(#shoulderJoint)" stroke="#E9D5FF" strokeWidth="1.2" />
-
-              {/* RIGHT SHOULDER SOCKET */}
-              <circle cx="176" cy="42" r="16" fill="url(#shoulderJoint)" stroke="#E9D5FF" strokeWidth="1.2" />
-
-              {/* MAIN CHEST ARMOR PLATING */}
+              {/* Ceramic Torso Armor Shell */}
               <path
-                d="M56 16 C76 12 134 12 154 16 C176 34 182 82 160 114 C144 132 105 138 105 138 C105 138 66 132 50 114 C28 82 34 34 56 16 Z"
+                d="M40 10 C70 8 140 8 170 10 C182 30 190 70 180 110 C170 140 140 148 105 148 C70 148 40 140 30 110 C20 70 28 30 40 10 Z"
                 fill="url(#torsoCeramic3D)"
-                stroke="#FAF5FF"
-                strokeWidth="1.8"
+                stroke="#E9D8FD"
+                strokeWidth="2"
               />
 
-              {/* AERODYNAMIC CHEST SEAM DETAILS */}
-              <path d="M68 46 L88 62" stroke="#8B5CF6" strokeWidth="1.5" strokeOpacity="0.4" />
-              <path d="M142 46 L122 62" stroke="#8B5CF6" strokeWidth="1.5" strokeOpacity="0.4" />
+              {/* Chest Plate Inset Panel */}
+              <path
+                d="M62 26 C82 24 128 24 148 26 C156 46 158 80 148 105 C136 122 118 126 105 126 C92 126 74 122 62 105 C52 80 54 46 62 26 Z"
+                fill="#15082E"
+                stroke="#4C1D95"
+                strokeWidth="1.5"
+              />
 
-              {/* WAIST CONTOUR */}
-              <path d="M80 116 C95 124 115 124 130 116" stroke="#7C3AED" strokeWidth="1.8" strokeOpacity="0.5" />
+              {/* Carbon Texture Accent Lines */}
+              <line x1="72" y1="36" x2="138" y2="36" stroke="#581C87" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="78" y1="44" x2="132" y2="44" stroke="#581C87" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* Quantum Reactor Core Outer Ring */}
+              <circle cx="105" cy="74" r="26" fill="#0D031F" stroke="#7C3AED" strokeWidth="2" />
+              <circle cx="105" cy="74" r="22" stroke="#C084FC" strokeWidth="1" strokeDasharray="4 2" />
+
+              {/* Glowing Reactor Energy Sphere */}
+              <circle cx="105" cy="74" r="17" fill="url(#reactorCoreGlow)" />
+              <circle cx="105" cy="74" r="8" fill="#FFFFFF" className="animate-pulse" />
+
+              {/* Nyra Emblem Logo on Chest */}
+              <path
+                d="M101 68 L105 60 L109 68 L117 72 L109 76 L105 84 L101 76 L93 72 Z"
+                fill="#FFFFFF"
+                opacity="0.9"
+              />
             </svg>
 
-            {/* NEURAL CORE CHEST REACTOR */}
-            <div className="absolute top-[36%] left-1/2 -translate-x-1/2 flex items-center justify-center">
-              <motion.div
-                animate={{
-                  scale: isThinking ? [1, 1.32, 1] : isHovered ? [1, 1.2, 1] : [1, 1.08, 1],
-                  boxShadow: isThinking
-                    ? ['0 0 12px #38bdf8', '0 0 28px #818cf8', '0 0 12px #38bdf8']
-                    : ['0 0 10px #a855f7', '0 0 20px #c084fc', '0 0 10px #a855f7'],
-                }}
-                transition={{ duration: isThinking ? 0.9 : 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#6366F1] via-[#A855F7] to-[#38BDF8] p-[2.5px] flex items-center justify-center"
-              >
-                <div className="w-full h-full rounded-full bg-[#14062B] flex items-center justify-center">
-                  <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-white shadow-[0_0_10px_#ffffff]" />
-                </div>
-              </motion.div>
-            </div>
+            {/* Glowing Core Pulse Overlay */}
+            <motion.div
+              animate={{
+                scale: isThinking ? [1, 1.35, 1] : [1, 1.15, 1],
+                opacity: isThinking ? [0.8, 1, 0.8] : [0.6, 0.9, 0.6],
+              }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute top-[60px] xs:top-[68px] sm:top-[74px] w-10 h-10 rounded-full bg-cyan-400/30 blur-md pointer-events-none"
+            />
           </div>
 
-          {/* =========================================================
-              3. ARTICULATED FLOATING ROBOTIC ARMS & HANDS
-          ========================================================= */}
-          {/* Left Arm & Hand */}
+          {/* LEFT ARTICULATED ARM (CERAMIC) */}
           <motion.div
-            style={{ rotate: smoothLeftArm }}
-            animate={{
-              y: [-4, 4, -4],
+            style={{
+              rotateZ: smoothLeftArm,
+              transformOrigin: 'top right',
             }}
-            transition={{ duration: 4.4, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute left-[-26px] sm:left-[-34px] top-[110px] sm:top-[125px] z-20 pointer-events-none"
+            className="absolute left-[-22px] sm:left-[-34px] top-[95px] sm:top-[125px] z-20 pointer-events-none"
           >
-            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[42px] sm:w-[52px] h-auto drop-shadow-md">
+            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[36px] xs:w-[42px] sm:w-[52px] h-auto drop-shadow-md">
               <rect x="10" y="6" width="28" height="22" rx="11" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
               <rect x="14" y="26" width="20" height="6" rx="3" fill="#3C2169" />
-              <rect x="13" y="32" width="6" height="16" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+              <rect x="13" y="32" width="6" height="15" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
               <rect x="21" y="32" width="6" height="18" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <rect x="29" y="32" width="6" height="15" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+              <rect x="29" y="32" width="6" height="16" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
               <circle cx="24" cy="20" r="3" fill="#8B5CF6" />
             </svg>
           </motion.div>
 
-          {/* Right Arm & Hand */}
+          {/* RIGHT ARTICULATED ARM (CERAMIC) */}
           <motion.div
-            style={{ rotate: smoothRightArm }}
-            animate={{
-              y: [4, -4, 4],
+            style={{
+              rotateZ: smoothRightArm,
+              transformOrigin: 'top left',
             }}
-            transition={{ duration: 4.6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-            className="absolute right-[-26px] sm:right-[-34px] top-[110px] sm:top-[125px] z-20 pointer-events-none"
+            className="absolute right-[-22px] sm:right-[-34px] top-[95px] sm:top-[125px] z-20 pointer-events-none"
           >
-            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[42px] sm:w-[52px] h-auto drop-shadow-md">
+            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[36px] xs:w-[42px] sm:w-[52px] h-auto drop-shadow-md">
               <rect x="10" y="6" width="28" height="22" rx="11" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
               <rect x="14" y="26" width="20" height="6" rx="3" fill="#3C2169" />
               <rect x="13" y="32" width="6" height="15" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
@@ -514,7 +517,7 @@ export default function HeroRobotVisual() {
           ========================================================= */}
           <div className="relative -mt-2 flex flex-col items-center">
             {/* Vertical Soft Light Cone */}
-            <div className="w-[80px] sm:w-[110px] h-[34px] sm:h-[46px] bg-gradient-to-b from-purple-400/40 via-violet-500/15 to-transparent blur-[8px] rounded-b-full" />
+            <div className="w-[70px] xs:w-[80px] sm:w-[110px] h-[28px] xs:h-[34px] sm:h-[46px] bg-gradient-to-b from-purple-400/40 via-violet-500/15 to-transparent blur-[8px] rounded-b-full" />
 
             {/* Ground Reflection Ellipse */}
             <motion.div
@@ -523,7 +526,7 @@ export default function HeroRobotVisual() {
                 opacity: isHovered ? 0.8 : 0.5,
               }}
               transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-[180px] sm:w-[260px] h-[14px] sm:h-[18px] mt-[-6px] rounded-[100%] bg-gradient-to-r from-transparent via-[#C4B5FD]/60 to-transparent blur-[8px]"
+              className="w-[150px] xs:w-[180px] sm:w-[260px] h-[12px] sm:h-[18px] mt-[-6px] rounded-[100%] bg-gradient-to-r from-transparent via-[#C4B5FD]/60 to-transparent blur-[8px]"
             />
           </div>
 
@@ -533,10 +536,10 @@ export default function HeroRobotVisual() {
           <motion.div
             animate={{ opacity: [0.9, 1, 0.9] }}
             transition={{ duration: 3, repeat: Infinity }}
-            className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-white/[0.08] border border-purple-300/30 backdrop-blur-xl shadow-lg transition-all group-hover:border-purple-200 group-hover:bg-white/[0.12]"
+            className="mt-2.5 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/[0.08] border border-purple-300/30 backdrop-blur-xl shadow-lg transition-all group-hover:border-purple-200 group-hover:bg-white/[0.12]"
           >
             <span className={`flex h-1.5 sm:h-2 w-1.5 sm:w-2 rounded-full ${isThinking ? 'bg-cyan-400 shadow-[0_0_8px_#38bdf8]' : 'bg-[#10B981] shadow-[0_0_8px_#34d399]'} animate-pulse`} />
-            <span className="font-mono text-[10px] sm:text-[11px] font-semibold text-purple-200">
+            <span className="font-mono text-[9.5px] sm:text-[11px] font-semibold text-purple-200">
               {isThinking ? 'Nyra Thinking...' : 'Nyra Companion • Interactive'}
             </span>
           </motion.div>
@@ -560,18 +563,18 @@ export default function HeroRobotVisual() {
           delay: 0.1,
         }}
         whileHover={{ scale: 1.06 }}
-        className="absolute top-0 left-[-8px] sm:top-4 sm:left-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[170px] sm:max-w-[205px] transition-transform cursor-pointer hover:border-purple-300/50"
+        className="absolute top-1 left-1 xs:top-0 xs:left-0 sm:top-4 sm:left-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[145px] xs:max-w-[170px] sm:max-w-[205px] transition-transform cursor-pointer hover:border-purple-300/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-400/35 text-purple-200 shadow-inner">
-            <Zap className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-amber-300 animate-pulse" />
+        <div className="flex items-center gap-2 xs:gap-2.5">
+          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 border border-purple-400/35 text-purple-200 shadow-inner">
+            <Zap className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-amber-300 animate-pulse" />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] sm:text-xs font-bold text-white">850 Tok/sec</span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white truncate">850 Tok/s</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] text-purple-200/80 font-mono block">
+            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-purple-200/80 font-mono block truncate">
               Groq LPU Speed
             </span>
           </div>
@@ -591,19 +594,19 @@ export default function HeroRobotVisual() {
           delay: 0.4,
         }}
         whileHover={{ scale: 1.06 }}
-        className="absolute top-2 right-[-8px] sm:top-6 sm:right-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[170px] sm:max-w-[205px] transition-transform cursor-pointer hover:border-purple-300/50"
+        className="absolute top-1 right-1 xs:top-2 xs:right-0 sm:top-6 sm:right-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[145px] xs:max-w-[170px] sm:max-w-[205px] transition-transform cursor-pointer hover:border-purple-300/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-fuchsia-500/20 border border-fuchsia-400/35 text-fuchsia-200 shadow-inner">
-            <Sparkles className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-fuchsia-300" />
+        <div className="flex items-center gap-2 xs:gap-2.5">
+          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-fuchsia-500/20 border border-fuchsia-400/35 text-fuchsia-200 shadow-inner">
+            <Sparkles className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-fuchsia-300" />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1">
-              <span className="text-[11px] sm:text-xs font-bold text-white">99.4% Accuracy</span>
+              <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white truncate">99.4% Accuracy</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] text-purple-200/80 font-mono block">
-              Llama 3.3 & Qwen 2.5
+            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-purple-200/80 font-mono block truncate">
+              Llama 3.3 & Qwen
             </span>
           </div>
         </div>
@@ -622,16 +625,16 @@ export default function HeroRobotVisual() {
           delay: 0.8,
         }}
         whileHover={{ scale: 1.06 }}
-        className="absolute bottom-6 left-[-10px] sm:bottom-12 sm:left-[-6px] z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[180px] sm:max-w-[215px] transition-transform hidden xs:block cursor-pointer hover:border-purple-300/50"
+        className="absolute bottom-4 left-1 xs:bottom-6 xs:left-0 sm:bottom-12 sm:left-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[145px] xs:max-w-[180px] sm:max-w-[215px] transition-transform hidden xs:block cursor-pointer hover:border-purple-300/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-400/35 text-cyan-200 shadow-inner">
-            <Globe className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-cyan-300" />
+        <div className="flex items-center gap-2 xs:gap-2.5">
+          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-400/35 text-cyan-200 shadow-inner">
+            <Globe className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-cyan-300" />
           </div>
-          <div>
-            <span className="text-[11px] sm:text-xs font-bold text-white block">Live Web Search</span>
-            <span className="text-[9px] sm:text-[10px] text-purple-200/80 font-mono">
+          <div className="min-w-0">
+            <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white block truncate">Live Web Search</span>
+            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-purple-200/80 font-mono truncate block">
               Tavily Context RAG
             </span>
           </div>
@@ -651,16 +654,16 @@ export default function HeroRobotVisual() {
           delay: 1.1,
         }}
         whileHover={{ scale: 1.06 }}
-        className="absolute bottom-4 right-[-10px] sm:bottom-10 sm:right-[-6px] z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[180px] sm:max-w-[215px] transition-transform hidden xs:block cursor-pointer hover:border-purple-300/50"
+        className="absolute bottom-4 right-1 xs:bottom-4 xs:right-0 sm:bottom-10 sm:right-0 z-30 rounded-2xl border border-purple-300/25 bg-[#170A2E]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.55)] backdrop-blur-xl max-w-[145px] xs:max-w-[180px] sm:max-w-[215px] transition-transform hidden xs:block cursor-pointer hover:border-purple-300/50"
         onClick={() => router.push('/documents')}
       >
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-400/35 text-violet-200 shadow-inner">
-            <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-violet-300" />
+        <div className="flex items-center gap-2 xs:gap-2.5">
+          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-400/35 text-violet-200 shadow-inner">
+            <FileText className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-violet-300" />
           </div>
-          <div>
-            <span className="text-[11px] sm:text-xs font-bold text-white block">PDF.js & Vision</span>
-            <span className="text-[9px] sm:text-[10px] text-purple-200/80 font-mono">
+          <div className="min-w-0">
+            <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white block truncate">PDF.js & Vision</span>
+            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-purple-200/80 font-mono truncate block">
               100% In-Browser Privacy
             </span>
           </div>

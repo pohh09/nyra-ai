@@ -50,6 +50,11 @@ const DEFAULT_STARTER_TASKS: TaskItem[] = [
 
 let cachedUserId: string | null = null;
 
+function getStorageKey(userId?: string | null): string {
+  const uid = userId || cachedUserId;
+  return uid ? `nyra_tasks_${uid}` : TASKS_STORAGE_KEY;
+}
+
 async function getAuthUserId(): Promise<string | null> {
   if (cachedUserId) return cachedUserId;
   if (!isSupabaseConfigured()) return null;
@@ -69,12 +74,13 @@ export function setTaskActiveUser(userId: string | null): void {
   cachedUserId = userId;
 }
 
-export function getTasks(): TaskItem[] {
+export function getTasks(userId?: string): TaskItem[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(TASKS_STORAGE_KEY);
+    const key = getStorageKey(userId);
+    const raw = localStorage.getItem(key);
     if (!raw) {
-      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(DEFAULT_STARTER_TASKS));
+      localStorage.setItem(key, JSON.stringify(DEFAULT_STARTER_TASKS));
       return DEFAULT_STARTER_TASKS;
     }
     const parsed = JSON.parse(raw);
@@ -89,13 +95,14 @@ export function getTasks(): TaskItem[] {
   }
 }
 
-export function saveTasks(tasks: TaskItem[]): void {
+export function saveTasks(tasks: TaskItem[], userId?: string): void {
   if (typeof window === 'undefined') return;
   try {
+    const key = getStorageKey(userId);
     const safeTasks = Array.isArray(tasks)
       ? tasks.filter((t): t is TaskItem => Boolean(t && typeof t === 'object' && t.id && t.title))
       : [];
-    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(safeTasks));
+    localStorage.setItem(key, JSON.stringify(safeTasks));
     window.dispatchEvent(new CustomEvent('nyra_tasks_updated', { detail: safeTasks }));
   } catch (err) {
     console.error('Failed to save tasks to storage:', err);
@@ -104,7 +111,7 @@ export function saveTasks(tasks: TaskItem[]): void {
 
 export async function syncTasksWithCloud(userId: string): Promise<TaskItem[]> {
   if (!userId || !isSupabaseConfigured()) {
-    return getTasks();
+    return getTasks(userId);
   }
 
   cachedUserId = userId;
@@ -112,19 +119,19 @@ export async function syncTasksWithCloud(userId: string): Promise<TaskItem[]> {
   try {
     const cloudTasks = await fetchCloudTasks(userId);
     if (cloudTasks && cloudTasks.length > 0) {
-      saveTasks(cloudTasks);
+      saveTasks(cloudTasks, userId);
       return cloudTasks;
     }
 
     // Cloud is empty for this user: if we have starter/local tasks, migrate them to cloud
-    const local = getTasks();
+    const local = getTasks(userId);
     if (local.length > 0) {
       await migrateLocalTasksToCloud(userId, local);
     }
     return local;
   } catch (err) {
     console.error('Failed to sync tasks with Supabase:', err);
-    return getTasks();
+    return getTasks(userId);
   }
 }
 
@@ -143,7 +150,7 @@ export function createTask(params: {
   category?: string;
   tags?: string[];
 }, userId?: string): TaskItem {
-  const current = getTasks();
+  const current = getTasks(userId);
   const newTask: TaskItem = {
     id: `task_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     title: params.title.trim() || 'Untitled Task',
@@ -164,7 +171,7 @@ export function createTask(params: {
   };
 
   const updated = [newTask, ...current];
-  saveTasks(updated);
+  saveTasks(updated, userId);
 
   // Sync to Supabase in the background if authenticated
   const targetUid = userId || cachedUserId;
@@ -184,7 +191,7 @@ export function updateTask(
   updates: Partial<Omit<TaskItem, 'id' | 'createdAt'>>,
   userId?: string
 ): TaskItem | null {
-  const current = getTasks();
+  const current = getTasks(userId);
   let updatedTask: TaskItem | null = null;
 
   const updatedList = current.map((t) => {
@@ -200,7 +207,7 @@ export function updateTask(
   });
 
   if (updatedTask) {
-    saveTasks(updatedList);
+    saveTasks(updatedList, userId);
 
     // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
@@ -217,10 +224,10 @@ export function updateTask(
 }
 
 export function deleteTask(id: string, userId?: string): boolean {
-  const current = getTasks();
+  const current = getTasks(userId);
   const filtered = current.filter((t) => t.id !== id);
   if (filtered.length !== current.length) {
-    saveTasks(filtered);
+    saveTasks(filtered, userId);
 
     // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
@@ -238,7 +245,7 @@ export function deleteTask(id: string, userId?: string): boolean {
 }
 
 export function toggleTaskStatus(id: string, userId?: string): TaskItem | null {
-  const current = getTasks();
+  const current = getTasks(userId);
   const task = current.find((t) => t.id === id);
   if (!task) return null;
 

@@ -43,7 +43,7 @@ export default function WebSearchCard({ sources, isSearching }: WebSearchCardPro
         <span>Sources ({sources.length})</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-2 overflow-x-auto no-scrollbar touch-pan-x -mx-1 sm:mx-0 px-1 sm:px-0 pb-1 sm:pb-0">
         {sources.map((src, index) => {
           let domain = src.domain || '';
           if (!domain) {
@@ -62,7 +62,7 @@ export default function WebSearchCard({ sources, isSearching }: WebSearchCardPro
               href={src.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group p-2.5 rounded-xl border border-[#E8E4EF] dark:border-purple-500/25 bg-[#FFFFFF] dark:bg-[#140e26] hover:bg-[#F5F3F9] dark:hover:bg-[#1e1538] hover:border-[#8B6FC9]/40 dark:hover:border-purple-400/40 transition-all flex flex-col justify-between gap-1.5 shadow-sm cursor-pointer"
+              className="group p-2.5 rounded-xl border border-[#E8E4EF] dark:border-purple-500/25 bg-[#FFFFFF] dark:bg-[#140e26] hover:bg-[#F5F3F9] dark:hover:bg-[#1e1538] hover:border-[#8B6FC9]/40 dark:hover:border-purple-400/40 transition-all flex flex-col justify-between gap-1.5 shadow-sm cursor-pointer min-w-[210px] max-w-[260px] sm:min-w-0 sm:max-w-none shrink-0 sm:shrink active:scale-[0.98]"
             >
               <div className="flex items-center gap-2 text-[11px] text-[#686477] dark:text-purple-300/80 group-hover:text-[#292633] dark:group-hover:text-purple-200 transition">
                 <span className="w-4 h-4 rounded-full bg-[#EEE8FA] dark:bg-[#241945] border border-[#8B6FC9]/30 dark:border-purple-400/30 flex items-center justify-center text-[9px] font-mono text-[#8B6FC9] dark:text-purple-200 font-bold shrink-0">

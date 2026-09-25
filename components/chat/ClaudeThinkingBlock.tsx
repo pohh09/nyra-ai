@@ -9,6 +9,7 @@ interface ClaudeThinkingBlockProps {
   loading?: boolean;
   thoughtContent?: string;
   initialElapsedSeconds?: number;
+  thinkingText?: string;
 }
 
 export default function ClaudeThinkingBlock({
@@ -16,6 +17,7 @@ export default function ClaudeThinkingBlock({
   loading = false,
   thoughtContent,
   initialElapsedSeconds = 2,
+  thinkingText,
 }: ClaudeThinkingBlockProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(initialElapsedSeconds);
@@ -70,7 +72,9 @@ export default function ClaudeThinkingBlock({
         {/* Text Label */}
         <span className="font-normal italic tracking-tight">
           {isActivelyThinking
-            ? `Thinking${elapsedSeconds > 0 ? ` (${elapsedSeconds}s)` : '...'}`
+            ? (thinkingText
+                ? `${thinkingText.replace(/\.\.\.$/, '')}${elapsedSeconds > 0 ? ` (${elapsedSeconds}s)` : '...'}`
+                : `Thinking${elapsedSeconds > 0 ? ` (${elapsedSeconds}s)` : '...'}`)
             : `Thought for ${Math.max(1, elapsedSeconds)} ${elapsedSeconds === 1 ? 'second' : 'seconds'}`}
         </span>
 

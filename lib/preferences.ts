@@ -2,7 +2,7 @@ import { UserPreferences } from './types';
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   theme: 'dark',
-  accentColor: 'blue',
+  accentColor: 'purple',
   fontSize: 'normal',
   defaultModel: 'qwen/qwen3.6-27b',
   voiceRate: 1,
@@ -17,7 +17,7 @@ export function loadLocalPreferences(): UserPreferences {
     if (!raw) {
       // Migrate legacy separate keys if present
       const theme = (localStorage.getItem('theme') as any) || 'dark';
-      const accentColor = localStorage.getItem('nyra_accent') || 'blue';
+      const accentColor = localStorage.getItem('nyra_accent') || 'purple';
       const fontSize = (localStorage.getItem('nyra_font_size') as any) || 'normal';
       const defaultModel = localStorage.getItem('nyra_selected_model') || 'qwen/qwen3.6-27b';
       const voiceName = localStorage.getItem('nyra_selected_voice') || undefined;
@@ -60,6 +60,7 @@ export function saveLocalPreferences(prefs: Partial<UserPreferences>): UserPrefe
     }
     if (prefs.fontSize) {
       localStorage.setItem('nyra_font_size', prefs.fontSize);
+      document.documentElement.setAttribute('data-font-size', prefs.fontSize);
     }
     if (prefs.defaultModel) {
       localStorage.setItem('nyra_selected_model', prefs.defaultModel);

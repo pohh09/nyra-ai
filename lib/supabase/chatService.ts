@@ -149,6 +149,10 @@ export async function updateCloudConversationTitle(userId: string, conversationI
 export async function deleteCloudConversation(userId: string, conversationId: string): Promise<boolean> {
   if (!isSupabaseConfigured() || !userId) return false;
   try {
+    try {
+      await supabase.from('messages').delete().eq('conversation_id', conversationId);
+    } catch { }
+
     const { error } = await supabase
       .from('conversations')
       .delete()
@@ -191,6 +195,10 @@ export async function toggleArchiveCloudConversation(userId: string, conversatio
 export async function clearAllUserConversations(userId: string): Promise<boolean> {
   if (!isSupabaseConfigured() || !userId) return false;
   try {
+    try {
+      await supabase.from('messages').delete().eq('user_id', userId);
+    } catch { }
+
     const { error } = await supabase
       .from('conversations')
       .delete()

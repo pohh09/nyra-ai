@@ -108,7 +108,7 @@ export default function DocsPage() {
                 DOCUMENTATION
               </p>
 
-              <h1 className="text-[48px] sm:text-[68px] md:text-[88px] font-semibold tracking-[-0.08em] leading-[0.9] text-[#292633] dark:text-white">
+              <h1 className="text-4xl 2xs:text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.06em] sm:tracking-[-0.08em] leading-[0.95] sm:leading-[0.9] text-[#292633] dark:text-white break-words">
                 Learn how
                 <br />
                 to build with

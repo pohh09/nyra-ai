@@ -178,24 +178,24 @@ export default function VoiceModeModal({
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.92 }}
-          className="w-full max-w-xl flex flex-col items-center justify-between min-h-[480px] sm:min-h-[560px] max-h-[90dvh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-[#E8E4EF] dark:border-purple-400/25 bg-[#FFFFFF] dark:bg-[#130f24] text-[#292633] dark:text-white shadow-2xl relative"
+          className="w-full max-w-xl flex flex-col items-center justify-between min-h-[480px] sm:min-h-[560px] max-h-[90dvh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-[#E7B8CF] dark:border-pink-500/25 bg-[#FAF8FB] dark:bg-[#16091F] text-[#261827] dark:text-white shadow-2xl relative"
         >
           {/* Header Bar */}
-          <div className="w-full flex items-center justify-between border-b border-[#E8E4EF] dark:border-purple-400/15 pb-3 sm:pb-4">
+          <div className="w-full flex items-center justify-between border-b border-[#E7B8CF] dark:border-pink-500/15 pb-3 sm:pb-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#8B6FC9] dark:text-purple-400" />
-              <span className="font-bold text-xs sm:text-sm tracking-wide text-[#292633] dark:text-white">Nyra Voice Interaction</span>
+              <Sparkles className="w-5 h-5 text-[#B31372] dark:text-pink-400" />
+              <span className="font-bold text-xs sm:text-sm tracking-wide text-[#261827] dark:text-white">Nyra Voice Interaction</span>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Speed Selector */}
-              <div className="flex items-center gap-0.5 sm:gap-1 bg-[#F5F3F9] dark:bg-[#07050d] border border-[#E8E4EF] dark:border-purple-400/20 rounded-xl p-1 text-xs">
+              <div className="flex items-center gap-0.5 sm:gap-1 bg-[#F4DCE9] dark:bg-[#08020D] border border-[#E7B8CF] dark:border-pink-500/20 rounded-xl p-1 text-xs">
                 {[0.75, 1, 1.25, 1.5].map((rate) => (
                   <button
                     key={rate}
                     onClick={() => setSpeechRate(rate)}
                     className={`px-1.5 sm:px-2 py-0.5 rounded-lg font-semibold transition cursor-pointer text-[11px] sm:text-xs ${
-                      speechRate === rate ? 'bg-[#8B6FC9] text-white' : 'text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white'
+                      speechRate === rate ? 'bg-gradient-to-r from-[#E52A83] to-[#B31372] text-white' : 'text-[#6E6072] hover:text-[#261827] dark:text-slate-400 dark:hover:text-white'
                     }`}
                   >
                     {rate}x
@@ -205,7 +205,7 @@ export default function VoiceModeModal({
 
               <button
                 onClick={onClose}
-                className="p-1.5 sm:p-2 rounded-xl bg-[#F5F3F9] hover:bg-[#EEE8FA] dark:bg-white/[0.06] dark:hover:bg-white/[0.12] text-[#686477] hover:text-[#292633] dark:text-slate-300 dark:hover:text-white transition cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-xl bg-[#F4DCE9] hover:bg-[#E7B8CF] dark:bg-white/[0.06] dark:hover:bg-white/[0.12] text-[#6E6072] hover:text-[#261827] dark:text-slate-300 dark:hover:text-white transition cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -233,7 +233,7 @@ export default function VoiceModeModal({
                       repeatType: 'reverse',
                       ease: 'easeInOut',
                     }}
-                    className="w-1.5 bg-gradient-to-t from-[#8B6FC9] via-[#7E9AC7] to-[#795BB8] rounded-full h-full origin-bottom"
+                    className="w-1.5 bg-gradient-to-t from-[#E52A83] via-[#FF4FA3] to-[#B31372] rounded-full h-full origin-bottom"
                   />
                 ))}
               </div>
@@ -247,29 +247,29 @@ export default function VoiceModeModal({
                   <span>{permissionError}</span>
                 </div>
               ) : isListening ? (
-                <div className="flex flex-col items-center gap-1 text-[#8B6FC9] dark:text-purple-300 text-xs font-semibold font-mono">
+                <div className="flex flex-col items-center gap-1 text-[#B31372] dark:text-pink-300 text-xs font-semibold font-mono">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#C77B7B] animate-ping" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping" />
                     <span>Listening... ({formatTimer(recordingSeconds)})</span>
                   </div>
                 </div>
               ) : speaking ? (
-                <div className="flex items-center gap-2 text-[#6FA58A] dark:text-emerald-400 text-xs font-semibold font-mono animate-pulse">
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-semibold font-mono animate-pulse">
                   <Volume2 size={16} />
                   <span>Nyra is speaking...</span>
                 </div>
               ) : (
-                <p className="text-xs text-[#686477] dark:text-slate-400">Click the microphone to start talking</p>
+                <p className="text-xs text-[#6E6072] dark:text-slate-400">Click the microphone to start talking</p>
               )}
             </div>
           </div>
 
           {/* Live Transcript / Speech Preview */}
-          <div className="w-full bg-[#F5F3F9] dark:bg-[#090614] border border-[#E8E4EF] dark:border-purple-400/20 rounded-2xl p-4 min-h-[90px] max-h-[120px] overflow-y-auto mb-4 text-center text-sm font-medium scrollbar-thin">
+          <div className="w-full bg-[#F4DCE9] dark:bg-[#08020D] border border-[#E7B8CF] dark:border-pink-500/20 rounded-2xl p-4 min-h-[90px] max-h-[120px] overflow-y-auto mb-4 text-center text-sm font-medium scrollbar-thin">
             {transcript ? (
-              <p className="text-[#292633] dark:text-purple-200">{transcript}</p>
+              <p className="text-[#261827] dark:text-pink-200">{transcript}</p>
             ) : (
-              <p className="text-[#92909B] dark:text-slate-500 italic text-xs">
+              <p className="text-[#6E6072] dark:text-slate-500 italic text-xs">
                 {isListening ? 'Speak now...' : 'Your speech transcript will appear here'}
               </p>
             )}
@@ -281,7 +281,7 @@ export default function VoiceModeModal({
             {isListening && (
               <button
                 onClick={handleCancelVoice}
-                className="px-4 py-2 rounded-xl bg-[#EEE8FA] hover:bg-[#E8E4EF] dark:bg-white/[0.06] dark:hover:bg-white/[0.12] text-xs text-[#292633] dark:text-slate-300 transition cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#F4DCE9] hover:bg-[#E7B8CF] dark:bg-white/[0.06] dark:hover:bg-white/[0.12] text-xs text-[#261827] dark:text-slate-300 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -292,8 +292,8 @@ export default function VoiceModeModal({
               onClick={isListening ? stopListening : startListening}
               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all transform hover:scale-105 shadow-xl cursor-pointer ${
                 isListening
-                  ? 'bg-[#C77B7B] hover:bg-[#A85A5A] text-white shadow-rose-500/50 animate-pulse'
-                  : 'bg-[#8B6FC9] hover:bg-[#795BB8] text-white font-bold shadow-[#8B6FC9]/30'
+                  ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-500/50 animate-pulse'
+                  : 'bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 text-white font-bold shadow-pink-500/30'
               }`}
             >
               {isListening ? <Square size={20} className="fill-white" /> : <Mic size={22} />}

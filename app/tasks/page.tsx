@@ -354,7 +354,13 @@ function CustomReminderModal({
 export default function TasksPage() {
   const router = useRouter();
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [activeFilter, setActiveFilter] = useState<ViewFilter>('today');
@@ -972,7 +978,7 @@ export default function TasksPage() {
   }, [roadmapGroups, selectedRoadmapDay]);
 
   return (
-    <div className="tasks-page-root min-h-screen w-full bg-[#07050d] text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
+    <div className="tasks-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
       {/* Container */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         {/* Top Header */}
