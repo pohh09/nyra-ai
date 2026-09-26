@@ -2,7 +2,7 @@ import { StreamProviderOptions } from '../types';
 import { extractImageContext } from '../../multimodal/contract';
 
 export async function streamAnthropic(options: StreamProviderOptions, onChunk: (text: string) => void): Promise<void> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
   if (!apiKey) {
     throw new Error('Anthropic API key is not configured.');
   }

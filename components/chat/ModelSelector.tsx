@@ -83,11 +83,12 @@ export default function ModelSelector({
   };
 
   const handleSelect = (model: AIModelConfig) => {
-    const isConfigured = configuredProviders[model.provider] ?? false;
+    const hasAnyConfigured = Object.values(configuredProviders).some(Boolean);
+    const isConfigured = Boolean(configuredProviders[model.provider] || hasAnyConfigured);
     if (!isConfigured) {
       addToast({
         type: 'error',
-        title: `${model.providerDisplayName} API key not configured in environment`,
+        title: `AI provider API keys not configured in environment`,
       });
       return;
     }
@@ -100,7 +101,8 @@ export default function ModelSelector({
     });
   };
 
-  const isSelectedConfigured = configuredProviders[selectedModel.provider] ?? true;
+  const hasAnyProviderActive = Object.values(configuredProviders).some(Boolean);
+  const isSelectedConfigured = Boolean(configuredProviders[selectedModel.provider] || hasAnyProviderActive);
   const effectiveModel = isSelectedConfigured ? selectedModel : getModelConfig(DEFAULT_MODEL_ID);
 
   return (
@@ -183,7 +185,7 @@ export default function ModelSelector({
                   (selectedModelId === 'llama-3.3-70b-versatile' && model.id === 'advanced') ||
                   (selectedModelId === 'deepseek-r1-distill-llama-70b' && model.id === 'reasoning');
 
-                const isConfigured = configuredProviders[model.provider] ?? false;
+                const isConfigured = Boolean(configuredProviders[model.provider] || hasAnyProviderActive);
 
                 return (
                   <button

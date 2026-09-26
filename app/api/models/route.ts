@@ -1,5 +1,14 @@
 import { NextResponse } from 'next/server';
-import { isProviderConfigured, DEFAULT_MODEL_ID, USER_FACING_MODELS } from '@/lib/ai/models';
+import {
+  isProviderConfigured,
+  USER_FACING_MODELS,
+  AI_MODELS,
+  resolveActiveModelConfig,
+} from '@/lib/ai/models';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const runtime = 'nodejs';
 
 export async function GET() {
   const configuredProviders = {
@@ -10,13 +19,25 @@ export async function GET() {
     openrouter: isProviderConfigured('openrouter'),
   };
 
-  const availableModels = USER_FACING_MODELS.filter(
-    (m) => configuredProviders[m.provider]
-  );
+  // Determine available models across all configured providers
+  const availableModels = configuredProviders.groq
+    ? USER_FACING_MODELS
+    : AI_MODELS.filter((m) => configuredProviders[m.provider]);
 
-  return NextResponse.json({
-    configuredProviders,
-    defaultModelId: configuredProviders['groq'] ? DEFAULT_MODEL_ID : availableModels[0]?.id || DEFAULT_MODEL_ID,
-    availableModels,
-  });
+  const activeModel = resolveActiveModelConfig();
+
+  return NextResponse.json(
+    {
+      configuredProviders,
+      defaultModelId: activeModel.id,
+      availableModels,
+      totalConfigured: Object.values(configuredProviders).filter(Boolean).length,
+    },
+    {
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    }
+  );
 }

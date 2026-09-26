@@ -3,7 +3,7 @@ import { StreamProviderOptions } from '../types';
 import { extractImageContext } from '../../multimodal/contract';
 
 export async function streamGroq(options: StreamProviderOptions, onChunk: (text: string) => void): Promise<void> {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = (process.env.GROQ_API_KEY || process.env.GROQ_KEY || '').trim();
   if (!apiKey) {
     throw new Error('Groq API key is not configured.');
   }

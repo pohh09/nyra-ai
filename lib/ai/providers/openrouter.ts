@@ -3,7 +3,7 @@ import { StreamProviderOptions } from '../types';
 import { extractImageContext } from '../../multimodal/contract';
 
 export async function streamOpenRouter(options: StreamProviderOptions, onChunk: (text: string) => void): Promise<void> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = (process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY || '').trim();
   if (!apiKey) {
     throw new Error('OpenRouter API key is not configured.');
   }

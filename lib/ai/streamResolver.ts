@@ -318,7 +318,7 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
   // Safety guard: if absolutely no providers are configured in the environment
   if (!isProviderConfigured(modelConfig.provider)) {
     return new Response(
-      `No active AI providers are configured. Please check your GROQ_API_KEY or other provider environment variables.`,
+      `No active AI providers are configured. Please check your GROQ_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY in your environment settings (visit /api/diagnostics for configuration status).`,
       { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }
     );
   }

@@ -354,29 +354,48 @@ export function getProviderEnvKey(provider: AIProvider): string {
 export function isProviderConfigured(provider: AIProvider): boolean {
   if (typeof process === 'undefined' || !process.env) return false;
   switch (provider) {
-    case 'groq':
-      return Boolean(process.env.GROQ_API_KEY);
-    case 'openai':
-      return Boolean(process.env.OPENAI_API_KEY);
-    case 'anthropic':
-      return Boolean(process.env.ANTHROPIC_API_KEY);
-    case 'gemini':
-      return Boolean(
+    case 'groq': {
+      const key = process.env.GROQ_API_KEY || process.env.GROQ_KEY;
+      return Boolean(key && key.trim().length > 0);
+    }
+    case 'openai': {
+      const key = process.env.OPENAI_API_KEY;
+      return Boolean(key && key.trim().length > 0);
+    }
+    case 'anthropic': {
+      const key = process.env.ANTHROPIC_API_KEY;
+      return Boolean(key && key.trim().length > 0);
+    }
+    case 'gemini': {
+      const key =
         process.env.GEMINI_API_KEY ||
         process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
         process.env.GOOGLE_API_KEY ||
-        process.env.NEXT_PUBLIC_GEMINI_API_KEY
-      );
-    case 'openrouter':
-      return Boolean(process.env.OPENROUTER_API_KEY);
+        process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+      return Boolean(key && key.trim().length > 0);
+    }
+    case 'openrouter': {
+      const key = process.env.OPENROUTER_API_KEY || process.env.OPEN_ROUTER_API_KEY;
+      return Boolean(key && key.trim().length > 0);
+    }
     default:
       return false;
   }
 }
 
+export function hasAnyActiveProvider(): boolean {
+  return (
+    isProviderConfigured('groq') ||
+    isProviderConfigured('openai') ||
+    isProviderConfigured('anthropic') ||
+    isProviderConfigured('gemini') ||
+    isProviderConfigured('openrouter')
+  );
+}
+
 /**
  * Safely resolves an active, configured model.
- * If the requested model is unconfigured (e.g. OpenAI when OPENAI_API_KEY is missing),
+ * If the requested model is unconfigured (e.g. Groq missing but Gemini/OpenAI configured),
  * it seamlessly falls back to the primary working configured model.
  * When needsVision is true, automatically routes to a configured vision model (Gemini / OpenAI).
  */
@@ -393,7 +412,7 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
     if (isProviderConfigured('gemini')) {
       return (
         AI_MODELS.find((m) => m.provider === 'gemini' && m.supportsVision) ||
-        getModelConfig('google-gemini-2-0-flash')
+        getModelConfig('google-gemini-3-6-flash')
       );
     }
     if (isProviderConfigured('openai')) {
@@ -408,6 +427,12 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
         getModelConfig('openrouter-auto')
       );
     }
+    if (isProviderConfigured('anthropic')) {
+      return (
+        AI_MODELS.find((m) => m.provider === 'anthropic' && m.supportsVision) ||
+        getModelConfig('anthropic-claude-3-5-haiku')
+      );
+    }
   }
 
   // If the requested model belongs to a configured provider, use it
@@ -415,15 +440,34 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
     return requested;
   }
 
-  // Otherwise find the best available model among configured providers
-  const configuredModels = USER_FACING_MODELS.filter((m) => isProviderConfigured(m.provider));
+  // If a generic mode was requested (e.g. fast, balanced, advanced, reasoning) or default,
+  // first check user facing models with configured providers
+  const configuredFacingModels = USER_FACING_MODELS.filter((m) => isProviderConfigured(m.provider));
+  if (configuredFacingModels.length > 0) {
+    if (requested) {
+      const match = configuredFacingModels.find((m) => m.id === requested.id);
+      if (match) return match;
+    }
+    const balanced = configuredFacingModels.find((m) => m.id === 'balanced');
+    if (balanced) return balanced;
+    return configuredFacingModels[0];
+  }
 
+  // If Groq is not configured, fall back to ANY configured provider in AI_MODELS
+  const configuredModels = AI_MODELS.filter((m) => isProviderConfigured(m.provider));
   if (configuredModels.length > 0) {
-    const qwen = configuredModels.find((m) => m.id === 'balanced' || m.modelIdentifier === 'qwen/qwen3.6-27b');
-    if (qwen) return qwen;
+    // Priority order: Gemini -> OpenAI -> Anthropic -> OpenRouter
+    const gemini = configuredModels.find((m) => m.provider === 'gemini');
+    if (gemini) return gemini;
+    const openai = configuredModels.find((m) => m.provider === 'openai');
+    if (openai) return openai;
+    const anthropic = configuredModels.find((m) => m.provider === 'anthropic');
+    if (anthropic) return anthropic;
+    const openrouter = configuredModels.find((m) => m.provider === 'openrouter');
+    if (openrouter) return openrouter;
     return configuredModels[0];
   }
 
-  // Fallback to default Nyra model
+  // Fallback to default Nyra model structure if no providers configured yet
   return USER_FACING_MODELS[1];
 }
