@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase/client';
+import { supabase, isSupabaseConfigured, setDynamicSupabaseConfig } from '@/lib/supabase/client';
 import { UserProfile, UserPreferences } from '@/lib/types';
 import { loadLocalPreferences, saveLocalPreferences } from '@/lib/preferences';
 import {
@@ -84,7 +84,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
   const [guestCount, setGuestCount] = useState(0);
-  const configured = isSupabaseConfigured();
+  const [isCloudConfigured, setIsCloudConfigured] = useState(isSupabaseConfigured());
+  const configured = isCloudConfigured || isSupabaseConfigured();
+
+  // Dynamically initialize Supabase if environment variables are provided at server runtime
+  useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      fetch('/api/auth/config')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.configured && data.supabaseUrl && data.supabaseAnonKey) {
+            setDynamicSupabaseConfig(data.supabaseUrl, data.supabaseAnonKey);
+            setIsCloudConfigured(true);
+          }
+        })
+        .catch((err) => console.warn('Auth config initialization notice:', err));
+    }
+  }, []);
 
   const syncActiveUserServices = useCallback((userId: string | null) => {
     setMemoryActiveUser(userId);
@@ -370,7 +386,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Local authentication fallback ONLY when Supabase is not configured
+    // In hosted production environments, NEVER silently fall back to local localStorage accounts
+    const isHostedEnv = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    if (isHostedEnv) {
+      return {
+        success: false,
+        error: 'Cloud authentication is unconfigured in this production environment. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in Vercel.',
+      };
+    }
+
+    // Local authentication fallback ONLY when Supabase is not configured in local development
     const localRes = await localSignIn(cleanEmail, password);
     if (localRes.success && localRes.user) {
       const authUser: AuthUser = {
@@ -494,7 +519,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Local Account Creation fallback ONLY when Supabase is not configured
+    // In hosted production environments, NEVER silently fall back to local localStorage accounts
+    const isHostedEnv = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    if (isHostedEnv) {
+      return {
+        success: false,
+        error: 'Cloud authentication is unconfigured in this production environment. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in Vercel.',
+      };
+    }
+
+    // Local Account Creation fallback ONLY when Supabase is not configured in local development
     const localRes = await localSignUp(cleanEmail, password, cleanDisplayName);
     if (localRes.success && localRes.user) {
       const authUser: AuthUser = {

@@ -40,10 +40,49 @@ export async function GET(req: Request) {
     },
   ];
 
+  const rawSupabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+  const rawSupabaseKey = (
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    ''
+  ).trim();
+
+  let supabaseHost: string | null = null;
+  try {
+    if (rawSupabaseUrl) {
+      supabaseHost = new URL(rawSupabaseUrl).host;
+    }
+  } catch {}
+
+  const supabaseConfigured = Boolean(
+    rawSupabaseUrl &&
+    rawSupabaseKey &&
+    rawSupabaseUrl !== 'https://your-project.supabase.co' &&
+    rawSupabaseKey !== 'your-anon-key' &&
+    !rawSupabaseUrl.includes('placeholder')
+  );
+
+  const authMode = supabaseConfigured ? 'supabase' : 'local_fallback';
+
+  const adminEmailsRaw = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '').trim();
+  const adminEmailsList = adminEmailsRaw
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const expectedAdminEmail = 'pooja@gmail.com';
+  const expectedAdminEmailPresent = adminEmailsList.includes(expectedAdminEmail);
+
   const services = {
-    supabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()),
-    supabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()),
+    supabaseConfigured,
+    supabaseHost,
+    authMode,
+    supabaseUrl: Boolean(rawSupabaseUrl),
+    supabaseAnonKey: Boolean(rawSupabaseKey),
     supabaseServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
+    adminConfigured: adminEmailsList.length > 0,
+    expectedAdminEmailPresent,
     tavily: Boolean(process.env.TAVILY_API_KEY?.trim()),
     cloudinary: Boolean(
       (process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)?.trim()
@@ -65,6 +104,12 @@ export async function GET(req: Request) {
     lines.push(`${provCol}${varCol}${valCol}`);
   }
 
+  lines.push('\nService        Status                     Details');
+  lines.push('-----------------------------------------------------');
+  lines.push(`Supabase Auth  ${supabaseConfigured ? 'CONNECTED' : 'UNCONFIGURED'}               Host: ${supabaseHost || 'NONE'}`);
+  lines.push(`Auth Mode      ${authMode.toUpperCase()}                  ${supabaseConfigured ? 'Cloud PostgreSQL' : 'Local Storage Fallback'}`);
+  lines.push(`Admin Config   ${expectedAdminEmailPresent ? 'YES' : 'NO'}                        pooja@gmail.com recognized`);
+
   const tableText = lines.join('\n');
 
   // If text format requested via ?format=text or header
@@ -81,7 +126,10 @@ export async function GET(req: Request) {
 
   return NextResponse.json(
     {
-      status: anyConfigured ? 'ok' : 'no_active_providers',
+      status: anyConfigured && supabaseConfigured ? 'ok' : 'degraded',
+      supabaseConfigured,
+      supabaseHost,
+      authMode,
       configuredCount,
       totalProviders: providers.length,
       providers,

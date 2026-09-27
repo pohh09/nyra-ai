@@ -1,23 +1,44 @@
 import { createBrowserClient } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const envSupabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
+const envSupabaseAnonKey = (
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  ''
+).trim();
+
+let dynamicSupabaseUrl = '';
+let dynamicSupabaseAnonKey = '';
+let clientInstance: any = null;
+
+export function setDynamicSupabaseConfig(url: string, anonKey: string): void {
+  if (url && anonKey) {
+    dynamicSupabaseUrl = url.trim();
+    dynamicSupabaseAnonKey = anonKey.trim();
+    clientInstance = createBrowserClient(dynamicSupabaseUrl, dynamicSupabaseAnonKey);
+  }
+}
 
 export function isSupabaseConfigured(): boolean {
+  const url = dynamicSupabaseUrl || envSupabaseUrl;
+  const key = dynamicSupabaseAnonKey || envSupabaseAnonKey;
   return Boolean(
-    supabaseUrl &&
-    supabaseAnonKey &&
-    supabaseUrl !== 'https://your-project.supabase.co' &&
-    supabaseAnonKey !== 'your-anon-key' &&
-    !supabaseUrl.includes('placeholder')
+    url &&
+    key &&
+    url !== 'https://your-project.supabase.co' &&
+    key !== 'your-anon-key' &&
+    !url.includes('placeholder')
   );
 }
 
-let clientInstance: any = null;
-
 export function getSupabaseBrowserClient(): SupabaseClient {
   if (clientInstance) return clientInstance;
+
+  const url = dynamicSupabaseUrl || envSupabaseUrl;
+  const key = dynamicSupabaseAnonKey || envSupabaseAnonKey;
 
   if (!isSupabaseConfigured()) {
     // Safe proxy client that avoids throwing websocket/network errors when unconfigured
@@ -28,8 +49,14 @@ export function getSupabaseBrowserClient(): SupabaseClient {
             getSession: async () => ({ data: { session: null }, error: null }),
             getUser: async () => ({ data: { user: null }, error: null }),
             onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-            signInWithPassword: async () => ({ data: { user: null, session: null }, error: { message: 'Supabase unconfigured' } }),
-            signUp: async () => ({ data: { user: null, session: null }, error: { message: 'Supabase unconfigured' } }),
+            signInWithPassword: async () => ({
+              data: { user: null, session: null },
+              error: { message: 'Supabase authentication is not configured in this environment.' },
+            }),
+            signUp: async () => ({
+              data: { user: null, session: null },
+              error: { message: 'Supabase authentication is not configured in this environment.' },
+            }),
             signOut: async () => ({ error: null }),
           };
         }
@@ -45,6 +72,7 @@ export function getSupabaseBrowserClient(): SupabaseClient {
               in: () => chainable,
               order: () => chainable,
               single: async () => ({ data: null, error: null }),
+              maybeSingle: async () => ({ data: null, error: null }),
               then: (resolve: any) => Promise.resolve({ data: [], error: null }).then(resolve),
             };
             return chainable;
@@ -60,7 +88,7 @@ export function getSupabaseBrowserClient(): SupabaseClient {
     return clientInstance;
   }
 
-  clientInstance = createBrowserClient(supabaseUrl, supabaseAnonKey);
+  clientInstance = createBrowserClient(url, key);
   return clientInstance;
 }
 
