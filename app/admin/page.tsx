@@ -74,7 +74,7 @@ interface DisplayUserRow {
 
 export default function AdminPage() {
   const router = useRouter();
-  const { user, profile, isLoading: authLoading } = useAuth();
+  const { user, profile, session, isLoading: authLoading } = useAuth();
   const { addToast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -103,9 +103,14 @@ export default function AdminPage() {
     setAccessDenied(false);
 
     try {
+      const headers: Record<string, string> = {};
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+
       const [statsRes, usersRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/users'),
+        fetch('/api/admin/stats', { headers }),
+        fetch('/api/admin/users', { headers }),
       ]);
 
       if (statsRes.status === 401 || statsRes.status === 403 || usersRes.status === 401 || usersRes.status === 403) {
@@ -259,7 +264,11 @@ export default function AdminPage() {
     if (u.type === 'Registered') {
       setLoadingDetail(true);
       try {
-        const res = await fetch(`/api/admin/users?id=${encodeURIComponent(u.id)}`);
+        const headers: Record<string, string> = {};
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`;
+        }
+        const res = await fetch(`/api/admin/users?id=${encodeURIComponent(u.id)}`, { headers });
         if (res.ok) {
           const data = await res.json();
           setSelectedUserStats({

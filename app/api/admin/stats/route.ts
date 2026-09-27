@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+
     let supabase: any;
 
     if (supabaseServiceKey) {
@@ -34,6 +37,13 @@ export async function GET(request: NextRequest) {
           },
           setAll() {},
         },
+        global: bearerToken
+          ? {
+              headers: {
+                Authorization: `Bearer ${bearerToken}`,
+              },
+            }
+          : undefined,
       });
     }
 

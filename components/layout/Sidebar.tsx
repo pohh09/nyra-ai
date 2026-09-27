@@ -501,7 +501,7 @@ export default function Sidebar({
                   <span>Settings</span>
                 </button>
 
-                {(profile?.role === 'admin' || user?.email?.toLowerCase() === 'pooja@gmail.com') && (
+                {!isGuest && user?.email?.toLowerCase() === 'pooja@gmail.com' && (
                   <Link
                     href="/admin"
                     onClick={() => setUserMenuOpen(false)}
