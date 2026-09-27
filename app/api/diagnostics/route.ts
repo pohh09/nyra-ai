@@ -124,6 +124,20 @@ export async function GET(req: Request) {
     });
   }
 
+  const detectedEnvVarNames = Object.keys(process.env)
+    .filter((k) => /SUPABASE|AUTH|GROQ|OPENAI|ANTHROPIC|GEMINI|OPENROUTER|ADMIN/i.test(k))
+    .sort();
+
+  const vercelMetadata = {
+    vercelEnv: process.env.VERCEL_ENV || null,
+    vercelUrl: process.env.VERCEL_URL || null,
+    projectProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL || null,
+    gitRepo: process.env.VERCEL_GIT_REPO_SLUG || null,
+    gitOwner: process.env.VERCEL_GIT_REPO_OWNER || null,
+    gitCommit: process.env.VERCEL_GIT_COMMIT_SHA ? process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7) : null,
+    gitRef: process.env.VERCEL_GIT_COMMIT_REF || null,
+  };
+
   return NextResponse.json(
     {
       status: anyConfigured && supabaseConfigured ? 'ok' : 'degraded',
@@ -134,6 +148,8 @@ export async function GET(req: Request) {
       totalProviders: providers.length,
       providers,
       services,
+      detectedEnvVarNames,
+      vercelMetadata,
       diagnosticReport: tableText,
       timestamp: new Date().toISOString(),
     },
