@@ -128,6 +128,17 @@ export async function GET(req: Request) {
     .filter((k) => /SUPABASE|AUTH|GROQ|OPENAI|ANTHROPIC|GEMINI|OPENROUTER|ADMIN/i.test(k))
     .sort();
 
+  const envVarDetails: Record<string, { exists: boolean; length: number; prefix: string; typeof: string }> = {};
+  for (const name of ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY', 'GROQ_API_KEY', 'ADMIN_EMAILS']) {
+    const val = process.env[name];
+    envVarDetails[name] = {
+      exists: name in process.env,
+      length: typeof val === 'string' ? val.length : 0,
+      prefix: typeof val === 'string' ? val.slice(0, 5) : '',
+      typeof: typeof val,
+    };
+  }
+
   const vercelMetadata = {
     vercelEnv: process.env.VERCEL_ENV || null,
     vercelUrl: process.env.VERCEL_URL || null,
@@ -149,6 +160,7 @@ export async function GET(req: Request) {
       providers,
       services,
       detectedEnvVarNames,
+      envVarDetails,
       vercelMetadata,
       diagnosticReport: tableText,
       timestamp: new Date().toISOString(),
