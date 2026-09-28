@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Plus, ArrowUp, Square, Mic, Globe } from 'lucide-react';
+import { Plus, ArrowUp, Square, Mic, Globe, Image as ImageIcon, FileText } from 'lucide-react';
 
 type Props = {
   value: string;
@@ -196,13 +196,15 @@ export default function ChatInput({
                 </button>
 
                 {showToolsMenu && (
-                  <div className="absolute bottom-12 left-0 w-56 rounded-2xl border border-[#E8E4EF] dark:border-white/15 bg-white dark:bg-[#161224] shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-2xl animate-[fadeIn_0.12s_ease-out]">
+                  <div className="absolute bottom-12 left-0 w-56 max-w-[calc(100vw-32px)] rounded-2xl border border-[#E8E4EF] dark:border-white/15 bg-white dark:bg-[#150A20] shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out] space-y-0.5">
                     {onImageUpload && (
-                      <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-black/5 dark:hover:bg-white/[0.07] transition text-[#292633] dark:text-zinc-200 hover:text-black dark:hover:text-white">
-                        <span className="text-base">🖼️</span>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold">Upload Images</span>
-                          <span className="text-[10.5px] text-zinc-500 dark:text-zinc-400">PNG, JPG, WEBP</span>
+                      <label className="flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#292633] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white">
+                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                          <ImageIcon size={18} className="text-[#E52A83] dark:text-pink-400" />
+                        </div>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="text-[13px] font-semibold leading-tight">Upload Images</span>
+                          <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">PNG, JPG, WEBP</span>
                         </div>
                         <input
                           ref={fileInputRef}
@@ -219,11 +221,13 @@ export default function ChatInput({
                     )}
 
                     {onPdfUpload && (
-                      <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-black/5 dark:hover:bg-white/[0.07] transition text-[#292633] dark:text-zinc-200 hover:text-black dark:hover:text-white">
-                        <span className="text-base">📄</span>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold">Upload PDF</span>
-                          <span className="text-[10.5px] text-zinc-500 dark:text-zinc-400">In-browser analysis</span>
+                      <label className="flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#292633] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white">
+                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                          <FileText size={18} className="text-[#E52A83] dark:text-pink-400" />
+                        </div>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="text-[13px] font-semibold leading-tight">Upload PDF</span>
+                          <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">In-browser analysis</span>
                         </div>
                         <input
                           ref={pdfInputRef}

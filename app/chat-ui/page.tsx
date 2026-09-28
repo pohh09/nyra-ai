@@ -32,6 +32,8 @@ import {
   MoreHorizontal,
   Sun,
   Moon,
+  Image as ImageIcon,
+  BookmarkPlus,
 } from 'lucide-react';
 
 import { applyTheme, initTheme, ThemeMode } from '@/lib/theme';
@@ -2228,12 +2230,14 @@ export default function ChatPage() {
                           </button>
 
                           {showToolsMenu && (
-                            <div className="absolute bottom-10 left-0 w-52 sm:w-56 max-w-[calc(100vw-32px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/30 bg-[#FFFFFF] dark:bg-[#12051B]/98 shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-xl animate-[fadeIn_0.12s_ease-out]">
-                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white">
-                                <span className="text-base">🖼️</span>
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-semibold">Upload Images</span>
-                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">PNG, JPG, WEBP</span>
+                            <div className="absolute bottom-10 left-0 w-56 max-w-[calc(100vw-32px)] rounded-2xl border border-[#E8E4EF] dark:border-white/15 bg-white dark:bg-[#150A20] shadow-2xl overflow-hidden z-[999] p-1.5 backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out] space-y-0.5">
+                              <label className="flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#261827] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white">
+                                <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                  <ImageIcon size={18} className="text-[#E52A83] dark:text-pink-400" />
+                                </div>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                  <span className="text-[13px] font-semibold leading-tight">Upload Images</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">PNG, JPG, WEBP</span>
                                 </div>
                                 <input
                                   ref={fileInputRef}
@@ -2248,11 +2252,13 @@ export default function ChatPage() {
                                 />
                               </label>
 
-                              <label className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white">
-                                <span className="text-base">📄</span>
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-semibold">Upload PDF</span>
-                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Analyze document</span>
+                              <label className="flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#261827] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white">
+                                <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                  <FileText size={18} className="text-[#E52A83] dark:text-pink-400" />
+                                </div>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                  <span className="text-[13px] font-semibold leading-tight">Upload PDF</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">Analyze document</span>
                                 </div>
                                 <input
                                   ref={pdfInputRef}
@@ -2267,7 +2273,7 @@ export default function ChatPage() {
                                 />
                               </label>
 
-                              <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
+                              <div className="h-[1px] bg-[#E8E4EF] dark:border-white/10 my-1" />
 
                               <button
                                 type="button"
@@ -2275,12 +2281,14 @@ export default function ChatPage() {
                                   setIsPromptLibraryOpen(true);
                                   setShowToolsMenu(false);
                                 }}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white text-left"
+                                className="w-full flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#261827] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white text-left"
                               >
-                                <span className="text-base">📚</span>
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-semibold">Prompt Library</span>
-                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Pre-built templates</span>
+                                <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                  <BookOpen size={18} className="text-[#E52A83] dark:text-pink-400" />
+                                </div>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                  <span className="text-[13px] font-semibold leading-tight">Prompt Library</span>
+                                  <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">Save & reuse prompts</span>
                                 </div>
                               </button>
 
@@ -2292,12 +2300,14 @@ export default function ChatPage() {
                                     setIsPromptLibraryOpen(true);
                                     setShowToolsMenu(false);
                                   }}
-                                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#F7F3FA] dark:hover:bg-pink-500/20 transition text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white text-left"
+                                  className="w-full flex items-center gap-3 px-3 py-2.5 min-h-[42px] rounded-xl cursor-pointer hover:bg-[#F4DCE9]/80 dark:hover:bg-white/[0.08] transition text-[#261827] dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white text-left"
                                 >
-                                  <span className="text-base">💾</span>
-                                  <div className="flex flex-col">
-                                    <span className="text-xs font-semibold">Save Prompt</span>
-                                    <span className="text-[10.5px] text-[#9E93A2] dark:text-pink-300/70">Save current input</span>
+                                  <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                    <BookmarkPlus size={18} className="text-[#E52A83] dark:text-pink-400" />
+                                  </div>
+                                  <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="text-[13px] font-semibold leading-tight">Save Prompt</span>
+                                    <span className="text-[10.5px] text-[#9E93A2] dark:text-zinc-400 leading-tight mt-0.5">Save current input</span>
                                   </div>
                                 </button>
                               )}
