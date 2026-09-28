@@ -83,23 +83,19 @@ export default function PromptLibraryModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Load only user-created prompts (zero built-in prompts)
-    const userPrompts = loadCustomPrompts();
+    const userPrompts = loadCustomPrompts(user?.id);
     setPrompts(userPrompts || []);
 
     if (user?.id) {
       fetchCloudPrompts(user.id).then((cloudPrompts) => {
         if (cloudPrompts) {
-          const filtered = cloudPrompts.filter(
-            (p) => p && p.isCustom !== false && !['p1', 'p2', 'p3', 'p4', 'b1', 'b2', 'b3', 'b4'].includes(p.id)
-          );
+          const filtered = cloudPrompts.filter((p) => p && p.isCustom !== false);
           setPrompts(filtered);
-          saveCustomPrompts(filtered);
+          saveCustomPrompts(filtered, user.id);
         }
       });
     }
 
-    // Handle "Save Input as Prompt" flow from chat composer
     if (initialPromptToSave) {
       setFormTitle('');
       setFormPrompt(initialPromptToSave);
@@ -195,7 +191,7 @@ export default function PromptLibraryModal({
     }
 
     setPrompts(updatedList);
-    saveCustomPrompts(updatedList);
+    saveCustomPrompts(updatedList, user?.id);
     setViewMode('library');
     setEditingId(null);
   };
@@ -205,7 +201,7 @@ export default function PromptLibraryModal({
     e.stopPropagation();
     const updatedList = prompts.filter((p) => p.id !== id);
     setPrompts(updatedList);
-    saveCustomPrompts(updatedList);
+    saveCustomPrompts(updatedList, user?.id);
 
     if (user?.id) {
       deleteCloudPrompt(user.id, id);
@@ -247,6 +243,7 @@ export default function PromptLibraryModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          action: 'create',
           goal: aiGoal.trim(),
           roleTone: aiRoleTone.trim() || undefined,
           desiredOutput: aiDesiredOutput.trim() || undefined,
@@ -267,7 +264,6 @@ export default function PromptLibraryModal({
       });
       addToast({ type: 'success', title: 'AI Prompt generated!' });
     } catch (err: any) {
-      console.error('AI Prompt Generation Error:', err);
       setAiError(err.message || 'AI generation failed. Please try again.');
       addToast({ type: 'error', title: err.message || 'AI generation failed' });
     } finally {
@@ -290,7 +286,7 @@ export default function PromptLibraryModal({
 
     const updatedList = [newPrompt, ...prompts];
     setPrompts(updatedList);
-    saveCustomPrompts(updatedList);
+    saveCustomPrompts(updatedList, user?.id);
 
     if (user?.id) {
       saveCloudPrompt(user.id, newPrompt);
@@ -325,222 +321,213 @@ export default function PromptLibraryModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex justify-end pointer-events-none">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex justify-end pointer-events-none">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto"
+          />
 
-        {/* Right-Side Screen Panel */}
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-          className="relative z-10 w-full sm:w-[480px] md:w-[540px] lg:w-[580px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-purple-400/25 bg-[#FFFFFF] dark:bg-[#0e0a1d] p-4 sm:p-5 md:p-6 shadow-[-20px_0_50px_rgba(41,38,51,0.06)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#292633] dark:text-white pointer-events-auto"
-        >
-          {/* Top Header */}
-          <div className="flex items-center justify-between border-b border-[#E8E4EF] dark:border-purple-400/15 pb-3 sm:pb-4 mb-3 sm:mb-4 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-xl bg-[#EEE8FA] dark:bg-purple-500/15 border border-[#E8E4EF] dark:border-purple-400/30 flex items-center justify-center text-[#8B6FC9] dark:text-purple-400 shadow-sm shrink-0">
-                <BookOpen size={18} />
+          {/* Right-Side Screen Panel */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 320 }}
+            className="relative z-10 w-full sm:w-[400px] md:w-[420px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-white/[0.08] bg-white dark:bg-[#0E0514] p-4 sm:p-5 shadow-[-16px_0_40px_rgba(0,0,0,0.15)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#261827] dark:text-zinc-100 pointer-events-auto backdrop-blur-xl"
+          >
+            {/* Top Header */}
+            <div className="flex items-center justify-between border-b border-[#E8E4EF] dark:border-white/[0.08] pb-3 mb-3 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 shadow-xs shrink-0">
+                  <BookOpen size={16} />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-base font-bold text-[#261827] dark:text-white truncate">Prompts</h2>
+                  <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 truncate">Create, save and reuse your prompts.</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <h2 className="text-sm sm:text-base md:text-lg font-bold text-[#292633] dark:text-white truncate">Prompts & Starters</h2>
-                <p className="text-[11px] sm:text-xs text-[#686477] dark:text-slate-400 truncate">Explore, customize & use prompts</p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              {viewMode === 'library' && (
-                <>
-                  <button
-                    onClick={() => setViewMode('ai-creator')}
-                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#EEE8FA] hover:bg-[#E8E4EF] border border-[#E8E4EF] dark:bg-purple-500/15 dark:hover:bg-purple-500/25 dark:border-purple-400/30 text-[#8B6FC9] dark:text-purple-200 hover:text-[#795BB8] dark:hover:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
-                  >
-                    <Sparkles size={13} className="text-[#8B6FC9] dark:text-purple-300" />
-                    <span className="hidden sm:inline">AI Creator</span>
-                    <span className="sm:hidden">AI</span>
-                  </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {viewMode === 'library' && (
+                  <>
+                    <button
+                      onClick={() => setViewMode('ai-creator')}
+                      className="px-2.5 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] border border-[#E8E4EF] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/10 text-[#261827] dark:text-zinc-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Sparkles size={13} className="text-[#B31372] dark:text-pink-400" />
+                      <span>AI Creator</span>
+                    </button>
 
-                  <button
-                    onClick={handleOpenCreate}
-                    className="px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm shadow-[#8B6FC9]/20"
-                  >
-                    <Plus size={14} />
-                    <span className="hidden sm:inline">New Prompt</span>
-                    <span className="sm:hidden">New</span>
-                  </button>
-                </>
-              )}
-
-              {viewMode !== 'library' && (
-                <button
-                  onClick={() => setViewMode('library')}
-                  className="px-3 py-1.5 rounded-xl bg-[#F5F3F9] hover:bg-[#EEE8FA] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#686477] hover:text-[#292633] dark:text-slate-300 dark:hover:text-white transition cursor-pointer"
-                >
-                  Back
-                </button>
-              )}
-
-              <button
-                onClick={onClose}
-                className="p-1.5 rounded-xl hover:bg-[#EEE8FA] dark:hover:bg-white/10 text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* =========================================================
-              VIEW 1: AI PROMPT CREATOR
-          ========================================================= */}
-          {viewMode === 'ai-creator' && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin flex flex-col justify-between"
-            >
-              <div className="space-y-3.5">
-                <div className="p-3.5 rounded-2xl bg-[#EEE8FA] dark:bg-sky-500/10 border border-[#E8E4EF] dark:border-sky-400/20 flex items-start gap-3">
-                  <Sparkles size={18} className="text-[#8B6FC9] dark:text-sky-300 mt-0.5 shrink-0" />
-                  <div>
-                    <h3 className="text-xs font-bold text-[#8B6FC9] dark:text-sky-200">Create a prompt with AI</h3>
-                    <p className="text-[11.5px] text-[#686477] dark:text-slate-300 mt-0.5 leading-relaxed">
-                      Describe your objective, role persona, and desired output structure. AI will synthesize a production-grade reusable prompt for your library.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Main Goal / Description */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#8B6FC9] dark:text-sky-300 mb-1.5">
-                    What do you want the prompt to do? *
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="e.g. I need a prompt to review my React components for performance, bugs, clean hooks usage, and TypeScript typings..."
-                    value={aiGoal}
-                    onChange={(e) => setAiGoal(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/25 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9] dark:focus:border-sky-400 transition resize-none leading-relaxed"
-                    autoFocus
-                  />
-                </div>
-
-                {/* Optional Structured Prompt Dimensions Toggle */}
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setShowAdvancedParams((v) => !v)}
-                    className="text-[11.5px] font-semibold text-[#8B6FC9] dark:text-sky-400 hover:text-[#795BB8] dark:hover:text-sky-300 flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Sliders size={12} />
-                    <span>{showAdvancedParams ? 'Hide Details' : 'Add Role, Output Format & Constraints (Optional)'}</span>
-                  </button>
-
-                  {showAdvancedParams && (
-                    <div className="mt-2.5 space-y-3 p-3.5 rounded-2xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/20">
-                      <div>
-                        <label className="block text-[11px] font-semibold text-[#292633] dark:text-slate-300 mb-1">
-                          Role / Persona / Tone
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Senior Staff Frontend Engineer, Analytical & Direct"
-                          value={aiRoleTone}
-                          onChange={(e) => setAiRoleTone(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-[#FFFFFF] dark:bg-[#0a1835] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-semibold text-[#292633] dark:text-slate-300 mb-1">
-                          Desired Output Format
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Structured markdown with summary, bug table, code diffs, and action list"
-                          value={aiDesiredOutput}
-                          onChange={(e) => setAiDesiredOutput(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-[#FFFFFF] dark:bg-[#0a1835] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-semibold text-[#292633] dark:text-slate-300 mb-1">
-                          Constraints & Framework Context
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. React 19, TypeScript strict mode, Next.js App Router"
-                          value={aiConstraints}
-                          onChange={(e) => setAiConstraints(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-[#FFFFFF] dark:bg-[#0a1835] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9]"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Generate Action Button */}
-                <div className="pt-1">
-                  <button
-                    onClick={handleGenerateAiPrompt}
-                    disabled={aiLoading || !aiGoal.trim()}
-                    className="w-full py-2.5 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white font-bold text-xs shadow-md shadow-[#8B6FC9]/25 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {aiLoading ? (
-                      <>
-                        <Loader2 size={15} className="animate-spin text-white" />
-                        <span>Generating Prompt with AI...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles size={14} className="text-white" />
-                        <span>Generate Prompt</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* AI Error State */}
-                {aiError && (
-                  <div className="p-3 rounded-xl bg-[#F9ECEC] dark:bg-rose-500/15 border border-[#C77B7B]/30 dark:border-rose-400/30 text-[#A85A5A] dark:text-rose-200 text-xs flex items-center gap-2.5">
-                    <AlertCircle size={15} className="text-[#C77B7B] dark:text-rose-400 shrink-0" />
-                    <span className="flex-1">{aiError}</span>
-                  </div>
+                    <button
+                      onClick={handleOpenCreate}
+                      className="px-3 py-1.5 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Plus size={14} />
+                      <span>Create</span>
+                    </button>
+                  </>
                 )}
 
-                {/* Generated Prompt Preview Card (MUST NOT auto-save) */}
-                {aiGeneratedPrompt && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-4 rounded-2xl border border-[#E8E4EF] dark:border-sky-400/30 bg-[#F5F3F9] dark:bg-[#060e1e] space-y-3"
+                {viewMode !== 'library' && (
+                  <button
+                    onClick={() => setViewMode('library')}
+                    className="px-3 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white transition cursor-pointer"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#292633] dark:text-white">{aiGeneratedPrompt.name}</span>
-                        <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#EEE8FA] dark:bg-sky-500/15 border border-[#E8E4EF] dark:border-sky-500/20 text-[#8B6FC9] dark:text-sky-300 font-mono">
-                          {aiGeneratedPrompt.category}
-                        </span>
-                      </div>
+                    Back
+                  </button>
+                )}
 
-                      <div className="flex items-center gap-2">
+                <button
+                  onClick={onClose}
+                  className="p-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white transition cursor-pointer"
+                  title="Close"
+                >
+                  <X size={17} />
+                </button>
+              </div>
+            </div>
+
+            {/* VIEW 1: AI PROMPT CREATOR */}
+            {viewMode === 'ai-creator' && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex-1 overflow-y-auto space-y-3.5 pr-0.5 scrollbar-thin flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-[#FAF8FB] dark:bg-white/[0.03] border border-[#E8E4EF] dark:border-white/[0.08] flex items-start gap-2.5">
+                    <Sparkles size={16} className="text-[#B31372] dark:text-pink-400 mt-0.5 shrink-0" />
+                    <div>
+                      <h3 className="text-xs font-bold text-[#261827] dark:text-white">Create a prompt with AI</h3>
+                      <p className="text-[11px] text-[#6E6072] dark:text-zinc-400 mt-0.5 leading-relaxed">
+                        Describe your objective and AI will synthesize a production-grade reusable prompt for your library.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#261827] dark:text-zinc-300 mb-1">
+                      What do you want the prompt to do? *
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="e.g. I need a prompt to review my React components for performance, bugs, and TypeScript typings..."
+                      value={aiGoal}
+                      onChange={(e) => setAiGoal(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 transition resize-none leading-relaxed shadow-xs"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAdvancedParams((v) => !v)}
+                      className="text-[11.5px] font-semibold text-[#B31372] dark:text-pink-400 hover:underline flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Sliders size={12} />
+                      <span>{showAdvancedParams ? 'Hide Details' : 'Add Role, Output Format & Constraints (Optional)'}</span>
+                    </button>
+
+                    {showAdvancedParams && (
+                      <div className="mt-2 space-y-2.5 p-3 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.03] border border-[#E8E4EF] dark:border-white/[0.06]">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                            Role / Persona / Tone
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Senior Staff Frontend Engineer, Analytical & Direct"
+                            value={aiRoleTone}
+                            onChange={(e) => setAiRoleTone(e.target.value)}
+                            className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#261827] dark:text-white outline-none focus:border-[#B31372]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                            Desired Output Format
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Structured markdown with summary, bug table, code diffs"
+                            value={aiDesiredOutput}
+                            onChange={(e) => setAiDesiredOutput(e.target.value)}
+                            className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#261827] dark:text-white outline-none focus:border-[#B31372]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                            Constraints & Context
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. React 19, TypeScript strict mode, Next.js App Router"
+                            value={aiConstraints}
+                            onChange={(e) => setAiConstraints(e.target.value)}
+                            className="w-full px-3 py-1.5 rounded-lg bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/10 text-xs text-[#261827] dark:text-white outline-none focus:border-[#B31372]"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-0.5">
+                    <button
+                      onClick={handleGenerateAiPrompt}
+                      disabled={aiLoading || !aiGoal.trim()}
+                      className="w-full h-9 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      {aiLoading ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin text-white" />
+                          <span>Generating Prompt...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={13} className="text-white" />
+                          <span>Generate Prompt</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {aiError && (
+                    <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-400/30 text-rose-700 dark:text-rose-200 text-xs flex items-center gap-2">
+                      <AlertCircle size={14} className="text-rose-500 dark:text-rose-400 shrink-0" />
+                      <span className="flex-1">{aiError}</span>
+                    </div>
+                  )}
+
+                  {aiGeneratedPrompt && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-3.5 rounded-xl border border-[#E8E4EF] dark:border-pink-500/30 bg-white dark:bg-[#150A20] space-y-2.5 shadow-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-[#261827] dark:text-white">{aiGeneratedPrompt.name}</span>
+                          <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-500/20 text-[#8A0E57] dark:text-pink-300 font-mono">
+                            {aiGeneratedPrompt.category}
+                          </span>
+                        </div>
+
                         <button
                           onClick={() => handleCopyPrompt('ai-gen', aiGeneratedPrompt.prompt)}
-                          className="px-2 py-1 rounded-lg text-[#686477] hover:text-[#292633] dark:text-slate-300 dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-white/[0.08] transition text-[11px] flex items-center gap-1 cursor-pointer"
+                          className="px-2 py-1 rounded-lg text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] transition text-[11px] flex items-center gap-1 cursor-pointer"
                         >
                           {copiedId === 'ai-gen' ? (
                             <>
-                              <Check size={11} className="text-[#6FA58A] dark:text-emerald-400" />
-                              <span className="text-[#6FA58A] dark:text-emerald-400">Copied</span>
+                              <Check size={11} className="text-emerald-500" />
+                              <span className="text-emerald-500">Copied</span>
                             </>
                           ) : (
                             <>
@@ -550,299 +537,291 @@ export default function PromptLibraryModal({
                           )}
                         </button>
                       </div>
-                    </div>
 
-                    <div className="p-3 rounded-xl bg-[#FFFFFF] dark:bg-[#0a1835]/80 border border-[#E8E4EF] dark:border-white/[0.04] text-xs text-[#292633] dark:text-slate-200 whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto scrollbar-thin">
-                      {aiGeneratedPrompt.prompt}
-                    </div>
-
-                    {/* Actions: Edit, Regenerate, Test Prompt, Save to Library */}
-                    <div className="flex items-center justify-between pt-1 border-t border-[#E8E4EF] dark:border-white/[0.06] flex-wrap gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={handleEditAiPrompt}
-                          className="px-2.5 py-1 rounded-lg text-xs text-[#686477] hover:text-[#292633] dark:text-slate-300 dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-white/[0.08] transition flex items-center gap-1 cursor-pointer"
-                        >
-                          <Edit3 size={12} />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          onClick={handleGenerateAiPrompt}
-                          disabled={aiLoading}
-                          className="px-2.5 py-1 rounded-lg text-xs text-[#686477] hover:text-[#8B6FC9] dark:text-slate-300 dark:hover:text-sky-300 hover:bg-[#EEE8FA] dark:hover:bg-sky-500/15 transition flex items-center gap-1 cursor-pointer"
-                        >
-                          <RotateCcw size={12} />
-                          <span>Regenerate</span>
-                        </button>
+                      <div className="p-2.5 rounded-xl bg-[#F7F3FA] dark:bg-black/30 border border-[#E8E4EF] dark:border-white/[0.04] text-xs text-[#261827] dark:text-zinc-200 whitespace-pre-wrap leading-relaxed max-h-[140px] overflow-y-auto scrollbar-thin">
+                        {aiGeneratedPrompt.prompt}
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={handleTestAiPrompt}
-                          className="px-3 py-1.5 rounded-xl bg-[#EEE8FA] hover:bg-[#E8E4EF] dark:bg-white/[0.08] dark:hover:bg-white/[0.15] border border-[#E8E4EF] dark:border-white/10 text-[#8B6FC9] dark:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
-                          title="Insert into composer to test immediately"
-                        >
-                          <Play size={11} className="text-[#8B6FC9] fill-[#8B6FC9] dark:text-sky-300 dark:fill-sky-300" />
-                          <span>Test Prompt</span>
-                        </button>
-
-                        <button
-                          onClick={handleSaveAiPromptToLibrary}
-                          className="px-4 py-1.5 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white text-xs font-bold shadow-md shadow-[#8B6FC9]/20 transition cursor-pointer"
-                        >
-                          Save to Library
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-
-              <div className="flex items-center justify-end pt-3 border-t border-[#E8E4EF] dark:border-sky-400/15 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('library')}
-                  className="px-4 py-2 rounded-xl text-xs text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* =========================================================
-              VIEW 2: MANUAL CREATE / EDIT PROMPT
-          ========================================================= */}
-          {viewMode === 'manual-create' && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin"
-            >
-              <div>
-                <label className="block text-xs font-semibold text-[#8B6FC9] dark:text-sky-300 mb-1.5">
-                  Prompt Name *
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Code Reviewer, Resume Polish, Bug Finder"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/25 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9] transition"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#8B6FC9] dark:text-sky-300 mb-1.5">
-                  Prompt *
-                </label>
-                <textarea
-                  rows={6}
-                  placeholder="Type or paste the prompt text here..."
-                  value={formPrompt}
-                  onChange={(e) => setFormPrompt(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/25 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9] transition resize-none leading-relaxed font-sans"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#686477] dark:text-slate-300 mb-1.5">
-                  Category (Optional)
-                </label>
-                <select
-                  value={formCategory}
-                  onChange={(e) => setFormCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/25 text-xs text-[#292633] dark:text-white outline-none focus:border-[#8B6FC9] transition cursor-pointer"
-                >
-                  <option value="General">General</option>
-                  <option value="Coding">Coding</option>
-                  <option value="Writing">Writing</option>
-                  <option value="Research">Research</option>
-                  <option value="Career">Career</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E8E4EF] dark:border-sky-400/15">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('library')}
-                  className="px-4 py-2 rounded-xl text-xs text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSavePrompt}
-                  className="px-5 py-2 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white text-xs font-bold shadow-md shadow-[#8B6FC9]/25 transition cursor-pointer"
-                >
-                  {editingId ? 'Save Changes' : 'Save Prompt'}
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* =========================================================
-              VIEW 3: PROMPTS LIBRARY (User-Created Only)
-          ========================================================= */}
-          {viewMode === 'library' && (
-            <div className="flex-1 flex flex-col min-h-0">
-              {/* Controls: Search + Categories */}
-              <div className="space-y-3 mb-4 shrink-0">
-                {/* Search Bar */}
-                <div className="relative">
-                  <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#92909B] dark:text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search prompts by name, text, or category..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#F5F3F9] dark:bg-[#060e1e] border border-[#E8E4EF] dark:border-sky-400/20 text-xs text-[#292633] dark:text-white placeholder-[#92909B] dark:placeholder-slate-500 outline-none focus:border-[#8B6FC9] transition"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white"
-                    >
-                      <X size={13} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Category Filter Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                  {PROMPT_CATEGORIES.map((cat) => {
-                    const isActive = selectedCategory === cat;
-                    return (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                          isActive
-                            ? 'bg-[#EEE8FA] dark:bg-sky-500/25 border border-[#8B6FC9]/50 text-[#8B6FC9] dark:text-sky-200 shadow-sm'
-                            : 'bg-[#F5F3F9] hover:bg-[#EEE8FA]/60 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-white/[0.08] text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Prompts Cards List */}
-              <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 scrollbar-thin">
-                {prompts.length === 0 ? (
-                  /* EMPTY STATE FOR BRAND-NEW USER */
-                  <div className="py-14 text-center text-[#686477] dark:text-slate-400 text-xs">
-                    <BookOpen size={36} className="mx-auto text-[#8B6FC9] dark:text-sky-400/60 mb-3" />
-                    <h3 className="text-sm font-bold text-[#292633] dark:text-white">Your prompt library is empty</h3>
-                    <p className="mt-1 text-xs text-[#686477] dark:text-slate-400 max-w-sm mx-auto">
-                      Create your own reusable prompts or let AI create one for you.
-                    </p>
-                    <div className="mt-5 flex items-center justify-center gap-3">
-                      <button
-                        onClick={handleOpenCreate}
-                        className="px-4 py-2 rounded-xl bg-[#F5F3F9] hover:bg-[#EEE8FA] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.1] text-[#292633] dark:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
-                      >
-                        <Plus size={13} />
-                        <span>Create Prompt</span>
-                      </button>
-                      <button
-                        onClick={() => setViewMode('ai-creator')}
-                        className="px-4 py-2 rounded-xl bg-[#8B6FC9] hover:bg-[#795BB8] text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm shadow-[#8B6FC9]/25"
-                      >
-                        <Sparkles size={13} className="text-white" />
-                        <span>AI Prompt Creator</span>
-                      </button>
-                    </div>
-                  </div>
-                ) : filteredPrompts.length === 0 ? (
-                  /* NO SEARCH / FILTER MATCHES */
-                  <div className="py-12 text-center text-[#686477] dark:text-slate-400 text-xs">
-                    <p className="font-semibold text-[#292633] dark:text-white">No prompts found.</p>
-                    <p className="mt-1 text-[11px]">Try adjusting your search or category filter.</p>
-                    <button
-                      onClick={() => {
-                        setSearchQuery('');
-                        setSelectedCategory('All');
-                      }}
-                      className="mt-3 text-xs text-[#8B6FC9] dark:text-sky-400 hover:underline cursor-pointer"
-                    >
-                      Clear search & filters
-                    </button>
-                  </div>
-                ) : (
-                  /* PROMPT CARDS */
-                  filteredPrompts.map((p) => (
-                    <div
-                      key={p.id}
-                      className="p-3.5 rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FFFFFF] dark:bg-[#060e1e] hover:border-[#8B6FC9]/30 transition-all flex flex-col gap-2 group shadow-sm"
-                    >
-                      {/* Card Header */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <h4 className="text-xs font-bold text-[#292633] dark:text-white truncate">{p.title}</h4>
-                          <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#EEE8FA] dark:bg-sky-500/15 border border-[#E8E4EF] dark:border-sky-500/20 text-[#8B6FC9] dark:text-sky-300 font-mono shrink-0">
-                            {p.category || 'General'}
-                          </span>
-                        </div>
-
-                        <button
-                          onClick={(e) => handleCopyPrompt(p.id, p.prompt, e)}
-                          className="p-1.5 rounded-lg text-[#686477] hover:text-[#292633] dark:text-slate-400 dark:hover:text-white hover:bg-[#EEE8FA] dark:hover:bg-white/[0.08] transition cursor-pointer shrink-0"
-                          title="Copy prompt text"
-                        >
-                          {copiedId === p.id ? (
-                            <Check size={13} className="text-[#6FA58A] dark:text-emerald-400" />
-                          ) : (
-                            <Copy size={13} />
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Prompt Content Preview */}
-                      <p className="text-[11.5px] text-[#686477] dark:text-slate-300 line-clamp-2 leading-relaxed bg-[#F5F3F9] dark:bg-[#0a1835]/70 p-2.5 rounded-xl border border-[#E8E4EF] dark:border-white/[0.04] font-sans">
-                        {p.prompt}
-                      </p>
-
-                      {/* Card Actions: Use, Edit, Delete */}
-                      <div className="flex items-center justify-between pt-1 border-t border-[#E8E4EF] dark:border-white/[0.05]">
+                      <div className="flex items-center justify-between pt-1 border-t border-[#E8E4EF] dark:border-white/[0.06] flex-wrap gap-2">
                         <div className="flex items-center gap-1">
                           <button
-                            onClick={() => handleOpenEdit(p)}
-                            className="px-2.5 py-1 rounded-lg text-[11px] text-[#686477] hover:text-[#8B6FC9] dark:text-slate-400 dark:hover:text-sky-300 hover:bg-[#EEE8FA] dark:hover:bg-sky-500/15 transition flex items-center gap-1 cursor-pointer"
+                            onClick={handleEditAiPrompt}
+                            className="px-2 py-1 rounded-lg text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] transition flex items-center gap-1 cursor-pointer"
                           >
                             <Edit3 size={11} />
                             <span>Edit</span>
                           </button>
                           <button
-                            onClick={(e) => handleDeletePrompt(p.id, e)}
-                            className="px-2.5 py-1 rounded-lg text-[11px] text-[#686477] hover:text-[#C77B7B] hover:bg-[#F9ECEC] dark:text-slate-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/15 transition flex items-center gap-1 cursor-pointer"
+                            onClick={handleGenerateAiPrompt}
+                            disabled={aiLoading}
+                            className="px-2 py-1 rounded-lg text-xs text-[#6E6072] hover:text-[#B31372] dark:text-zinc-300 dark:hover:text-pink-300 hover:bg-[#F7F3FA] dark:hover:bg-pink-500/15 transition flex items-center gap-1 cursor-pointer"
                           >
-                            <Trash2 size={11} />
-                            <span>Delete</span>
+                            <RotateCcw size={11} />
+                            <span>Regenerate</span>
                           </button>
                         </div>
 
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={handleTestAiPrompt}
+                            className="px-2.5 py-1 rounded-lg bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.08] dark:hover:bg-white/[0.15] border border-[#E8E4EF] dark:border-white/10 text-xs font-semibold text-[#261827] dark:text-white transition flex items-center gap-1 cursor-pointer"
+                          >
+                            <Play size={10} className="fill-current text-[#B31372] dark:text-pink-300" />
+                            <span>Test</span>
+                          </button>
+
+                          <button
+                            onClick={handleSaveAiPromptToLibrary}
+                            className="px-3 py-1 rounded-lg bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-bold shadow-xs transition cursor-pointer"
+                          >
+                            Save to Library
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end pt-2 border-t border-[#E8E4EF] dark:border-white/[0.08] mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('library')}
+                    className="px-3.5 py-1.5 rounded-xl text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* VIEW 2: MANUAL CREATE / EDIT PROMPT */}
+            {viewMode === 'manual-create' && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex-1 overflow-y-auto space-y-3 pr-0.5 scrollbar-thin"
+              >
+                <div>
+                  <label className="block text-xs font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                    Prompt Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Code Reviewer, Resume Polish"
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] transition shadow-xs"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                    Prompt *
+                  </label>
+                  <textarea
+                    rows={6}
+                    placeholder="Type or paste prompt text here... supports {{variables}}"
+                    value={formPrompt}
+                    onChange={(e) => setFormPrompt(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] transition resize-none leading-relaxed font-sans shadow-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#6E6072] dark:text-zinc-300 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={formCategory}
+                    onChange={(e) => setFormCategory(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F7F3FA] dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white outline-none focus:border-[#B31372] transition cursor-pointer shadow-xs"
+                  >
+                    <option value="General">General</option>
+                    <option value="Coding">Coding</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Research">Research</option>
+                    <option value="Career">Career</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2.5 border-t border-[#E8E4EF] dark:border-white/[0.08]">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('library')}
+                    className="px-3.5 py-1.5 rounded-xl text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSavePrompt}
+                    className="px-4 py-1.5 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-bold shadow-xs transition cursor-pointer"
+                  >
+                    {editingId ? 'Save Changes' : 'Save Prompt'}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* VIEW 3: PROMPTS LIBRARY */}
+            {viewMode === 'library' && (
+              <div className="flex-1 flex flex-col min-h-0">
+                {/* Controls: Search + Categories */}
+                <div className="space-y-2.5 mb-3 shrink-0">
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500" />
+                    <input
+                      type="text"
+                      placeholder="Search prompts..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-8.5 pr-7 py-1.5 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] transition shadow-xs"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white"
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Category Filter Pills */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-0.5 px-0.5">
+                    {PROMPT_CATEGORIES.map((cat) => {
+                      const isActive = selectedCategory === cat;
+                      return (
                         <button
-                          onClick={() => handleUsePrompt(p.prompt)}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#EEE8FA] hover:bg-[#8B6FC9] hover:text-white border border-[#E8E4EF] dark:bg-sky-500/20 dark:hover:bg-sky-500/35 dark:border-sky-400/35 text-[#8B6FC9] dark:text-sky-200 dark:hover:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-                          title="Insert prompt into chat composer"
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                            isActive
+                              ? 'bg-[#B31372] text-white dark:bg-white dark:text-zinc-950 font-semibold shadow-xs'
+                              : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-white/[0.08] text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white'
+                          }`}
                         >
-                          <span>Use</span>
-                          <ArrowRight size={12} className="text-[#8B6FC9] group-hover:text-white dark:text-sky-300" />
+                          {cat}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Prompts Cards List */}
+                <div className="flex-1 overflow-y-auto space-y-2 pr-0.5 scrollbar-thin">
+                  {prompts.length === 0 ? (
+                    <div className="py-8 px-4 text-center rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FAF8FB] dark:bg-white/[0.02] space-y-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 mx-auto">
+                        <BookOpen size={18} />
+                      </div>
+                      <div className="space-y-0.5">
+                        <h3 className="text-xs sm:text-sm font-bold text-[#261827] dark:text-white">Your prompt library is empty</h3>
+                        <p className="text-[11px] text-[#6E6072] dark:text-zinc-400 max-w-xs mx-auto">
+                          Create your own reusable prompts or let AI create one for you.
+                        </p>
+                      </div>
+                      <div className="pt-1 flex items-center justify-center gap-2">
+                        <button
+                          onClick={handleOpenCreate}
+                          className="px-3 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.1] text-[#261827] dark:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        >
+                          <Plus size={13} />
+                          <span>Create</span>
+                        </button>
+                        <button
+                          onClick={() => setViewMode('ai-creator')}
+                          className="px-3 py-1.5 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        >
+                          <Sparkles size={13} className="text-white" />
+                          <span>AI Creator</span>
                         </button>
                       </div>
                     </div>
-                  ))
-                )}
+                  ) : filteredPrompts.length === 0 ? (
+                    <div className="py-8 text-center text-[#6E6072] dark:text-zinc-400 text-xs">
+                      <p className="font-semibold text-[#261827] dark:text-white">No prompts found.</p>
+                      <p className="mt-0.5 text-[11px]">Try adjusting your search or category filter.</p>
+                      <button
+                        onClick={() => {
+                          setSearchQuery('');
+                          setSelectedCategory('All');
+                        }}
+                        className="mt-2 text-xs text-[#B31372] dark:text-pink-300 hover:underline cursor-pointer"
+                      >
+                        Clear search & filters
+                      </button>
+                    </div>
+                  ) : (
+                    filteredPrompts.map((p) => (
+                      <div
+                        key={p.id}
+                        className="p-3 rounded-xl border border-[#E8E4EF] dark:border-white/[0.07] bg-white hover:bg-[#FAF8FB] dark:bg-[#130A1C] dark:hover:bg-[#180C24] hover:border-[#B31372]/30 transition-all flex flex-col gap-1.5 group shadow-xs"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                            <h4 className="text-xs font-bold text-[#261827] dark:text-white truncate">{p.title}</h4>
+                            <span className="text-[10px] px-2 py-0.2 rounded-full bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-500/20 text-[#8A0E57] dark:text-pink-300 font-mono shrink-0">
+                              {p.category || 'General'}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={(e) => handleCopyPrompt(p.id, p.prompt, e)}
+                            className="p-1 rounded-lg text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] transition cursor-pointer shrink-0"
+                            title="Copy prompt text"
+                          >
+                            {copiedId === p.id ? (
+                              <Check size={12} className="text-emerald-500" />
+                            ) : (
+                              <Copy size={12} />
+                            )}
+                          </button>
+                        </div>
+
+                        <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-300 line-clamp-2 leading-relaxed bg-[#F7F3FA]/70 dark:bg-black/20 p-2 rounded-lg border border-[#E8E4EF]/60 dark:border-white/[0.03] font-sans">
+                          {p.prompt}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-1 border-t border-[#E8E4EF]/70 dark:border-white/[0.05]">
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleOpenEdit(p)}
+                              className="px-2 py-1 rounded-lg text-[11px] text-[#6E6072] hover:text-[#B31372] dark:text-zinc-400 dark:hover:text-pink-300 hover:bg-[#F7F3FA] dark:hover:bg-pink-500/15 transition flex items-center gap-1 cursor-pointer"
+                            >
+                              <Edit3 size={11} />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              onClick={(e) => handleDeletePrompt(p.id, e)}
+                              className="px-2 py-1 rounded-lg text-[11px] text-[#6E6072] hover:text-rose-600 hover:bg-rose-50 dark:text-zinc-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/15 transition flex items-center gap-1 cursor-pointer"
+                            >
+                              <Trash2 size={11} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+
+                          <button
+                            onClick={() => handleUsePrompt(p.prompt)}
+                            className="px-3 py-1 rounded-lg bg-[#F7F3FA] hover:bg-[#B31372] hover:text-white border border-[#E8E4EF] dark:bg-white/[0.08] dark:hover:bg-pink-600 dark:border-white/10 text-[#261827] dark:text-white text-xs font-semibold transition flex items-center gap-1 cursor-pointer shadow-xs active:scale-95"
+                            title="Insert prompt into chat composer"
+                          >
+                            <span>Use</span>
+                            <ArrowRight size={11} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </motion.div>
-      </div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </AnimatePresence>
   );
 }

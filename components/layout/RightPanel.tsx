@@ -21,7 +21,7 @@ export default function RightPanel({
   title,
   subtitle,
   children,
-  widthClass = 'w-full md:w-[460px] lg:w-[490px]',
+  widthClass = 'w-full md:w-[380px] lg:w-[400px] xl:w-[420px]',
 }: RightPanelProps) {
   // Listen for Escape key
   useEffect(() => {
@@ -60,24 +60,24 @@ export default function RightPanel({
               inset-0 md:inset-y-0 md:left-auto md:right-0
               z-[101] md:z-20
               w-full ${widthClass}
-              h-[100dvh] md:h-[calc(100%-20px)]
-              md:my-2.5 md:mr-2.5 md:ml-3
-              rounded-none md:rounded-[28px]
+              h-[100dvh] md:h-[calc(100%-16px)]
+              md:my-2 md:mr-2 md:ml-0
+              rounded-none md:rounded-2xl lg:rounded-[24px]
               overflow-hidden flex flex-col
-              bg-[#FFFFFF] dark:bg-[#0e091d] md:dark:bg-[#120c24]/98
-              border-0 md:border md:border-[#E8E4EF] dark:md:border-white/10
-              shadow-none md:shadow-[0_20px_60px_rgba(0,0,0,0.9)]
-              text-zinc-900 dark:text-white shrink-0 select-none pointer-events-auto
-              backdrop-blur-2xl
+              bg-white dark:bg-[#0E0514] md:dark:bg-[#12081C]
+              border-0 md:border md:border-[#E8E4EF] dark:md:border-white/[0.08]
+              shadow-none md:shadow-[0_12px_36px_rgba(38,24,39,0.06)] dark:md:shadow-[0_20px_50px_rgba(0,0,0,0.7)]
+              text-[#261827] dark:text-zinc-100 shrink-0 select-none pointer-events-auto
+              backdrop-blur-xl
             `}
           >
             {/* Native-Feeling Clean Header */}
-            <div className="relative z-10 flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-[#E8E4EF] dark:border-white/10 bg-transparent shrink-0">
+            <div className="relative z-10 flex items-center justify-between px-4 sm:px-5 py-3 border-b border-[#E8E4EF] dark:border-white/[0.08] bg-transparent shrink-0">
               <div className="flex items-center gap-2.5 min-w-0 pr-2">
                 {/* Mobile Back / Close Button */}
                 <button
                   onClick={onClose}
-                  className="md:hidden flex h-9 w-9 -ml-1 rounded-xl items-center justify-center text-zinc-700 dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/10 transition active:scale-95 cursor-pointer"
+                  className="md:hidden flex h-9 w-9 -ml-1 rounded-xl items-center justify-center text-[#261827] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/10 transition active:scale-95 cursor-pointer"
                   title="Close"
                   aria-label="Close"
                 >
@@ -85,11 +85,11 @@ export default function RightPanel({
                 </button>
 
                 <div className="min-w-0">
-                  <h2 className="text-base sm:text-base font-bold text-zinc-900 dark:text-white tracking-tight leading-tight">
+                  <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
                     {title}
                   </h2>
                   {subtitle && (
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 truncate font-normal">
+                    <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 mt-0.5 truncate font-normal">
                       {subtitle}
                     </p>
                   )}
@@ -99,16 +99,16 @@ export default function RightPanel({
               {/* Desktop Close Button */}
               <button
                 onClick={onClose}
-                className="hidden md:flex h-8 w-8 rounded-xl items-center justify-center text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/[0.08] transition cursor-pointer active:scale-95 shrink-0"
+                className="hidden md:flex h-8 w-8 rounded-xl items-center justify-center text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/[0.08] transition cursor-pointer active:scale-95 shrink-0"
                 title="Close panel (Esc)"
                 aria-label="Close panel"
               >
-                <X size={17} />
+                <X size={16} />
               </button>
             </div>
 
             {/* Panel Content Body */}
-            <div className="relative z-10 flex-1 overflow-hidden flex flex-col p-3.5 sm:p-4 md:p-5 select-text">
+            <div className="relative z-10 flex-1 overflow-hidden flex flex-col p-3.5 sm:p-4 select-text">
               {children}
             </div>
           </motion.aside>
@@ -117,3 +117,4 @@ export default function RightPanel({
     </AnimatePresence>
   );
 }
+
