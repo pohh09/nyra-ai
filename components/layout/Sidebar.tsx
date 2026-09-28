@@ -444,110 +444,28 @@ export default function Sidebar({
             {userMenuOpen && (
               <div
                 ref={userMenuRef}
-                className="absolute bottom-12 left-0 z-50 w-full overflow-hidden rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-1.5 shadow-2xl backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out]"
+                className="absolute bottom-12 left-0 z-50 w-full overflow-hidden rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-1.5 shadow-2xl backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out] space-y-0.5"
               >
-                <button
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    onOpenFavorites?.();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                >
-                  <Star size={13} className="text-[#E52A83] dark:text-pink-400" />
-                  <span className="flex-1 text-left">Saved Messages</span>
-                  {favoritesCount > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 font-mono font-bold">
-                      {favoritesCount}
-                    </span>
-                  )}
-                </button>
-
-                <button
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    onOpenProjectsModal?.();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                >
-                  <Layers size={13} className="text-[#E52A83] dark:text-pink-400" />
-                  <span className="flex-1 text-left">Workspaces & Projects</span>
-                  {projects.length > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 font-mono font-bold">
-                      {projects.length}
-                    </span>
-                  )}
-                </button>
-
-                {onOpenPromptLibrary && (
-                  <button
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      onOpenPromptLibrary();
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                  >
-                    <BookOpen size={13} className="text-[#E52A83] dark:text-pink-400" />
-                    <span className="flex-1 text-left">Prompt Library</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => {
-                    const current = (localStorage.getItem('theme') as ThemeMode) || 'dark';
-                    const next: ThemeMode = current === 'light' ? 'dark' : 'light';
-                    applyTheme(next);
-                    setUserMenuOpen(false);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                >
-                  <Sun size={13} className="text-[#C49A5A]" />
-                  <span>Toggle Light / Dark Theme</span>
-                </button>
-
                 <button
                   onClick={() => {
                     setUserMenuOpen(false);
                     onOpenSettings?.();
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                  className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[38px] sm:min-h-[36px]"
                 >
-                  <Settings size={13} className="text-[#E52A83] dark:text-pink-400" />
-                  <span>Settings</span>
+                  <Settings size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                  <span className="flex-1 text-left">Settings</span>
                 </button>
 
                 {!isGuest && user?.email?.toLowerCase() === 'pooja@gmail.com' && (
                   <Link
                     href="/admin"
                     onClick={() => setUserMenuOpen(false)}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#B31372] dark:text-pink-300 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 font-semibold transition cursor-pointer"
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-[#B31372] dark:text-pink-300 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 font-semibold transition cursor-pointer min-h-[38px] sm:min-h-[36px]"
                   >
-                    <Shield size={13} className="text-[#E52A83] dark:text-pink-400" />
-                    <span>Admin Dashboard</span>
+                    <Shield size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                    <span className="flex-1 text-left">Admin Dashboard</span>
                   </Link>
-                )}
-
-                <button
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    onOpenExport?.();
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                >
-                  <Download size={13} className="text-[#E52A83] dark:text-pink-400" />
-                  <span>Export Data</span>
-                </button>
-
-                {chats && chats.length > 0 && (
-                  <button
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      setConfirmClearHistory(true);
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#C77B7B] dark:text-rose-400 hover:bg-[#F9ECEC] dark:hover:bg-rose-500/20 hover:text-[#A85A5A] dark:hover:text-rose-300 transition cursor-pointer"
-                  >
-                    <Trash2 size={13} className="text-rose-500 dark:text-rose-400" />
-                    <span>Clear All History</span>
-                  </button>
                 )}
 
                 {user ? (
@@ -559,10 +477,10 @@ export default function Sidebar({
                         await signOut?.();
                         router.push('/login');
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#C77B7B] dark:text-rose-300 hover:bg-[#F9ECEC] dark:hover:bg-rose-500/20 hover:text-[#A85A5A] dark:hover:text-rose-200 transition cursor-pointer"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#C77B7B] dark:text-rose-300 hover:bg-[#F9ECEC] dark:hover:bg-rose-500/20 hover:text-[#A85A5A] dark:hover:text-rose-200 transition cursor-pointer min-h-[38px] sm:min-h-[36px]"
                     >
-                      <LogOut size={13} />
-                      <span>Log out</span>
+                      <LogOut size={14} className="shrink-0" />
+                      <span className="flex-1 text-left">Log out</span>
                     </button>
                   </>
                 ) : (
@@ -571,10 +489,10 @@ export default function Sidebar({
                     <Link
                       href="/login"
                       onClick={() => setUserMenuOpen(false)}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#B31372] dark:text-pink-300 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 font-semibold transition cursor-pointer"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs text-[#B31372] dark:text-pink-300 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 font-semibold transition cursor-pointer min-h-[38px] sm:min-h-[36px]"
                     >
-                      <Sparkles size={13} className="text-[#E52A83]" />
-                      <span>Sign In / Create Account</span>
+                      <Sparkles size={14} className="text-[#E52A83] shrink-0" />
+                      <span className="flex-1 text-left">Sign In / Create Account</span>
                     </Link>
                   </>
                 )}
