@@ -1159,9 +1159,10 @@ export default function ChatPage() {
 
         // Increment local client usage counters
         try {
+          const isUserAdmin = profile?.role === 'admin' || user?.email?.toLowerCase() === 'pooja@gmail.com';
           incrementLocalUsage('aiRequests', 1);
           if (webSearch || deepResearch) incrementLocalUsage('webSearches', 1);
-          if (selectedImages && selectedImages.length > 0) incrementLocalUsage('imageRequests', 1);
+          if (selectedImages && selectedImages.length > 0 && !isUserAdmin) incrementLocalUsage('imageRequests', 1);
           if (targetPdfText || (targetPdfs && targetPdfs.length > 0)) incrementLocalUsage('pdfRequests', 1);
         } catch (e) {
           console.warn('Failed to record local usage:', e);

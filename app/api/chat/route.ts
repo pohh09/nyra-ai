@@ -1,6 +1,7 @@
 import { tavily } from '@tavily/core';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { checkAndIncrementUsage } from '@/lib/usage/usageService';
+import { getAdminEmails } from '@/lib/auth/adminAuth';
 import {
   resolveAIStream,
   calculatePdfContextBudget,
@@ -82,10 +83,34 @@ export async function POST(req: Request) {
     // Authenticate user session for server-side usage checks
     const supabase = await createSupabaseServerClient();
     let userId: string | null = null;
+    let userEmail: string | null = null;
+    let isAdmin = false;
+
     if (supabase) {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         userId = user.id;
+        userEmail = user.email || null;
+        if (userEmail) {
+          const adminEmails = getAdminEmails();
+          if (adminEmails.includes(userEmail.toLowerCase().trim())) {
+            isAdmin = true;
+          }
+        }
+        if (!isAdmin && userId) {
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', userId)
+              .maybeSingle();
+            if (profile?.role === 'admin') {
+              isAdmin = true;
+            }
+          } catch (err) {
+            console.warn('Profile role check in chat API:', err);
+          }
+        }
       }
     }
 
@@ -105,7 +130,8 @@ export async function POST(req: Request) {
         checkAndIncrementUsage(supabase, userId, 'webSearches', 1).then((r) => ({ ...r, feature: 'Web Search' }))
       );
     }
-    if (hasImages) {
+    // Image analysis quota: enforced for normal users, bypassed server-side for admin (pooja@gmail.com)
+    if (hasImages && !isAdmin) {
       usageChecks.push(
         checkAndIncrementUsage(supabase, userId, 'imageRequests', 1).then((r) => ({ ...r, feature: 'image analysis' }))
       );
