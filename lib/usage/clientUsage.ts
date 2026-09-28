@@ -125,3 +125,43 @@ export function getTimeUntilUtcMidnight(): { hours: number; minutes: number; for
     formatted: `${hours}h ${minutes.toString().padStart(2, '0')}m`,
   };
 }
+
+export function getLocalResetTimeString(): string {
+  const now = new Date();
+  const tomorrowUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+  const diff = getTimeUntilUtcMidnight();
+  try {
+    const timeStr = tomorrowUtc.toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short',
+    });
+    return `${timeStr} (in ${diff.formatted})`;
+  } catch {
+    return `00:00 UTC (in ${diff.formatted})`;
+  }
+}
+
+export function formatLimitErrorMessage(errText: string): string {
+  const resetTime = getLocalResetTimeString();
+  const lower = errText.toLowerCase();
+
+  if (lower.includes('image analysis') || lower.includes('imagerequests')) {
+    return `### Daily image analysis limit reached\n\nYou've used all 5 image analyses available today.\nYour allowance resets at **${resetTime}**.\n\nYou can continue using text chat in the meantime.`;
+  }
+
+  if (lower.includes('pdf') || lower.includes('document')) {
+    return `### Daily document analysis limit reached\n\nYou've used all 5 document analyses available today.\nYour allowance resets at **${resetTime}**.\n\nYou can continue using text chat in the meantime.`;
+  }
+
+  if (lower.includes('web search') || lower.includes('websearches')) {
+    return `### Daily web search limit reached\n\nYou've used all 10 web searches available today.\nYour allowance resets at **${resetTime}**.\n\nYou can continue using standard chat in the meantime.`;
+  }
+
+  if (lower.includes('ai request') || lower.includes('airequests')) {
+    return `### Daily chat limit reached\n\nYou've used all 20 AI messages available today.\nYour allowance resets at **${resetTime}**.`;
+  }
+
+  return `✦ Error: ${errText}`;
+}
+

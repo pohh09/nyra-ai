@@ -135,3 +135,40 @@ export async function getUserTodayUsage(
     isLimitReached,
   };
 }
+
+export async function decrementUsage(
+  supabaseServer: SupabaseClient | null,
+  userId: string | null,
+  feature: FeatureType,
+  count: number = 1
+): Promise<void> {
+  if (!supabaseServer || !userId) return;
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const fieldMap: Record<FeatureType, string> = {
+      aiRequests: 'ai_requests',
+      webSearches: 'web_searches',
+      imageRequests: 'image_requests',
+      pdfRequests: 'pdf_requests',
+    };
+    const dbField = fieldMap[feature];
+
+    const { data: record } = await supabaseServer
+      .from('usage_records')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('date', today)
+      .maybeSingle();
+
+    if (record && record[dbField] > 0) {
+      const updated = Math.max(0, record[dbField] - count);
+      await supabaseServer
+        .from('usage_records')
+        .update({ [dbField]: updated, updated_at: new Date().toISOString() })
+        .eq('id', record.id);
+    }
+  } catch (e) {
+    console.warn('Failed to decrement usage record:', e);
+  }
+}
+

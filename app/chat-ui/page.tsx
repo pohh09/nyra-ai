@@ -42,7 +42,7 @@ import MessageBubble from '@/components/chat/MessageBubble';
 import ImagePreview from '@/components/chat/ImagePreview';
 import ModelSelector, { AI_MODELS, DEFAULT_MODEL_ID } from '@/components/chat/ModelSelector';
 import { DEFAULT_VISION_MODEL_ID, getModelConfig, validateModelCapabilities } from '@/lib/models';
-import { incrementLocalUsage } from '@/lib/usage/clientUsage';
+import { incrementLocalUsage, formatLimitErrorMessage } from '@/lib/usage/clientUsage';
 import InChatSearch from '@/components/chat/InChatSearch';
 import SettingsModal from '@/components/modals/SettingsModal';
 import RightPanel from '@/components/layout/RightPanel';
@@ -1262,6 +1262,10 @@ export default function ChatPage() {
       } catch (err: any) {
         if (err.name !== 'AbortError' && !controller.signal.aborted) {
           const isLimitErr = err.message?.includes('limit reached');
+          const finalErrorContent = isLimitErr
+            ? formatLimitErrorMessage(err.message)
+            : `✦ Error: ${err.message || 'Unable to generate response. Please check your connection and try again.'}`;
+
           setChats((prev) =>
             prev.map((chat) => {
               if (chat.id !== chatId) return chat;
@@ -1272,7 +1276,7 @@ export default function ChatPage() {
                     content:
                       m.content.trim().length > 0
                         ? m.content
-                        : `✦ Error: ${err.message || 'Unable to generate response. Please check your connection and try again.'}`,
+                        : finalErrorContent,
                   }
                   : m
               );
