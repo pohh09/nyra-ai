@@ -404,6 +404,40 @@ export default function ChatPage() {
     addToast({ type: 'info', title: `Model: ${model?.name || modelId}` });
   };
 
+  // Context-aware prompt suggestions for uploaded image/PDF
+  const getAttachmentSuggestions = useCallback(() => {
+    const hasImages = selectedImages.length > 0;
+    const hasPdfs = attachedPdfs.length > 0;
+
+    if (hasImages && !hasPdfs) {
+      return [
+        'Describe this image',
+        'Extract the text from this image',
+        'Analyze this image',
+        "Explain what's in this image",
+      ];
+    }
+
+    if (hasPdfs && !hasImages) {
+      return [
+        'Summarize this document',
+        'Explain the key points',
+        'Extract the important information',
+        'Find the main conclusions',
+      ];
+    }
+
+    if (hasImages && hasPdfs) {
+      return [
+        'Summarize and analyze these attachments',
+        'Extract the key details and text',
+        'Explain the main points',
+      ];
+    }
+
+    return [];
+  }, [selectedImages.length, attachedPdfs.length]);
+
   // Save bookmarks
   const handleToggleBookmark = (msgId: string) => {
     let updated: string[];
@@ -2179,6 +2213,30 @@ export default function ChatPage() {
                             onRetry={handleRetryPdf}
                           />
                         )}
+                      </div>
+                    )}
+
+                    {/* Context-aware suggestions for uploaded media/documents */}
+                    {(selectedImages.length > 0 || attachedPdfs.length > 0) && !input.trim() && (
+                      <div className="mb-2.5 pt-0.5 animate-[fadeIn_0.15s_ease-out]">
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-0.5 px-0.5">
+                          {getAttachmentSuggestions().map((suggestion, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                setInput(suggestion);
+                                if (composerTextareaRef.current) {
+                                  composerTextareaRef.current.focus();
+                                }
+                              }}
+                              className="shrink-0 text-xs px-2.5 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FAF8FB] hover:bg-[#F4DCE9] dark:bg-pink-500/10 dark:hover:bg-pink-500/20 text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5 font-medium"
+                            >
+                              <Sparkles size={11} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                              <span>{suggestion}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
 
