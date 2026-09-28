@@ -709,12 +709,12 @@ export default function PromptLibraryModal({
                           else (e.target as HTMLInputElement).blur();
                         }
                       }}
-                      className="w-full pl-[38px] pr-8 h-[38px] rounded-[10px] bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
+                      className="w-full pl-[38px] pr-8 h-[42px] sm:h-[38px] rounded-[10px] bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
                     />
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 sm:p-1 rounded-md text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
                         title="Clear search"
                         aria-label="Clear search"
                       >
@@ -728,9 +728,9 @@ export default function PromptLibraryModal({
                     <button
                       type="button"
                       onClick={() => setIsCategoryDropdownOpen((prev) => !prev)}
-                      className={`w-full h-[38px] px-3 rounded-[10px] border transition flex items-center justify-between cursor-pointer shadow-xs active:scale-[0.99] text-xs ${
+                      className={`w-full h-[44px] sm:h-[38px] px-3.5 sm:px-3 rounded-[10px] border transition flex items-center justify-between cursor-pointer shadow-xs active:scale-[0.99] text-xs ${
                         selectedCategory !== 'All'
-                          ? 'bg-[#F4DCE9]/50 dark:bg-pink-500/10 border-[#B31372]/40 dark:border-pink-500/40 text-[#8A0E57] dark:text-pink-200 font-semibold'
+                          ? 'bg-[#F4DCE9]/60 dark:bg-pink-500/15 border-[#B31372]/40 dark:border-pink-500/40 text-[#8A0E57] dark:text-pink-200 font-semibold'
                           : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border-[#E8E4EF] dark:border-white/[0.08] text-[#261827] dark:text-zinc-200 font-medium'
                       }`}
                     >
@@ -753,22 +753,35 @@ export default function PromptLibraryModal({
                     </button>
 
                     {isCategoryDropdownOpen && (
-                      <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/15 shadow-xl p-1 text-xs space-y-0.5 animate-[fadeIn_0.1s_ease-out] max-h-60 overflow-y-auto custom-scrollbar">
-                        <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#9E93A2] dark:text-zinc-400 border-b border-[#E8E4EF]/70 dark:border-white/[0.06] mb-1 flex items-center justify-between">
+                      <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/15 shadow-2xl p-1 text-xs space-y-0.5 animate-[fadeIn_0.1s_ease-out] max-h-72 sm:max-h-60 overflow-y-auto custom-scrollbar">
+                        <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#9E93A2] dark:text-zinc-400 border-b border-[#E8E4EF]/70 dark:border-white/[0.06] mb-1 flex items-center justify-between">
                           <span>Categories</span>
-                          {selectedCategory !== 'All' && (
+                          <div className="flex items-center gap-2">
+                            {selectedCategory !== 'All' && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedCategory('All');
+                                  setIsCategoryDropdownOpen(false);
+                                }}
+                                className="text-[#B31372] dark:text-pink-300 hover:underline capitalize font-normal text-[10.5px] cursor-pointer"
+                              >
+                                Reset
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedCategory('All');
                                 setIsCategoryDropdownOpen(false);
                               }}
-                              className="text-[#B31372] dark:text-pink-300 hover:underline capitalize font-normal text-[10.5px] cursor-pointer"
+                              className="p-1 rounded-md text-[#9E93A2] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white cursor-pointer"
+                              title="Close"
                             >
-                              Reset
+                              <X size={12} />
                             </button>
-                          )}
+                          </div>
                         </div>
                         {PROMPT_CATEGORIES.map((cat) => {
                           const isSelected = selectedCategory === cat.name;
@@ -780,7 +793,7 @@ export default function PromptLibraryModal({
                                 setSelectedCategory(cat.name);
                                 setIsCategoryDropdownOpen(false);
                               }}
-                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition cursor-pointer ${
+                              className={`w-full flex items-center justify-between px-3 py-2.5 sm:py-2 min-h-[44px] sm:min-h-[36px] rounded-lg text-left transition cursor-pointer text-xs ${
                                 isSelected
                                   ? 'bg-[#F4DCE9] text-[#8A0E57] dark:bg-pink-500/20 dark:text-pink-200 font-semibold'
                                   : 'text-[#261827] dark:text-zinc-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.06]'

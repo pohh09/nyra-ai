@@ -73,37 +73,25 @@ export default function RightPanel({
           >
             {/* Clean Header */}
             <div className="relative z-10 flex items-start justify-between px-4 sm:px-5 pt-4 pb-3 border-b border-[#E8E4EF] dark:border-white/[0.08] bg-transparent shrink-0">
-              <div className="flex items-start gap-2.5 min-w-0 pr-2">
-                {/* Mobile Back / Close Button */}
-                <button
-                  onClick={onClose}
-                  className="md:hidden flex h-7 w-7 -ml-1 mt-0.5 rounded-lg items-center justify-center text-[#261827] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/10 transition active:scale-95 cursor-pointer shrink-0"
-                  title="Close"
-                  aria-label="Close"
-                >
-                  <ArrowLeft size={16} />
-                </button>
-
-                <div className="min-w-0">
-                  <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
-                    {title}
-                  </h2>
-                  {subtitle && (
-                    <p className="text-xs text-[#6E6072] dark:text-zinc-400 mt-0.5 font-normal leading-normal">
-                      {subtitle}
-                    </p>
-                  )}
-                </div>
+              <div className="min-w-0 pr-2">
+                <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
+                  {title}
+                </h2>
+                {subtitle && (
+                  <p className="text-xs text-[#6E6072] dark:text-zinc-400 mt-0.5 font-normal leading-normal">
+                    {subtitle}
+                  </p>
+                )}
               </div>
 
-              {/* Desktop Close Button */}
+              {/* Close Button */}
               <button
                 onClick={onClose}
-                className="hidden md:flex h-7 w-7 mt-0.5 rounded-lg items-center justify-center text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/[0.08] transition cursor-pointer active:scale-95 shrink-0"
+                className="flex h-8 w-8 sm:h-7 sm:w-7 mt-0.5 rounded-lg items-center justify-center text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/[0.08] transition cursor-pointer active:scale-95 shrink-0"
                 title="Close panel (Esc)"
                 aria-label="Close panel"
               >
-                <X size={16} />
+                <X size={17} />
               </button>
             </div>
 
