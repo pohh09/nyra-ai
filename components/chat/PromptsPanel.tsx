@@ -758,11 +758,11 @@ export default function PromptsPanel({
       ========================================================= */}
       {subView === 'list' ? (
         <div className="shrink-0 space-y-2.5 pb-2.5">
-          {/* Search Bar + Create Button */}
+          {/* Search Bar + Create Button Row */}
           <div className="flex items-center gap-2">
-            <div className="relative flex-1 group">
+            <div className="relative flex-1 min-w-0 group">
               <Search
-                size={14}
+                size={15}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none"
               />
               <input
@@ -781,12 +781,12 @@ export default function PromptsPanel({
                     else (e.target as HTMLInputElement).blur();
                   }
                 }}
-                className="w-full pl-8.5 pr-8 h-9 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder:text-[#9E93A2] dark:placeholder:text-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
+                className="w-full pl-[38px] pr-8 h-[38px] rounded-[10px] bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder:text-[#9E93A2] dark:placeholder:text-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#9E93A2] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#9E93A2] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
                   title="Clear search"
                   aria-label="Clear search"
                 >
@@ -797,7 +797,7 @@ export default function PromptsPanel({
 
             <button
               onClick={handleOpenCreate}
-              className="h-9 px-3 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+              className="h-[38px] px-3.5 rounded-[10px] bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
               title="Create prompt manually"
             >
               <Plus size={14} />

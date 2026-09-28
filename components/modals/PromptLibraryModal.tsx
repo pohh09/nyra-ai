@@ -345,24 +345,23 @@ export default function PromptLibraryModal({
             transition={{ type: 'spring', damping: 30, stiffness: 320 }}
             className="relative z-10 w-full sm:w-[440px] md:w-[480px] lg:w-[520px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-white/[0.08] bg-white dark:bg-[#0E0514] p-4 sm:p-5 shadow-[-16px_0_40px_rgba(0,0,0,0.15)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#261827] dark:text-zinc-100 pointer-events-auto backdrop-blur-xl"
           >
-            {/* Top Header */}
-            <div className="flex items-center justify-between border-b border-[#E8E4EF] dark:border-white/[0.08] pb-3 mb-3 shrink-0">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 shadow-xs shrink-0">
-                  <BookOpen size={16} />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-base font-bold text-[#261827] dark:text-white truncate">Prompts</h2>
-                  <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 truncate">Create, save and reuse your prompts.</p>
-                </div>
+            {/* Clean Header */}
+            <div className="flex items-start justify-between border-b border-[#E8E4EF] dark:border-white/[0.08] pt-1 pb-3 mb-3 shrink-0">
+              <div className="min-w-0 pr-2">
+                <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
+                  Prompts
+                </h2>
+                <p className="text-xs text-[#6E6072] dark:text-zinc-400 mt-0.5 font-normal leading-normal">
+                  Create, save and reuse your prompts.
+                </p>
               </div>
 
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
                 {viewMode === 'library' && (
                   <>
                     <button
                       onClick={() => setViewMode('ai-creator')}
-                      className="px-2.5 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] border border-[#E8E4EF] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/10 text-[#261827] dark:text-zinc-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#F7F3FA] hover:bg-[#F0EAF5] border border-[#E8E4EF] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] dark:border-white/10 text-[#261827] dark:text-zinc-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Sparkles size={13} className="text-[#B31372] dark:text-pink-400" />
                       <span>AI Creator</span>
@@ -370,7 +369,7 @@ export default function PromptLibraryModal({
 
                     <button
                       onClick={handleOpenCreate}
-                      className="px-3 py-1.5 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      className="px-3 py-1.5 rounded-lg bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Plus size={14} />
                       <span>Create</span>
@@ -381,7 +380,7 @@ export default function PromptLibraryModal({
                 {viewMode !== 'library' && (
                   <button
                     onClick={() => setViewMode('library')}
-                    className="px-3 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white transition cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white transition cursor-pointer"
                   >
                     Back
                   </button>
@@ -389,10 +388,10 @@ export default function PromptLibraryModal({
 
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white transition cursor-pointer"
+                  className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white transition cursor-pointer"
                   title="Close"
                 >
-                  <X size={17} />
+                  <X size={16} />
                 </button>
               </div>
             </div>
@@ -676,7 +675,7 @@ export default function PromptLibraryModal({
                 <div className="space-y-2.5 mb-3 shrink-0">
                   {/* Search Bar */}
                   <div className="relative group">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none" />
+                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none" />
                     <input
                       type="text"
                       role="searchbox"
@@ -693,7 +692,7 @@ export default function PromptLibraryModal({
                           else (e.target as HTMLInputElement).blur();
                         }
                       }}
-                      className="w-full pl-8.5 pr-7 py-1.5 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
+                      className="w-full pl-[38px] pr-8 h-[38px] rounded-[10px] bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
                     />
                     {searchQuery && (
                       <button
