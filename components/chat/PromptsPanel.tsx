@@ -18,6 +18,7 @@ import {
   Wand2,
   Variable,
   MoreVertical,
+  ChevronDown,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import { PromptItem } from '@/lib/types';
@@ -36,6 +37,20 @@ export const PROMPT_CATEGORIES = [
   'Custom',
   'General',
 ] as const;
+
+export const ALL_FILTER_CATEGORIES = [
+  { name: 'All', icon: '⚡' },
+  { name: '⭐ Starred', icon: '⭐' },
+  { name: '📌 Pinned', icon: '📌' },
+  { name: 'Coding', icon: '💻' },
+  { name: 'Writing', icon: '✍️' },
+  { name: 'Image Generation', icon: '🎨' },
+  { name: 'Learning', icon: '📚' },
+  { name: 'Career', icon: '💼' },
+  { name: 'Research', icon: '🔍' },
+  { name: 'Custom', icon: '🧠' },
+  { name: 'General', icon: '⚡' },
+];
 
 export const CATEGORY_DETAILS: Record<
   string,
@@ -216,6 +231,7 @@ export default function PromptsPanel({
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   // Manual Form State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -256,19 +272,24 @@ export default function PromptsPanel({
   const [variableKeys, setVariableKeys] = useState<string[]>([]);
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
 
-  // Close card action menu on outside click
+  // Close card action menu & category dropdown on outside click
   const menuRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setActiveMenuId(null);
       }
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
+        setIsCategoryDropdownOpen(false);
+      }
     };
-    if (activeMenuId) {
+    if (activeMenuId || isCategoryDropdownOpen) {
       document.addEventListener('mousedown', handleOutsideClick);
     }
     return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [activeMenuId]);
+  }, [activeMenuId, isCategoryDropdownOpen]);
 
   // Load custom prompts, favorites & pinned from storage
   useEffect(() => {
@@ -885,35 +906,79 @@ export default function PromptsPanel({
         {/* TAB 1: PROMPT LIBRARY */}
         {subView === 'list' && tabMode === 'library' && (
           <div className="space-y-2.5">
-            {/* Category Filter Chips Bar */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none -mx-0.5 px-0.5">
-              {[
-                'All',
-                '⭐ Starred',
-                '📌 Pinned',
-                'Coding',
-                'Writing',
-                'Image Generation',
-                'Learning',
-                'Career',
-                'Research',
-                'Custom',
-              ].map((cat) => {
-                const isActive = selectedCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition whitespace-nowrap cursor-pointer shrink-0 active:scale-95 ${
-                      isActive
-                        ? 'bg-[#B31372] text-white dark:bg-white dark:text-zinc-950 font-semibold shadow-xs'
-                        : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.05] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-white/[0.07] text-[#6E6072] dark:text-zinc-300 hover:text-[#261827] dark:hover:text-white'
+            {/* Category Dropdown Filter Popover */}
+            <div className="relative" ref={categoryDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsCategoryDropdownOpen((prev) => !prev)}
+                className={`w-full h-[38px] px-3 rounded-[10px] border transition flex items-center justify-between cursor-pointer shadow-xs active:scale-[0.99] text-xs ${
+                  selectedCategory !== 'All'
+                    ? 'bg-[#F4DCE9]/50 dark:bg-pink-500/10 border-[#B31372]/40 dark:border-pink-500/40 text-[#8A0E57] dark:text-pink-200 font-semibold'
+                    : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border-[#E8E4EF] dark:border-white/[0.08] text-[#261827] dark:text-zinc-200 font-medium'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-xs shrink-0">
+                    {ALL_FILTER_CATEGORIES.find((c) => c.name === selectedCategory)?.icon || '⚡'}
+                  </span>
+                  <span className="truncate">
+                    {selectedCategory === 'All' ? 'All Categories' : selectedCategory}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                  <ChevronDown
+                    size={14}
+                    className={`text-[#6E6072] dark:text-zinc-400 transition-transform duration-200 ${
+                      isCategoryDropdownOpen ? 'rotate-180 text-[#B31372] dark:text-pink-400' : ''
                     }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
+                  />
+                </div>
+              </button>
+
+              {isCategoryDropdownOpen && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/15 shadow-xl p-1 text-xs space-y-0.5 animate-[fadeIn_0.1s_ease-out] max-h-60 overflow-y-auto custom-scrollbar">
+                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#9E93A2] dark:text-zinc-400 border-b border-[#E8E4EF]/70 dark:border-white/[0.06] mb-1 flex items-center justify-between">
+                    <span>Categories</span>
+                    {selectedCategory !== 'All' && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCategory('All');
+                          setIsCategoryDropdownOpen(false);
+                        }}
+                        className="text-[#B31372] dark:text-pink-300 hover:underline capitalize font-normal text-[10.5px] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                  {ALL_FILTER_CATEGORIES.map((opt) => {
+                    const isSelected = selectedCategory === opt.name;
+                    return (
+                      <button
+                        key={opt.name}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCategory(opt.name);
+                          setIsCategoryDropdownOpen(false);
+                        }}
+                        className={`w-full px-2.5 py-2 rounded-lg text-left flex items-center justify-between transition cursor-pointer text-xs ${
+                          isSelected
+                            ? 'bg-[#F4DCE9] text-[#8A0E57] dark:bg-pink-500/20 dark:text-pink-200 font-semibold'
+                            : 'text-[#261827] dark:text-zinc-300 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.06] hover:text-[#B31372] dark:hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-xs shrink-0">{opt.icon}</span>
+                          <span className="truncate">{opt.name === 'All' ? 'All Categories' : opt.name}</span>
+                        </div>
+                        {isSelected && <Check size={14} className="text-[#B31372] dark:text-pink-400 shrink-0 ml-2" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Prompt Cards List */}

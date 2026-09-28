@@ -18,6 +18,7 @@ import {
   AlertCircle,
   Play,
   Sliders,
+  ChevronDown,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import { PromptItem } from '@/lib/types';
@@ -26,13 +27,15 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { fetchCloudPrompts, saveCloudPrompt, deleteCloudPrompt } from '@/lib/supabase/chatService';
 
 export const PROMPT_CATEGORIES = [
-  'All',
-  'General',
-  'Coding',
-  'Writing',
-  'Research',
-  'Career',
-  'Other',
+  { name: 'All', icon: '⚡' },
+  { name: 'Coding', icon: '💻' },
+  { name: 'Writing', icon: '✍️' },
+  { name: 'Image Generation', icon: '🎨' },
+  { name: 'Learning', icon: '📚' },
+  { name: 'Research', icon: '🔍' },
+  { name: 'Career', icon: '💼' },
+  { name: 'General', icon: '⚡' },
+  { name: 'Other', icon: '💡' },
 ] as const;
 
 interface PromptLibraryModalProps {
@@ -58,6 +61,20 @@ export default function PromptLibraryModal({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
+        setIsCategoryDropdownOpen(false);
+      }
+    };
+    if (isCategoryDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isCategoryDropdownOpen]);
 
   // Manual Form State (Create / Edit)
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -706,24 +723,81 @@ export default function PromptLibraryModal({
                     )}
                   </div>
 
-                  {/* Category Filter Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-0.5 px-0.5">
-                    {PROMPT_CATEGORIES.map((cat) => {
-                      const isActive = selectedCategory === cat;
-                      return (
-                        <button
-                          key={cat}
-                          onClick={() => setSelectedCategory(cat)}
-                          className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap cursor-pointer shrink-0 ${
-                            isActive
-                              ? 'bg-[#B31372] text-white dark:bg-white dark:text-zinc-950 font-semibold shadow-xs'
-                              : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-white/[0.08] text-[#6E6072] hover:text-[#261827] dark:text-zinc-300 dark:hover:text-white'
+                  {/* Category Dropdown Filter Popover */}
+                  <div className="relative" ref={categoryDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsCategoryDropdownOpen((prev) => !prev)}
+                      className={`w-full h-[38px] px-3 rounded-[10px] border transition flex items-center justify-between cursor-pointer shadow-xs active:scale-[0.99] text-xs ${
+                        selectedCategory !== 'All'
+                          ? 'bg-[#F4DCE9]/50 dark:bg-pink-500/10 border-[#B31372]/40 dark:border-pink-500/40 text-[#8A0E57] dark:text-pink-200 font-semibold'
+                          : 'bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border-[#E8E4EF] dark:border-white/[0.08] text-[#261827] dark:text-zinc-200 font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs shrink-0">
+                          {PROMPT_CATEGORIES.find((c) => c.name === selectedCategory)?.icon || '⚡'}
+                        </span>
+                        <span className="truncate">
+                          {selectedCategory === 'All' ? 'All Categories' : selectedCategory}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        <ChevronDown
+                          size={14}
+                          className={`text-[#6E6072] dark:text-zinc-400 transition-transform duration-200 ${
+                            isCategoryDropdownOpen ? 'rotate-180 text-[#B31372] dark:text-pink-400' : ''
                           }`}
-                        >
-                          {cat}
-                        </button>
-                      );
-                    })}
+                        />
+                      </div>
+                    </button>
+
+                    {isCategoryDropdownOpen && (
+                      <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-xl bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-white/15 shadow-xl p-1 text-xs space-y-0.5 animate-[fadeIn_0.1s_ease-out] max-h-60 overflow-y-auto custom-scrollbar">
+                        <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#9E93A2] dark:text-zinc-400 border-b border-[#E8E4EF]/70 dark:border-white/[0.06] mb-1 flex items-center justify-between">
+                          <span>Categories</span>
+                          {selectedCategory !== 'All' && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedCategory('All');
+                                setIsCategoryDropdownOpen(false);
+                              }}
+                              className="text-[#B31372] dark:text-pink-300 hover:underline capitalize font-normal text-[10.5px] cursor-pointer"
+                            >
+                              Reset
+                            </button>
+                          )}
+                        </div>
+                        {PROMPT_CATEGORIES.map((cat) => {
+                          const isSelected = selectedCategory === cat.name;
+                          return (
+                            <button
+                              key={cat.name}
+                              type="button"
+                              onClick={() => {
+                                setSelectedCategory(cat.name);
+                                setIsCategoryDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#F4DCE9] text-[#8A0E57] dark:bg-pink-500/20 dark:text-pink-200 font-semibold'
+                                  : 'text-[#261827] dark:text-zinc-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.06]'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-xs shrink-0">{cat.icon}</span>
+                                <span className="truncate">{cat.name === 'All' ? 'All Categories' : cat.name}</span>
+                              </div>
+                              {isSelected && (
+                                <Check size={14} className="text-[#B31372] dark:text-pink-400 shrink-0 ml-1.5" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
 
