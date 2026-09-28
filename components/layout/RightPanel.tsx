@@ -21,7 +21,7 @@ export default function RightPanel({
   title,
   subtitle,
   children,
-  widthClass = 'w-full md:w-[380px] lg:w-[400px] xl:w-[420px]',
+  widthClass = 'w-full md:w-[440px] lg:w-[480px] xl:w-[520px]',
 }: RightPanelProps) {
   // Listen for Escape key
   useEffect(() => {

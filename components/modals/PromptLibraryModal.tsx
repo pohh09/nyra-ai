@@ -343,7 +343,7 @@ export default function PromptLibraryModal({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 320 }}
-            className="relative z-10 w-full sm:w-[400px] md:w-[420px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-white/[0.08] bg-white dark:bg-[#0E0514] p-4 sm:p-5 shadow-[-16px_0_40px_rgba(0,0,0,0.15)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#261827] dark:text-zinc-100 pointer-events-auto backdrop-blur-xl"
+            className="relative z-10 w-full sm:w-[440px] md:w-[480px] lg:w-[520px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-white/[0.08] bg-white dark:bg-[#0E0514] p-4 sm:p-5 shadow-[-16px_0_40px_rgba(0,0,0,0.15)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#261827] dark:text-zinc-100 pointer-events-auto backdrop-blur-xl"
           >
             {/* Top Header */}
             <div className="flex items-center justify-between border-b border-[#E8E4EF] dark:border-white/[0.08] pb-3 mb-3 shrink-0">
