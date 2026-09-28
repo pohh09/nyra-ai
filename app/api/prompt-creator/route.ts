@@ -83,9 +83,9 @@ async function tryGemini(systemPrompt: string, userPrompt: string): Promise<stri
   if (!apiKey) throw new Error('GEMINI_API_KEY not configured');
 
   const models = [
-    'gemini-3.6-flash',
-    'gemini-3.1-flash-lite',
-    'gemini-3.8-flash',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
     'gemini-flash-latest',
     'gemini-pro-latest',
   ];
@@ -132,12 +132,11 @@ async function tryGroq(systemPrompt: string, userPrompt: string): Promise<string
 
   const groq = new Groq({ apiKey });
   const models = [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
     'openai/gpt-oss-120b',
     'openai/gpt-oss-20b',
     'qwen/qwen3.8-27b',
-    'qwen/qwen3.6-27b',
-    'groq/compound-mini',
-    'groq/compound',
   ];
   let lastErr: any = null;
 

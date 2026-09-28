@@ -61,30 +61,79 @@ const STARTER_PROMPTS: PromptItem[] = [
   },
   {
     id: 'starter_2',
-    title: 'Executive Brief Synthesizer',
+    title: 'Full-Stack Bug Diagnostic & Root Cause Solver',
+    prompt: 'Analyze this runtime error stack trace and implementation. Identify the exact failing line, explain the technical root cause, and provide a robust production-ready code patch:\n\nError / Stack Trace:\n{{error_stack_trace}}\n\nRelevant Code:\n{{code_context}}',
+    category: 'Coding',
+    isCustom: true,
+  },
+  {
+    id: 'starter_3',
+    title: 'System Design & Scalable API Architect',
+    prompt: 'Design a high-scale, fault-tolerant backend system for {{feature_or_product}}. Detail the database schema, API contracts, caching strategy (Redis), queue architecture, and rate-limiting approach.',
+    category: 'Coding',
+    isCustom: true,
+  },
+  {
+    id: 'starter_4',
+    title: 'Executive Brief & Strategic Summary',
     prompt: 'Synthesize a structured executive summary highlighting the key takeaways, core metrics, actionable items, and strategic considerations for:\n\n{{document_or_topic}}',
     category: 'Writing',
     isCustom: true,
   },
   {
-    id: 'starter_3',
-    title: 'Photorealistic Architectural Prompt',
+    id: 'starter_5',
+    title: 'High-Converting Landing Page Copy',
+    prompt: 'Write compelling, modern SaaS landing page copy for {{product_name}}, a {{product_description}} aimed at {{target_audience}}. Include a punchy H1 hero headline, value proposition subheadline, 3 core feature benefit pillars, social proof snippet, and a high-converting CTA.',
+    category: 'Writing',
+    isCustom: true,
+  },
+  {
+    id: 'starter_6',
+    title: 'Persuasive Cold Email Outreach',
+    prompt: 'Draft a short, highly personalized cold email to {{prospect_role}} at {{company_name}} regarding {{value_proposition}}. Keep it under 100 words, friendly yet authoritative, with a low-friction call-to-action.',
+    category: 'Writing',
+    isCustom: true,
+  },
+  {
+    id: 'starter_7',
+    title: 'Photorealistic Architectural Visualization',
     prompt: 'A photorealistic architectural visualization of a {{building_type}} surrounded by {{environment}}, 8k resolution, cinematic golden hour lighting, architectural digest style, volumetric fog, shot on 35mm lens.',
     category: 'Image Generation',
     isCustom: true,
   },
   {
-    id: 'starter_4',
+    id: 'starter_8',
+    title: 'Cinematic Sci-Fi Concept Art',
+    prompt: 'Epic cinematic concept art of {{subject}} in a futuristic {{setting}}, hyper-detailed, ray tracing reflections, cyberpunk neon accents, volumetric atmosphere, unreal engine 5 render, trending on artstation.',
+    category: 'Image Generation',
+    isCustom: true,
+  },
+  {
+    id: 'starter_9',
     title: 'Technical Step-by-Step Tutor',
     prompt: 'Explain the core principles and step-by-step logic behind {{technical_concept}} in simple, intuitive terms for a beginner, with practical real-world analogies and code examples.',
     category: 'Learning',
     isCustom: true,
   },
   {
-    id: 'starter_5',
+    id: 'starter_10',
+    title: 'First-Principles Mental Model Explainer',
+    prompt: 'Deconstruct {{complex_topic}} from first principles. Break it down into fundamental axioms, show how they build into the modern system, and identify the most common misconceptions.',
+    category: 'Learning',
+    isCustom: true,
+  },
+  {
+    id: 'starter_11',
     title: 'Tailored Senior Job Cover Letter',
     prompt: 'Write a compelling, professional cover letter for a {{role}} position at {{company}}. Highlight achievements in leadership, architecture, and delivering high-impact business outcomes.',
     category: 'Career',
+    isCustom: true,
+  },
+  {
+    id: 'starter_12',
+    title: 'Competitive Landscape & Market Analysis',
+    prompt: 'Perform a comprehensive competitive landscape analysis for {{industry_or_product}}. Compare key players across product capabilities, pricing tiers, target customer segments, moat strength, and strategic market gaps.',
+    category: 'Research',
     isCustom: true,
   },
 ];
@@ -171,14 +220,21 @@ export default function PromptsPanel({
 
   // Load custom prompts, favorites & pinned from storage
   useEffect(() => {
-    const loaded = loadCustomPrompts();
-    setCustomPrompts(loaded || []);
+    const loaded = loadCustomPrompts(user?.id);
+    if (loaded && loaded.length > 0) {
+      setCustomPrompts(loaded);
+    } else {
+      setCustomPrompts(STARTER_PROMPTS);
+      saveCustomPrompts(STARTER_PROMPTS, user?.id);
+    }
 
     try {
-      const storedFavs = localStorage.getItem('nyra_prompt_favorites');
+      const favKey = user?.id ? `nyra_prompt_favorites_${user.id}` : 'nyra_prompt_favorites';
+      const storedFavs = localStorage.getItem(favKey) || localStorage.getItem('nyra_prompt_favorites');
       if (storedFavs) setFavorites(new Set(JSON.parse(storedFavs)));
 
-      const storedPins = localStorage.getItem('nyra_prompt_pinned');
+      const pinKey = user?.id ? `nyra_prompt_pinned_${user.id}` : 'nyra_prompt_pinned';
+      const storedPins = localStorage.getItem(pinKey) || localStorage.getItem('nyra_prompt_pinned');
       if (storedPins) setPinned(new Set(JSON.parse(storedPins)));
     } catch (e) {
       console.error(e);
@@ -189,7 +245,7 @@ export default function PromptsPanel({
         if (cloud && cloud.length > 0) {
           const filtered = cloud.filter((p) => p && p.isCustom !== false);
           setCustomPrompts(filtered);
-          saveCustomPrompts(filtered);
+          saveCustomPrompts(filtered, user.id);
         }
       });
     }
@@ -264,7 +320,8 @@ export default function PromptsPanel({
     else next.add(id);
     setFavorites(next);
     try {
-      localStorage.setItem('nyra_prompt_favorites', JSON.stringify(Array.from(next)));
+      const favKey = user?.id ? `nyra_prompt_favorites_${user.id}` : 'nyra_prompt_favorites';
+      localStorage.setItem(favKey, JSON.stringify(Array.from(next)));
     } catch (err) {
       console.error(err);
     }
@@ -277,7 +334,8 @@ export default function PromptsPanel({
     else next.add(id);
     setPinned(next);
     try {
-      localStorage.setItem('nyra_prompt_pinned', JSON.stringify(Array.from(next)));
+      const pinKey = user?.id ? `nyra_prompt_pinned_${user.id}` : 'nyra_prompt_pinned';
+      localStorage.setItem(pinKey, JSON.stringify(Array.from(next)));
     } catch (err) {
       console.error(err);
     }
@@ -350,7 +408,7 @@ export default function PromptsPanel({
     setActiveMenuId(null);
     const updated = customPrompts.filter((p) => p.id !== id);
     setCustomPrompts(updated);
-    saveCustomPrompts(updated);
+    saveCustomPrompts(updated, user?.id);
     if (user?.id) deleteCloudPrompt(user.id, id);
     addToast({ type: 'info', title: 'Prompt deleted' });
   };
@@ -358,7 +416,7 @@ export default function PromptsPanel({
   const handleLoadStarters = () => {
     const updated = [...customPrompts, ...STARTER_PROMPTS];
     setCustomPrompts(updated);
-    saveCustomPrompts(updated);
+    saveCustomPrompts(updated, user?.id);
     addToast({ type: 'success', title: 'Loaded starter templates' });
   };
 
@@ -401,7 +459,7 @@ export default function PromptsPanel({
     }
 
     setCustomPrompts(updatedList);
-    saveCustomPrompts(updatedList);
+    saveCustomPrompts(updatedList, user?.id);
     setSubView('list');
     setEditingId(null);
   };
@@ -459,7 +517,7 @@ export default function PromptsPanel({
     };
     const updated = [newItem, ...customPrompts];
     setCustomPrompts(updated);
-    saveCustomPrompts(updated);
+    saveCustomPrompts(updated, user?.id);
     if (user?.id) saveCloudPrompt(user.id, newItem);
     addToast({ type: 'success', title: `"${newItem.title}" saved to library` });
     setTabMode('library');
@@ -523,7 +581,7 @@ export default function PromptsPanel({
     };
     const updated = [newItem, ...customPrompts];
     setCustomPrompts(updated);
-    saveCustomPrompts(updated);
+    saveCustomPrompts(updated, user?.id);
     if (user?.id) saveCloudPrompt(user.id, newItem);
     addToast({ type: 'success', title: `"${newItem.title}" saved to library` });
     setTabMode('library');

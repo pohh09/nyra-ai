@@ -29,6 +29,7 @@ import {
   Sun,
   Moon,
   Shield,
+  BookOpen,
 } from 'lucide-react';
 import { applyTheme, ThemeMode } from '@/lib/theme';
 import { Chat, WorkspaceProject } from '@/lib/types';
@@ -476,6 +477,19 @@ export default function Sidebar({
                     </span>
                   )}
                 </button>
+
+                {onOpenPromptLibrary && (
+                  <button
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      onOpenPromptLibrary();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-[#261827] dark:text-zinc-200 hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                  >
+                    <BookOpen size={13} className="text-[#E52A83] dark:text-pink-400" />
+                    <span className="flex-1 text-left">Prompt Library</span>
+                  </button>
+                )}
 
                 <button
                   onClick={() => {

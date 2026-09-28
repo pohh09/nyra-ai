@@ -1791,14 +1791,14 @@ export default function ChatPage() {
 
             {/* TOP RIGHT: Clean Action Buttons (Desktop & Mobile Optimized) */}
             <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
-              {/* Desktop Prompts Screen Pill */}
+              {/* Prompts Screen Pill */}
               <button
                 onClick={() => setIsPromptLibraryOpen(true)}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
                 title="Open Prompts & Starters"
               >
                 <BookOpen size={13} className="text-[#E52A83] dark:text-pink-300" />
-                <span>Prompts</span>
+                <span className="hidden xs:inline">Prompts</span>
               </button>
 
               {/* Desktop Share Button Pill */}
