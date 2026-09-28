@@ -294,27 +294,29 @@ html.light .chat-edit-box textarea::placeholder,
 }
 
 .chat-edit-cancel-btn {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #cbd5e1 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 .chat-edit-cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.14) !important;
-  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 html.light .chat-edit-cancel-btn,
 [data-theme="light"] .chat-edit-cancel-btn {
-  background: #F5F3F9 !important;
+  background: #F4F2F7 !important;
   color: #686477 !important;
-  border: 1px solid #E8E4EF !important;
+  border: 1px solid #E2DEEA !important;
 }
 
 html.light .chat-edit-cancel-btn:hover,
 [data-theme="light"] .chat-edit-cancel-btn:hover {
-  background: #EEE8FA !important;
+  background: #EAE5F3 !important;
   color: #292633 !important;
+  border-color: #D3CCE0 !important;
 }
 
 .chat-edit-send-btn,
@@ -322,13 +324,15 @@ html.light .chat-edit-send-btn,
 [data-theme="light"] .chat-edit-send-btn {
   background: linear-gradient(135deg, var(--accent-from, #E52A83) 0%, var(--accent-to, #B31372) 100%) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 0 12px var(--accent-glow, rgba(229, 42, 131, 0.4)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 2px 10px var(--accent-glow, rgba(229, 42, 131, 0.35)) !important;
 }
 
 .chat-edit-send-btn:hover:not(:disabled),
 html.light .chat-edit-send-btn:hover:not(:disabled),
 [data-theme="light"] .chat-edit-send-btn:hover:not(:disabled) {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px var(--accent-glow, rgba(229, 42, 131, 0.5)) !important;
 }
 
 /* =========================================

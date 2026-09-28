@@ -37,6 +37,7 @@ import {
   Layers,
   ZoomIn,
   X,
+  Send,
   MoreHorizontal,
 } from 'lucide-react';
 
@@ -414,21 +415,25 @@ export default function MessageBubble({
                   className="w-full resize-none bg-transparent outline-none text-[14.5px] sm:text-[15.5px] leading-relaxed select-text placeholder-[#92909B] dark:placeholder-slate-400 font-normal focus:ring-0 text-[#292633] dark:text-white"
                   placeholder="Edit your message..."
                 />
-                <div className="flex items-center justify-end gap-2 mt-2.5 pt-1">
+                <div className="flex items-center justify-end gap-2.5 mt-3 pt-1">
                   <button
                     type="button"
                     onClick={handleCancelEdit}
-                    className="chat-edit-cancel-btn px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer active:scale-95"
+                    className="chat-edit-cancel-btn inline-flex items-center gap-1.5 h-9 px-3.5 sm:px-4 rounded-xl text-xs sm:text-[13px] font-medium transition-all duration-150 cursor-pointer active:scale-95 select-none"
+                    aria-label="Cancel editing"
                   >
-                    Cancel
+                    <X size={13.5} className="shrink-0 opacity-70" />
+                    <span>Cancel</span>
                   </button>
                   <button
                     type="button"
                     disabled={!editingValue.trim()}
                     onClick={handleSaveEdit}
-                    className="chat-edit-send-btn disabled:opacity-40 disabled:cursor-not-allowed px-4.5 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer shadow-sm active:scale-95"
+                    className="chat-edit-send-btn inline-flex items-center gap-1.5 h-9 px-4 sm:px-4.5 rounded-xl text-xs sm:text-[13px] font-semibold transition-all duration-150 cursor-pointer shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                    aria-label="Send edited message"
                   >
-                    Send
+                    <span>Send</span>
+                    <Send size={12.5} className="shrink-0" />
                   </button>
                 </div>
               </div>
