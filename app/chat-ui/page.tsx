@@ -182,6 +182,8 @@ export default function ChatPage() {
 
   const scrollToBottom = useCallback((behavior: 'smooth' | 'auto' = 'smooth') => {
     if (!scrollRef.current) return;
+    isUserScrolledUpRef.current = false;
+    setShowScrollButton(false);
     scrollRef.current.scrollTo({
       top: scrollRef.current.scrollHeight,
       behavior,
@@ -191,14 +193,15 @@ export default function ChatPage() {
   const handleChatScroll = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-    const distanceToBottom = scrollHeight - scrollTop - clientHeight;
-    const isUp = distanceToBottom > 80;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    // When distance to bottom > 100px, user has manually scrolled up
+    const isUp = distanceFromBottom > 100;
     isUserScrolledUpRef.current = isUp;
-    setShowScrollButton(isUp && messages.length > 0);
+    setShowScrollButton(isUp && messages.length > 0 && scrollHeight > clientHeight + 80);
   }, [messages.length]);
 
-  // Buttery-smooth, hardware-accelerated RAF glider during streaming
-  const smoothGliderScroll = useCallback(() => {
+  // High-performance, hardware-accelerated RAF glider during streaming
+  const followStreamingScroll = useCallback(() => {
     if (!scrollRef.current || isUserScrolledUpRef.current) return;
     if (rafScrollIdRef.current) return;
 
@@ -210,10 +213,8 @@ export default function ChatPage() {
       const current = el.scrollTop + el.clientHeight;
       const diff = target - current;
 
-      if (diff > 0 && diff < 900) {
+      if (diff > 0) {
         el.scrollTop = target - el.clientHeight;
-      } else if (diff >= 900) {
-        el.scrollTo({ top: target, behavior: 'smooth' });
       }
     });
   }, []);
@@ -221,7 +222,7 @@ export default function ChatPage() {
   // Auto smooth-scroll to bottom during response generation / streaming if user hasn't scrolled up
   useEffect(() => {
     if (!isUserScrolledUpRef.current && messages.length > 0) {
-      smoothGliderScroll();
+      followStreamingScroll();
     }
     return () => {
       if (rafScrollIdRef.current) {
@@ -229,7 +230,7 @@ export default function ChatPage() {
         rafScrollIdRef.current = null;
       }
     };
-  }, [messages, isLoading, thinking, smoothGliderScroll]);
+  }, [messages, isLoading, thinking, followStreamingScroll]);
 
   // Load state from LocalStorage on mount
   useEffect(() => {
@@ -793,42 +794,7 @@ export default function ChatPage() {
     });
   };
 
-  // Scroll handler with user manual scroll detection
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
 
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const { scrollTop, scrollHeight, clientHeight } = container;
-          const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-          const userScrolledUp = distanceFromBottom > 100;
-
-          isUserScrolledUpRef.current = userScrolledUp;
-          setShowScrollButton(userScrolledUp && scrollHeight > clientHeight + 120);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Frame-by-frame seamless streaming follow
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container || isUserScrolledUpRef.current) return;
-
-    window.requestAnimationFrame(() => {
-      if (!isUserScrolledUpRef.current && container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    });
-  }, [messages, isLoading]);
 
   // Reset scroll state on switching chat
   useEffect(() => {
@@ -1085,6 +1051,11 @@ export default function ChatPage() {
       abortControllerRef.current = controller;
       setIsLoading(true);
       setThinking(true);
+      isUserScrolledUpRef.current = false;
+      setShowScrollButton(false);
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
 
       const targetPdfs =
         activePdfDocuments && activePdfDocuments.length > 0
@@ -1224,7 +1195,7 @@ export default function ChatPage() {
               );
 
               // Follow streaming response with buttery-smooth RAF glider
-              smoothGliderScroll();
+              followStreamingScroll();
             }
           }
         }
@@ -1504,6 +1475,11 @@ export default function ChatPage() {
     setPdfText('');
     setPdfName('');
     setPdfPages(0);
+    isUserScrolledUpRef.current = false;
+    setShowScrollButton(false);
+    requestAnimationFrame(() => {
+      scrollToBottom('smooth');
+    });
 
     await streamAssistantResponse({
       nextMessages: [...baseMessages, userMessage],
@@ -2144,31 +2120,27 @@ export default function ChatPage() {
                 className="absolute bottom-0 left-0 right-0 z-20 px-2 sm:px-4 md:px-6 pb-2 sm:pb-4 md:pb-5 pointer-events-none bg-gradient-to-t from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent pt-6 sm:pt-8 chatscreen-bottom-bar"
               >
                 <div className="relative mx-auto w-full max-w-3xl pointer-events-auto">
-                  {/* ChatGPT Circular Scroll to Bottom Arrow (Directly Above Input Bar) */}
+                  {/* ChatGPT Scroll to Bottom Button ("Jump to latest") */}
                   <AnimatePresence>
                     {showScrollButton && (
                       <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.8 }}
+                        initial={{ opacity: 0, y: 8, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.8 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.9 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
+                        className="absolute -top-11 sm:-top-12 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
                       >
                         <button
                           type="button"
                           onClick={() => {
-                            isUserScrolledUpRef.current = false;
-                            setShowScrollButton(false);
-                            scrollRef.current?.scrollTo({
-                              top: scrollRef.current.scrollHeight,
-                              behavior: 'smooth',
-                            });
+                            scrollToBottom('smooth');
                           }}
-                          className="group h-8 w-8 rounded-full border border-[#E8E4EF] dark:border-pink-500/35 bg-[#FFFFFF]/95 dark:bg-[#16091F]/95 hover:bg-[#F7F3FA] dark:hover:bg-[#24103A] hover:border-[#B31372]/40 text-[#B31372] dark:text-pink-200 hover:text-[#261827] dark:hover:text-white flex items-center justify-center shadow-[0_4px_16px_rgba(38,24,39,0.08)] dark:shadow-[0_8px_20px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all duration-150 hover:scale-110 active:scale-95 cursor-pointer"
-                          title="Scroll to recent messages"
-                          aria-label="Scroll to recent messages"
+                          className="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-500/35 bg-[#FFFFFF]/95 dark:bg-[#16091F]/95 hover:bg-[#F7F3FA] dark:hover:bg-[#24103A] hover:border-[#B31372]/40 text-[#261827] dark:text-pink-100 shadow-[0_4px_16px_rgba(38,24,39,0.12)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all duration-150 hover:scale-105 active:scale-95 cursor-pointer text-xs font-medium select-none"
+                          title="Jump to latest message"
+                          aria-label="Jump to latest message"
                         >
-                          <ArrowDown size={15} className="text-[#E52A83] dark:text-pink-300 group-hover:text-[#261827] dark:group-hover:text-white transition-colors" />
+                          <ArrowDown size={13} className="text-[#E52A83] dark:text-pink-400 group-hover:translate-y-0.5 transition-transform" />
+                          <span>Jump to latest</span>
                         </button>
                       </motion.div>
                     )}
