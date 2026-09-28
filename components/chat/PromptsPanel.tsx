@@ -335,6 +335,9 @@ export default function PromptsPanel({
 
   // Filtered prompts by category & search query
   const filteredPrompts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+
     return sortedPrompts.filter((p) => {
       if (selectedCategory === '⭐ Starred' && !favorites.has(p.id)) return false;
       if (selectedCategory === '📌 Pinned' && !pinned.has(p.id)) return false;
@@ -343,17 +346,18 @@ export default function PromptsPanel({
         selectedCategory === 'All' ||
         selectedCategory === '⭐ Starred' ||
         selectedCategory === '📌 Pinned' ||
-        p.category?.toLowerCase() === selectedCategory.toLowerCase();
+        (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
 
       if (!matchesCategory) return false;
 
-      if (!searchQuery.trim()) return true;
+      if (terms.length === 0) return true;
 
-      const q = searchQuery.toLowerCase();
-      return (
-        p.title?.toLowerCase().includes(q) ||
-        p.prompt?.toLowerCase().includes(q) ||
-        p.category?.toLowerCase().includes(q)
+      const title = (p.title || '').toLowerCase();
+      const prompt = (p.prompt || '').toLowerCase();
+      const cat = (p.category || '').toLowerCase();
+
+      return terms.every(
+        (term) => title.includes(term) || prompt.includes(term) || cat.includes(term)
       );
     });
   }, [sortedPrompts, selectedCategory, searchQuery, favorites, pinned]);
@@ -756,22 +760,35 @@ export default function PromptsPanel({
         <div className="shrink-0 space-y-2.5 pb-2.5">
           {/* Search Bar + Create Button */}
           <div className="flex items-center gap-2">
-            <div className="relative flex-1">
+            <div className="relative flex-1 group">
               <Search
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none"
               />
               <input
                 type="text"
+                role="searchbox"
+                aria-label="Search prompts"
+                autoComplete="off"
+                spellCheck={false}
                 placeholder="Search prompts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8.5 pr-7 h-9 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder:text-[#9E93A2] dark:placeholder:text-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    e.stopPropagation();
+                    if (searchQuery) setSearchQuery('');
+                    else (e.target as HTMLInputElement).blur();
+                  }
+                }}
+                className="w-full pl-8.5 pr-8 h-9 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder:text-[#9E93A2] dark:placeholder:text-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white cursor-pointer"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#9E93A2] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+                  title="Clear search"
+                  aria-label="Clear search"
                 >
                   <X size={13} />
                 </button>
@@ -916,6 +933,22 @@ export default function PromptsPanel({
                       ? 'Try adjusting your search query or category filter.'
                       : 'Create your first prompt or let AI generate one for you.'}
                   </p>
+                  {searchQuery && selectedCategory !== 'All' && (
+                    <button
+                      onClick={() => setSelectedCategory('All')}
+                      className="inline-block mt-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-semibold cursor-pointer"
+                    >
+                      Search across all categories
+                    </button>
+                  )}
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="block mx-auto mt-0.5 text-[11px] text-[#6E6072] dark:text-zinc-400 hover:underline cursor-pointer"
+                    >
+                      Clear search query
+                    </button>
+                  )}
                 </div>
                 <div className="pt-1 flex flex-col gap-2 max-w-[220px] mx-auto">
                   <button

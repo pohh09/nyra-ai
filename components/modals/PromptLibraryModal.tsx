@@ -111,21 +111,25 @@ export default function PromptLibraryModal({
 
   // Filter user prompts by category and search
   const filteredPrompts = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    const terms = q ? q.split(/\s+/).filter(Boolean) : [];
+
     return prompts.filter((p) => {
       const matchesCategory =
         selectedCategory === 'All' ||
-        p.category?.toLowerCase() === selectedCategory.toLowerCase();
+        (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
 
       if (!matchesCategory) return false;
 
-      if (!searchQuery.trim()) return true;
+      if (terms.length === 0) return true;
 
-      const q = searchQuery.toLowerCase();
-      const titleMatch = p.title?.toLowerCase().includes(q);
-      const promptMatch = p.prompt?.toLowerCase().includes(q);
-      const catMatch = p.category?.toLowerCase().includes(q);
+      const title = (p.title || '').toLowerCase();
+      const prompt = (p.prompt || '').toLowerCase();
+      const cat = (p.category || '').toLowerCase();
 
-      return titleMatch || promptMatch || catMatch;
+      return terms.every(
+        (term) => title.includes(term) || prompt.includes(term) || cat.includes(term)
+      );
     });
   }, [prompts, selectedCategory, searchQuery]);
 
@@ -671,19 +675,32 @@ export default function PromptLibraryModal({
                 {/* Controls: Search + Categories */}
                 <div className="space-y-2.5 mb-3 shrink-0">
                   {/* Search Bar */}
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500" />
+                  <div className="relative group">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none" />
                     <input
                       type="text"
+                      role="searchbox"
+                      aria-label="Search prompts"
+                      autoComplete="off"
+                      spellCheck={false}
                       placeholder="Search prompts..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-8.5 pr-7 py-1.5 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] transition shadow-xs"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          e.stopPropagation();
+                          if (searchQuery) setSearchQuery('');
+                          else (e.target as HTMLInputElement).blur();
+                        }
+                      }}
+                      className="w-full pl-8.5 pr-7 py-1.5 rounded-xl bg-[#F7F3FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.08] text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-[#B31372] dark:focus:border-pink-500/60 focus:ring-2 focus:ring-[#B31372]/15 dark:focus:ring-pink-500/15 focus:bg-white dark:focus:bg-[#0E0514] transition shadow-xs"
                     />
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+                        title="Clear search"
+                        aria-label="Clear search"
                       >
                         <X size={13} />
                       </button>
