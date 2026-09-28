@@ -28,14 +28,11 @@ import { fetchCloudPrompts, saveCloudPrompt, deleteCloudPrompt } from '@/lib/sup
 
 export const PROMPT_CATEGORIES = [
   { name: 'All', icon: '⚡' },
+  { name: 'General', icon: '⚡' },
   { name: 'Coding', icon: '💻' },
   { name: 'Writing', icon: '✍️' },
-  { name: 'Image Generation', icon: '🎨' },
-  { name: 'Learning', icon: '📚' },
-  { name: 'Research', icon: '🔍' },
-  { name: 'Career', icon: '💼' },
-  { name: 'General', icon: '⚡' },
-  { name: 'Other', icon: '💡' },
+  { name: 'Productivity', icon: '🎯' },
+  { name: 'Custom', icon: '🧠' },
 ] as const;
 
 interface PromptLibraryModalProps {
@@ -815,48 +812,76 @@ export default function PromptLibraryModal({
                 </div>
 
                 {/* Prompts Cards List */}
-                <div className="flex-1 overflow-y-auto space-y-2 pr-0.5 scrollbar-thin">
+                <div className="flex-1 overflow-y-auto space-y-2.5 pr-0.5 scrollbar-thin">
+                  {/* My Prompts Section Header */}
+                  <div className="flex items-center justify-between pt-0.5 pb-1 text-xs text-[#6E6072] dark:text-zinc-400 font-semibold border-b border-[#E8E4EF] dark:border-white/[0.08]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#261827] dark:text-white font-bold text-xs">My Prompts</span>
+                      {prompts.length > 0 && (
+                        <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#F4DCE9] text-[#8A0E57] dark:bg-pink-500/20 dark:text-pink-300 font-mono font-semibold">
+                          {prompts.length}
+                        </span>
+                      )}
+                    </div>
+                    {filteredPrompts.length !== prompts.length && prompts.length > 0 && (
+                      <span className="text-[11px] text-[#9E93A2] dark:text-zinc-500">
+                        {filteredPrompts.length} of {prompts.length}
+                      </span>
+                    )}
+                  </div>
+
                   {prompts.length === 0 ? (
-                    <div className="py-8 px-4 text-center rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FAF8FB] dark:bg-white/[0.02] space-y-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 mx-auto">
+                    <div className="py-8 sm:py-10 px-4 text-center rounded-2xl border border-dashed border-[#E8E4EF] dark:border-white/10 bg-[#FAF8FB]/60 dark:bg-white/[0.02] space-y-3 shadow-xs">
+                      <div className="w-10 h-10 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 mx-auto shadow-xs">
                         <BookOpen size={18} />
                       </div>
-                      <div className="space-y-0.5">
-                        <h3 className="text-xs sm:text-sm font-bold text-[#261827] dark:text-white">Your prompt library is empty</h3>
-                        <p className="text-[11px] text-[#6E6072] dark:text-zinc-400 max-w-xs mx-auto">
-                          Create your own reusable prompts or let AI create one for you.
+                      <div className="space-y-1">
+                        <h4 className="text-xs sm:text-sm font-bold text-[#261827] dark:text-white">No saved prompts yet</h4>
+                        <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 max-w-xs mx-auto leading-relaxed">
+                          Create your first prompt or let Nyra create one for you with AI.
                         </p>
                       </div>
-                      <div className="pt-1 flex items-center justify-center gap-2">
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2 max-w-[280px] mx-auto">
                         <button
                           onClick={handleOpenCreate}
-                          className="px-3 py-1.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.1] text-[#261827] dark:text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          className="w-full sm:w-auto h-[38px] px-4 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                         >
-                          <Plus size={13} />
-                          <span>Create</span>
+                          <Plus size={14} />
+                          <span>Create Prompt</span>
                         </button>
                         <button
                           onClick={() => setViewMode('ai-creator')}
-                          className="px-3 py-1.5 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                          className="w-full sm:w-auto h-[38px] px-3.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/10 text-[#261827] dark:text-zinc-200 text-xs font-medium transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                         >
-                          <Sparkles size={13} className="text-white" />
-                          <span>AI Creator</span>
+                          <Sparkles size={13} className="text-[#B31372] dark:text-pink-400" />
+                          <span>Generate with AI</span>
                         </button>
                       </div>
                     </div>
                   ) : filteredPrompts.length === 0 ? (
-                    <div className="py-8 text-center text-[#6E6072] dark:text-zinc-400 text-xs">
-                      <p className="font-semibold text-[#261827] dark:text-white">No prompts found.</p>
-                      <p className="mt-0.5 text-[11px]">Try adjusting your search or category filter.</p>
-                      <button
-                        onClick={() => {
-                          setSearchQuery('');
-                          setSelectedCategory('All');
-                        }}
-                        className="mt-2 text-xs text-[#B31372] dark:text-pink-300 hover:underline cursor-pointer"
-                      >
-                        Clear search & filters
-                      </button>
+                    <div className="py-7 px-4 text-center rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FAF8FB] dark:bg-white/[0.02] space-y-2.5 shadow-xs">
+                      <p className="text-xs font-semibold text-[#261827] dark:text-white">No matching prompts found</p>
+                      <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 max-w-[260px] mx-auto">
+                        Try adjusting your search query or reset your category filter.
+                      </p>
+                      <div className="pt-1 flex items-center justify-center gap-2 flex-wrap">
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery('')}
+                            className="px-2.5 py-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-medium cursor-pointer"
+                          >
+                            Clear search query
+                          </button>
+                        )}
+                        {selectedCategory !== 'All' && (
+                          <button
+                            onClick={() => setSelectedCategory('All')}
+                            className="px-2.5 py-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-medium cursor-pointer"
+                          >
+                            Reset category filter
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     filteredPrompts.map((p) => (

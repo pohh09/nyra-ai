@@ -153,6 +153,7 @@ export const loadCustomPrompts = (userId?: string | null): PromptItem[] => {
       (p) =>
         p &&
         p.isCustom !== false &&
+        !p.id.startsWith('starter_') &&
         !['p1', 'p2', 'p3', 'p4', 'b1', 'b2', 'b3', 'b4'].includes(p.id)
     );
   } catch {

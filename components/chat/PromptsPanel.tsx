@@ -28,182 +28,59 @@ import { fetchCloudPrompts, saveCloudPrompt, deleteCloudPrompt } from '@/lib/sup
 
 export const PROMPT_CATEGORIES = [
   'All',
+  'General',
   'Coding',
   'Writing',
-  'Image Generation',
-  'Learning',
-  'Career',
-  'Research',
+  'Productivity',
   'Custom',
-  'General',
 ] as const;
 
 export const ALL_FILTER_CATEGORIES = [
   { name: 'All', icon: '⚡' },
   { name: '⭐ Starred', icon: '⭐' },
   { name: '📌 Pinned', icon: '📌' },
+  { name: 'General', icon: '⚡' },
   { name: 'Coding', icon: '💻' },
   { name: 'Writing', icon: '✍️' },
-  { name: 'Image Generation', icon: '🎨' },
-  { name: 'Learning', icon: '📚' },
-  { name: 'Career', icon: '💼' },
-  { name: 'Research', icon: '🔍' },
+  { name: 'Productivity', icon: '🎯' },
   { name: 'Custom', icon: '🧠' },
-  { name: 'General', icon: '⚡' },
 ];
 
 export const CATEGORY_DETAILS: Record<
   string,
   { label: string; icon: string; color: string; desc: string }
 > = {
-  Coding: {
-    label: 'Coding',
-    icon: '💻',
-    color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20',
-    desc: 'Code review, debugging & refactoring',
-  },
-  Writing: {
-    label: 'Writing',
-    icon: '✍️',
-    color: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',
-    desc: 'Essays, copywriting, emails & summaries',
-  },
-  'Image Generation': {
-    label: 'Image Generation',
-    icon: '🎨',
-    color: 'text-fuchsia-600 dark:text-fuchsia-400 bg-fuchsia-50 dark:bg-fuchsia-500/10 border-fuchsia-200 dark:border-fuchsia-500/20',
-    desc: 'Midjourney, DALL-E & visual art',
-  },
-  Learning: {
-    label: 'Learning',
-    icon: '📚',
-    color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20',
-    desc: 'Tutorials, explanations & study guides',
-  },
-  Career: {
-    label: 'Career',
-    icon: '💼',
-    color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20',
-    desc: 'Resumes, cover letters & interview prep',
-  },
-  Research: {
-    label: 'Research',
-    icon: '🔍',
-    color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20',
-    desc: 'Deep synthesis & data analysis',
-  },
-  Custom: {
-    label: 'Custom',
-    icon: '🧠',
-    color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20',
-    desc: 'Tailored templates & workflows',
-  },
   General: {
     label: 'General',
     icon: '⚡',
     color: 'text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-white/5 border-zinc-200 dark:border-white/10',
     desc: 'Everyday productivity prompts',
   },
+  Coding: {
+    label: 'Coding',
+    icon: '💻',
+    color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20',
+    desc: 'Code review, debugging & architecture',
+  },
+  Writing: {
+    label: 'Writing',
+    icon: '✍️',
+    color: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 border-sky-200 dark:border-sky-500/20',
+    desc: 'Essays, emails, copy & summaries',
+  },
+  Productivity: {
+    label: 'Productivity',
+    icon: '🎯',
+    color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20',
+    desc: 'Planning, synthesis & task management',
+  },
+  Custom: {
+    label: 'Custom',
+    icon: '🧠',
+    color: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 border-purple-200 dark:border-purple-500/20',
+    desc: 'Tailored personal templates',
+  },
 };
-
-const STARTER_PROMPTS: PromptItem[] = [
-  {
-    id: 'starter_1',
-    title: 'React 19 & TypeScript Code Reviewer',
-    prompt:
-      'Review the following {{framework}} code thoroughly for runtime bugs, race conditions, memory leaks, and hook dependency issues. Provide clean refactored solutions:\n\n{{code_snippet}}',
-    category: 'Coding',
-    isCustom: true,
-  },
-  {
-    id: 'starter_2',
-    title: 'Full-Stack Bug Diagnostic & Solver',
-    prompt:
-      'Analyze this runtime error stack trace and implementation. Identify the exact failing line, explain the technical root cause, and provide a robust production-ready code patch:\n\nError / Stack Trace:\n{{error_stack_trace}}\n\nRelevant Code:\n{{code_context}}',
-    category: 'Coding',
-    isCustom: true,
-  },
-  {
-    id: 'starter_3',
-    title: 'System Design & Scalable API Architect',
-    prompt:
-      'Design a high-scale, fault-tolerant backend system for {{feature_or_product}}. Detail the database schema, API contracts, caching strategy (Redis), queue architecture, and rate-limiting approach.',
-    category: 'Coding',
-    isCustom: true,
-  },
-  {
-    id: 'starter_4',
-    title: 'Executive Brief & Strategic Summary',
-    prompt:
-      'Synthesize a structured executive summary highlighting the key takeaways, core metrics, actionable items, and strategic considerations for:\n\n{{document_or_topic}}',
-    category: 'Writing',
-    isCustom: true,
-  },
-  {
-    id: 'starter_5',
-    title: 'High-Converting Landing Page Copy',
-    prompt:
-      'Write compelling, modern SaaS landing page copy for {{product_name}}, a {{product_description}} aimed at {{target_audience}}. Include a punchy H1 hero headline, value proposition subheadline, 3 core feature benefit pillars, social proof snippet, and a high-converting CTA.',
-    category: 'Writing',
-    isCustom: true,
-  },
-  {
-    id: 'starter_6',
-    title: 'Persuasive Cold Email Outreach',
-    prompt:
-      'Draft a short, highly personalized cold email to {{prospect_role}} at {{company_name}} regarding {{value_proposition}}. Keep it under 100 words, friendly yet authoritative, with a low-friction call-to-action.',
-    category: 'Writing',
-    isCustom: true,
-  },
-  {
-    id: 'starter_7',
-    title: 'Photorealistic Architectural Visualization',
-    prompt:
-      'A photorealistic architectural visualization of a {{building_type}} surrounded by {{environment}}, 8k resolution, cinematic golden hour lighting, architectural digest style, volumetric fog, shot on 35mm lens.',
-    category: 'Image Generation',
-    isCustom: true,
-  },
-  {
-    id: 'starter_8',
-    title: 'Cinematic Sci-Fi Concept Art',
-    prompt:
-      'Epic cinematic concept art of {{subject}} in a futuristic {{setting}}, hyper-detailed, ray tracing reflections, cyberpunk neon accents, volumetric atmosphere, unreal engine 5 render, trending on artstation.',
-    category: 'Image Generation',
-    isCustom: true,
-  },
-  {
-    id: 'starter_9',
-    title: 'Technical Step-by-Step Tutor',
-    prompt:
-      'Explain the core principles and step-by-step logic behind {{technical_concept}} in simple, intuitive terms for a beginner, with practical real-world analogies and code examples.',
-    category: 'Learning',
-    isCustom: true,
-  },
-  {
-    id: 'starter_10',
-    title: 'First-Principles Mental Model Explainer',
-    prompt:
-      'Deconstruct {{complex_topic}} from first principles. Break it down into fundamental axioms, show how they build into the modern system, and identify the most common misconceptions.',
-    category: 'Learning',
-    isCustom: true,
-  },
-  {
-    id: 'starter_11',
-    title: 'Tailored Senior Job Cover Letter',
-    prompt:
-      'Write a compelling, professional cover letter for a {{role}} position at {{company}}. Highlight achievements in leadership, architecture, and delivering high-impact business outcomes.',
-    category: 'Career',
-    isCustom: true,
-  },
-  {
-    id: 'starter_12',
-    title: 'Competitive Landscape & Market Analysis',
-    prompt:
-      'Perform a comprehensive competitive landscape analysis for {{industry_or_product}}. Compare key players across product capabilities, pricing tiers, target customer segments, moat strength, and strategic market gaps.',
-    category: 'Research',
-    isCustom: true,
-  },
-];
 
 interface PromptsPanelProps {
   onSelectPrompt: (promptText: string) => void;
@@ -294,12 +171,7 @@ export default function PromptsPanel({
   // Load custom prompts, favorites & pinned from storage
   useEffect(() => {
     const loaded = loadCustomPrompts(user?.id);
-    if (loaded && loaded.length > 0) {
-      setCustomPrompts(loaded);
-    } else {
-      setCustomPrompts(STARTER_PROMPTS);
-      saveCustomPrompts(STARTER_PROMPTS, user?.id);
-    }
+    setCustomPrompts(loaded || []);
 
     try {
       const favKey = user?.id ? `nyra_prompt_favorites_${user.id}` : 'nyra_prompt_favorites';
@@ -488,13 +360,6 @@ export default function PromptsPanel({
     saveCustomPrompts(updated, user?.id);
     if (user?.id) deleteCloudPrompt(user.id, id);
     addToast({ type: 'info', title: 'Prompt deleted' });
-  };
-
-  const handleLoadStarters = () => {
-    const updated = [...customPrompts, ...STARTER_PROMPTS];
-    setCustomPrompts(updated);
-    saveCustomPrompts(updated, user?.id);
-    addToast({ type: 'success', title: 'Loaded starter templates' });
   };
 
   const handleSaveManualPrompt = () => {
@@ -996,62 +861,79 @@ export default function PromptsPanel({
         {/* TAB 1: PROMPT LIBRARY */}
         {subView === 'list' && tabMode === 'library' && (
           <div className="space-y-2.5">
+            {/* My Prompts Section Header */}
+            <div className="flex items-center justify-between pt-0.5 pb-1 text-xs text-[#6E6072] dark:text-zinc-400 font-semibold border-b border-[#E8E4EF] dark:border-white/[0.08]">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#261827] dark:text-white font-bold text-xs">My Prompts</span>
+                {customPrompts.length > 0 && (
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#F4DCE9] text-[#8A0E57] dark:bg-pink-500/20 dark:text-pink-300 font-mono font-semibold">
+                    {customPrompts.length}
+                  </span>
+                )}
+              </div>
+              {filteredPrompts.length !== customPrompts.length && customPrompts.length > 0 && (
+                <span className="text-[11px] text-[#9E93A2] dark:text-zinc-500">
+                  {filteredPrompts.length} of {customPrompts.length}
+                </span>
+              )}
+            </div>
 
-            {/* Prompt Cards List */}
-            {filteredPrompts.length === 0 ? (
-              <div className="py-6 sm:py-8 px-4 text-center rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FAF8FB] dark:bg-white/[0.02] space-y-3 shadow-xs">
+            {/* Prompt Cards List / Empty State */}
+            {customPrompts.length === 0 ? (
+              <div className="py-8 sm:py-10 px-4 text-center rounded-2xl border border-dashed border-[#E8E4EF] dark:border-white/10 bg-[#FAF8FB]/60 dark:bg-white/[0.02] space-y-3 shadow-xs">
                 <div className="w-10 h-10 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 mx-auto shadow-xs">
                   <BookOpen size={18} />
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-xs sm:text-sm font-bold text-[#261827] dark:text-white">
-                    {searchQuery || selectedCategory !== 'All'
-                      ? 'No matching prompts found'
-                      : 'Your prompt library is empty'}
+                    No saved prompts yet
                   </h4>
                   <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 leading-relaxed max-w-[260px] mx-auto">
-                    {searchQuery || selectedCategory !== 'All'
-                      ? 'Try adjusting your search query or category filter.'
-                      : 'Create your first prompt or let AI generate one for you.'}
+                    Create your first prompt or let Nyra create one for you with AI.
                   </p>
-                  {searchQuery && selectedCategory !== 'All' && (
-                    <button
-                      onClick={() => setSelectedCategory('All')}
-                      className="inline-block mt-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-semibold cursor-pointer"
-                    >
-                      Search across all categories
-                    </button>
-                  )}
+                </div>
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2 max-w-[280px] mx-auto">
+                  <button
+                    onClick={handleOpenCreate}
+                    className="w-full sm:w-auto h-[38px] px-4 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition cursor-pointer active:scale-95 shadow-xs flex items-center justify-center gap-1.5"
+                  >
+                    <Plus size={14} />
+                    <span>Create Prompt</span>
+                  </button>
+                  <button
+                    onClick={() => setTabMode('ai-creator')}
+                    className="w-full sm:w-auto h-[38px] px-3.5 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/10 text-xs font-medium text-[#261827] dark:text-zinc-200 transition cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 shadow-xs"
+                  >
+                    <Sparkles size={13} className="text-[#B31372] dark:text-pink-400" />
+                    <span>Generate with AI</span>
+                  </button>
+                </div>
+              </div>
+            ) : filteredPrompts.length === 0 ? (
+              <div className="py-7 px-4 text-center rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#FAF8FB] dark:bg-white/[0.02] space-y-2.5 shadow-xs">
+                <p className="text-xs font-semibold text-[#261827] dark:text-white">
+                  No matching prompts found
+                </p>
+                <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-400 max-w-[260px] mx-auto">
+                  Try adjusting your search query or reset your category filter.
+                </p>
+                <div className="pt-1 flex items-center justify-center gap-2 flex-wrap">
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="block mx-auto mt-0.5 text-[11px] text-[#6E6072] dark:text-zinc-400 hover:underline cursor-pointer"
+                      className="px-2.5 py-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-medium cursor-pointer"
                     >
                       Clear search query
                     </button>
                   )}
-                </div>
-                <div className="pt-1 flex flex-col gap-2 max-w-[220px] mx-auto">
-                  <button
-                    onClick={() => setTabMode('ai-creator')}
-                    className="w-full h-9 rounded-xl bg-[#B31372] hover:bg-[#9E1064] dark:bg-pink-600 dark:hover:bg-pink-500 text-white text-xs font-semibold transition cursor-pointer active:scale-95 shadow-xs flex items-center justify-center gap-1.5"
-                  >
-                    <Sparkles size={13} />
-                    <span>AI Prompt Creator</span>
-                  </button>
-                  <button
-                    onClick={handleOpenCreate}
-                    className="w-full h-9 rounded-xl bg-[#F7F3FA] hover:bg-[#F0EAF5] dark:bg-white/[0.06] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/10 text-xs font-semibold text-[#261827] dark:text-white transition cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 shadow-xs"
-                  >
-                    <Plus size={13} />
-                    <span>Create Custom Prompt</span>
-                  </button>
-                  <button
-                    onClick={handleLoadStarters}
-                    className="w-full py-1 text-[11px] text-[#B31372] hover:text-[#8A0E57] dark:text-pink-300 dark:hover:text-pink-200 underline transition cursor-pointer font-medium"
-                  >
-                    Load Starter Templates
-                  </button>
+                  {selectedCategory !== 'All' && (
+                    <button
+                      onClick={() => setSelectedCategory('All')}
+                      className="px-2.5 py-1 text-xs text-[#B31372] dark:text-pink-300 hover:underline font-medium cursor-pointer"
+                    >
+                      Reset category filter
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
