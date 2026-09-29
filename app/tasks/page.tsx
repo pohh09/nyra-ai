@@ -50,6 +50,7 @@ import { TaskItem, TaskPriority, TaskStatus } from '@/lib/types';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { playReminderChime } from '@/lib/audioUtils';
+import ResponsiveDropdown, { DropdownOption } from '@/components/ui/ResponsiveDropdown';
 
 type ViewFilter = 'roadmap' | 'today' | 'upcoming' | 'completed' | 'all';
 
@@ -1105,7 +1106,7 @@ export default function TasksPage() {
 
             {/* Quick Suggestions when in AI Mode */}
             {isAiMode && (
-              <div className="flex items-center gap-1.5 overflow-x-auto w-full pt-1.5 pb-0.5 custom-scrollbar">
+              <div className="flex flex-wrap items-center gap-1.5 w-full pt-1.5 pb-0.5">
                 <span className="text-[10px] text-zinc-500 shrink-0 font-medium">Try:</span>
                 {GOAL_SUGGESTIONS.map((sug) => (
                   <button
@@ -1128,7 +1129,31 @@ export default function TasksPage() {
 
         {/* Navigation Tabs & Search */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
-          <div className="tasks-segmented-bar flex items-center gap-1.5 p-1 rounded-2xl bg-white/[0.03] border border-purple-400/15 overflow-x-auto custom-scrollbar">
+          {/* Mobile Filter Dropdown (sm:hidden) */}
+          <div className="block sm:hidden w-full">
+            <ResponsiveDropdown<ViewFilter>
+              options={[
+                ...(hasRoadmap
+                  ? [
+                      {
+                        id: 'roadmap' as ViewFilter,
+                        label: `Roadmap (${roadmapGroups.length} Days)`,
+                        icon: Compass,
+                      },
+                    ]
+                  : []),
+                { id: 'today', label: `Today (${todayTasks.length})` },
+                { id: 'upcoming', label: `Upcoming (${upcomingTasks.length})` },
+                { id: 'completed', label: `Done (${completedTasks.length})` },
+                { id: 'all', label: `All Tasks (${tasks.length})` },
+              ]}
+              value={activeFilter}
+              onChange={(val) => setActiveFilter(val)}
+            />
+          </div>
+
+          {/* Desktop Segmented Bar (hidden sm:flex) */}
+          <div className="hidden sm:flex tasks-segmented-bar items-center gap-1.5 p-1 rounded-2xl bg-white/[0.03] border border-purple-400/15 overflow-x-auto custom-scrollbar">
             {hasRoadmap && (
               <button
                 onClick={() => setActiveFilter('roadmap')}
@@ -1189,14 +1214,14 @@ export default function TasksPage() {
           </div>
 
           {/* Search */}
-          <div className="relative min-w-[180px] sm:w-64">
+          <div className="relative w-full sm:w-64 min-w-[180px]">
             <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400/60" />
             <input
               type="text"
               placeholder="Search tasks & topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="tasks-search-input w-full pl-9 pr-7 py-1.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-purple-400/15 text-xs text-white placeholder-zinc-500 outline-none focus:border-purple-400/40 transition"
+              className="tasks-search-input w-full pl-9 pr-7 py-2 sm:py-1.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-purple-400/15 text-xs text-white placeholder-zinc-500 outline-none focus:border-purple-400/40 transition"
             />
             {searchQuery && (
               <button
@@ -1308,8 +1333,27 @@ export default function TasksPage() {
                 </div>
               </div>
 
-              {/* Day filter pills */}
-              <div className="flex items-center gap-1.5 pt-2 overflow-x-auto custom-scrollbar border-t border-purple-400/15">
+              {/* Day filter: Mobile dropdown (sm:hidden) */}
+              <div className="block sm:hidden pt-2 border-t border-purple-400/15">
+                <ResponsiveDropdown<string>
+                  options={[
+                    { id: 'all', label: `All Days (${roadmapGroups.length})` },
+                    ...roadmapGroups.map((group) => {
+                      const isDone = group.tasks.length > 0 && group.tasks.every((t) => t.status === 'completed');
+                      return {
+                        id: String(group.day),
+                        label: `Day ${group.day}: ${group.topic}`,
+                        badge: isDone ? '✓ Done' : `${group.tasks.filter((t) => t.status === 'completed').length}/${group.tasks.length}`,
+                      };
+                    }),
+                  ]}
+                  value={String(selectedRoadmapDay)}
+                  onChange={(val) => setSelectedRoadmapDay(val === 'all' ? 'all' : Number(val))}
+                />
+              </div>
+
+              {/* Day filter: Desktop pills (hidden sm:flex) */}
+              <div className="hidden sm:flex items-center gap-1.5 pt-2 overflow-x-auto custom-scrollbar border-t border-purple-400/15">
                 <button
                   onClick={() => setSelectedRoadmapDay('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 ${

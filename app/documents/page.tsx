@@ -38,6 +38,7 @@ import { extractPdfText } from '@/lib/extractPdfText';
 import { DocumentRecord } from '@/lib/types';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
+import ResponsiveDropdown from '@/components/ui/ResponsiveDropdown';
 
 const EXAMPLE_QUESTIONS = [
   '✨ Give me a 3-bullet point summary',
@@ -509,6 +510,26 @@ CRITICAL RULES:
 
           {/* Right Column: Q&A Question & Answer Workspace (8 Cols) */}
           <div className="lg:col-span-8 flex flex-col gap-4">
+            {/* Mobile Document Switcher Dropdown (lg:hidden) */}
+            {documents.length > 1 && (
+              <div className="block lg:hidden w-full">
+                <ResponsiveDropdown<string>
+                  label="Select Document:"
+                  options={documents.map((d) => ({
+                    id: d.id,
+                    label: d.name,
+                    badge: `${d.pages || 1}p`,
+                    icon: FileText,
+                  }))}
+                  value={selectedDocId || documents[0]?.id || ''}
+                  onChange={(val) => {
+                    setSelectedDocId(val);
+                    setAnswer(null);
+                  }}
+                />
+              </div>
+            )}
+
             {/* Active Document Header Card */}
             {activeDoc ? (
               <div className="docs-card p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#130c26]/90 border border-purple-200 dark:border-purple-400/25 shadow-sm dark:shadow-xl space-y-4 transition-colors">

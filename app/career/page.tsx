@@ -34,6 +34,7 @@ import {
 } from '@/lib/services/careerService';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { ResponsiveDropdown } from '@/components/ui/ResponsiveDropdown';
 
 const SAMPLE_RESUME_TEXT = `ALEX MORGAN
 Full Stack Software Engineer | San Francisco, CA | alex.morgan@email.com | (555) 234-5678 | github.com/alexmorgan | linkedin.com/in/alexmorgan
@@ -527,44 +528,20 @@ Generate:
             Resume Analysis
           </h2>
 
-          {/* 2. Analysis Mode Selector (Segmented Control) */}
-          <div className="w-full p-1 rounded-xl bg-black/40 border border-purple-400/20 career-input h-[42px] mb-3">
-            <div className="grid grid-cols-3 gap-1 w-full h-full">
-              {[
-                { id: 'audit', label: 'Resume Strength' },
-                { id: 'job_match', label: 'Job Match' },
-                { id: 'cover_letter', label: 'Tailor' },
-              ].map((tab) => {
-                const isSelected = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as CareerTab)}
-                    className={`h-full rounded-lg text-xs transition-all flex items-center justify-center px-1 truncate cursor-pointer ${
-                      isSelected
-                        ? 'career-tab-active bg-purple-600 text-white font-semibold shadow-xs'
-                        : 'text-zinc-400 hover:text-zinc-200 font-medium career-text-subtle'
-                    }`}
-                  >
-                    <span className="truncate">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* 2. Analysis Mode Selector (Mobile Dropdown) */}
+          <div className="mb-3.5">
+            <ResponsiveDropdown<CareerTab>
+              label="Analysis Mode"
+              options={[
+                { id: 'audit' as const, label: 'Resume Strength Audit', icon: TrendingUp },
+                { id: 'job_match' as const, label: 'Resume vs. Job Match', icon: Target },
+                { id: 'cover_letter' as const, label: 'Tailored Cover Letter', icon: FileEdit },
+                { id: 'interview' as const, label: 'Interview Prep & Q&A', icon: MessageCircleQuestion },
+              ]}
+              value={activeTab}
+              onChange={(val: CareerTab) => setActiveTab(val)}
+            />
           </div>
-
-          {/* If interview prep was active, show graceful indicator so user is informed */}
-          {activeTab === 'interview' && (
-            <div className="mb-3 px-3 py-1.5 rounded-lg bg-purple-600/20 border border-purple-400/30 flex items-center justify-between text-xs text-purple-200">
-              <span className="truncate font-medium">Mode: Interview Prep & Q&A</span>
-              <button
-                onClick={() => setActiveTab('job_match')}
-                className="text-purple-300 font-semibold underline text-[11px] ml-2 shrink-0 cursor-pointer"
-              >
-                Switch
-              </button>
-            </div>
-          )}
 
           {/* 3. Run Analysis Button (Primary Action) */}
           <button

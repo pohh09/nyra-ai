@@ -38,6 +38,7 @@ import {
 import { MemoryItem, MemoryCategory } from '@/lib/types';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/lib/auth/AuthContext';
+import ResponsiveDropdown, { DropdownOption } from '@/components/ui/ResponsiveDropdown';
 
 const MEMORY_CATEGORIES: { id: MemoryCategory; label: string; icon: LucideIcon }[] = [
   { id: 'career', label: 'Career', icon: Briefcase },
@@ -350,8 +351,25 @@ export default function MemoryPage() {
             </button>
           </div>
 
-          {/* Category Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+          {/* Mobile Category Dropdown (sm:hidden) */}
+          <div className="block sm:hidden w-full">
+            <ResponsiveDropdown<string>
+              options={[
+                { id: 'all', label: `All Memories (${memories.length})`, icon: Brain },
+                ...MEMORY_CATEGORIES.map((cat) => ({
+                  id: cat.id,
+                  label: cat.label,
+                  icon: cat.icon,
+                  badge: memories.filter((m) => m.category === cat.id).length,
+                })),
+              ]}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+            />
+          </div>
+
+          {/* Desktop Category Filter Chips (hidden sm:flex) */}
+          <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
             <button
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer shrink-0 border ${
@@ -360,11 +378,12 @@ export default function MemoryPage() {
                   : 'memory-tab-inactive bg-purple-950/40 border-purple-400/20 text-purple-200 hover:bg-purple-900/60'
               }`}
             >
-              All
+              All ({memories.length})
             </button>
             {MEMORY_CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isSelected = selectedCategory === cat.id;
+              const count = memories.filter((m) => m.category === cat.id).length;
               return (
                 <button
                   key={cat.id}
@@ -377,6 +396,7 @@ export default function MemoryPage() {
                 >
                   <Icon size={12} className={isSelected ? 'text-white' : 'text-purple-400'} />
                   <span>{cat.label}</span>
+                  {count > 0 && <span className="text-[10px] opacity-80">({count})</span>}
                 </button>
               );
             })}
