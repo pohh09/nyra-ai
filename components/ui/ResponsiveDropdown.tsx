@@ -71,13 +71,13 @@ export default function ResponsiveDropdown<T extends string = string>({
     };
   }, [isOpen]);
 
-  const renderIcon = (icon: LucideIcon | ReactNode | undefined) => {
+  const renderIcon = (icon: LucideIcon | ReactNode | React.ComponentType<{ size?: number; className?: string }> | undefined) => {
     if (!icon) return null;
-    if (typeof icon === 'function') {
-      const IconComponent = icon as LucideIcon;
-      return <IconComponent size={15} className="shrink-0 text-[#E52A83] dark:text-purple-400" />;
+    if (React.isValidElement(icon)) {
+      return <span className="shrink-0 flex items-center">{icon}</span>;
     }
-    return <span className="shrink-0 flex items-center">{icon}</span>;
+    const IconComponent = icon as React.ComponentType<{ size?: number; className?: string }>;
+    return <IconComponent size={15} className="shrink-0 text-[#E52A83] dark:text-purple-400" />;
   };
 
   return (
