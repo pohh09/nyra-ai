@@ -1,56 +1,63 @@
-# Nyra AI — Futuristic Intelligent Workspace
+# Nyra AI
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.0-blue?style=flat&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-SSR%20%2B%20RLS-3ecf8e?style=flat&logo=supabase)](https://supabase.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+> A production-oriented full-stack AI workspace built with Next.js 16, React 19, TypeScript, Supabase, and multi-provider foundation models.
 
-**Nyra AI** is a production-grade, full-stack AI workspace application combining multi-model foundation intelligence, real-time web search with source attribution, multi-PDF document analysis, multimodal vision understanding, voice input & speech synthesis, persistent cloud sync with Supabase RLS, and responsive dark glassmorphism.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-nyra--ai.vercel.app-E52A83?style=for-the-badge&logo=vercel)](https://nyra-ai.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-pohh09%2Fnyra--ai-181717?style=for-the-badge&logo=github)](https://github.com/pohh09/nyra-ai)
 
 ---
 
-## 🌟 Key Features & Capabilities
+## 🔗 Live Demo & Links
 
-### 1. 🧠 Multi-Model AI Foundation Engine
-- Dynamic foundation switching across **Groq**, **OpenAI (GPT-4o, GPT-4o Mini)**, **Anthropic (Claude 3.5 Sonnet)**, **Google Gemini (Gemini 2.0 Flash)**, and **OpenRouter (DeepSeek R1, DeepSeek V3)**.
-- Ultra-low latency streaming with non-destructive `<think>...</think>` deep reasoning filters.
-- AI response controls: **Isolated Retry**, **Continue Generation**, and **Instant AbortController Stopping**.
-- Real-time dynamic **Suggested Follow-up Questions**.
+- **Live Application**: [https://nyra-ai.vercel.app](https://nyra-ai.vercel.app)
+- **Source Code**: [https://github.com/pohh09/nyra-ai](https://github.com/pohh09/nyra-ai)
+- **Guest Access**: Instant demo evaluation available via **✦ Continue as Guest** on the login page (no registration required).
 
-### 2. 🌐 Real-Time Web Search & Citation Attribution
-- Live web ground-truth retrieval powered by the Tavily Search API.
-- Cites referenced web sources with domain badges and numbered snippet attribution cards.
+---
 
-### 3. 📄 Advanced Multi-PDF Document Intelligence
-- Client-side text parsing for up to 5 simultaneous PDF documents per message (20MB limit).
-- Structured prompt formatting for comparative analysis, data extraction, and page-specific citations.
-- Full upload lifecycle with status tracking (`Processing`, `Ready`, `Failed`) and one-click retry.
+## 🌟 Features
 
-### 4. 👁️ Multimodal Image Vision Understanding
-- Multi-image attachments (up to 4 images per message) with drag-and-drop and clipboard paste (`Ctrl+V` / `Cmd+V`).
-- Automatic vision capability verification that warns if a text-only model is selected.
-- Image previews with hover zoom overlays and a full-screen enlarged lightbox view.
+### 1. Multi-Provider AI Foundation Engine
+- **Provider Flexibility**: Real-time routing across **Groq** (Llama 3.3 70B, Qwen 2.5 72B), **OpenAI** (GPT-4o, GPT-4o Mini), **Google Gemini** (Gemini 2.0 Flash), **Anthropic** (Claude 3.5 Sonnet), and **OpenRouter** (DeepSeek R1/V3).
+- **Streaming & Reasoning**: Low-latency token streaming with deep reasoning extraction (`<think>...</think>`).
+- **Interactive Controls**: AbortController-based instant stream stopping, message editing, branch regeneration, and dynamic follow-up prompts.
 
-### 5. 🎙️ Complete Voice & Speech System
-- **Speech-to-Text (STT)**: Browser Speech Recognition capturing live interim transcripts into the composer without auto-submitting.
-- **Read Aloud (TTS)**: Clean SpeechSynthesis that strips markdown formatting, raw URLs, and code blocks before speaking.
-- Dynamic device voice enumeration with 0.75x–2x playback speed customization.
-- Strict one-speech-at-a-time enforcement and immediate cancellation on navigation or unmount.
+### 2. Multimodal Vision & PDF Document Intelligence
+- **In-Browser PDF Parsing**: Client-side document parsing and chunking via PDF.js for multi-page documents (up to 5 PDFs, 20MB limit) with zero server-side file retention.
+- **Vision Analysis**: Multi-image attachments with drag-and-drop, clipboard paste (`Ctrl+V`), and full-screen image inspection lightbox.
+- **Context-Aware Suggestions**: Automatic prompt recommendations tailored to uploaded images or document types.
 
-### 6. 🔒 Authentication & Cloud Chat Sync (Supabase)
-- SSR Authentication via `@supabase/ssr` with transparent session refreshing across page reloads.
-- 100% Row Level Security (RLS) policies protecting `profiles`, `conversations`, `messages`, `prompts`, and `usage_records`.
-- Optimistic non-blocking streaming with batch persistence on stream completion.
-- Seamless local-to-cloud migration of guest conversations upon user sign-in.
-- Atomic PostgreSQL `FOR UPDATE` RPC daily usage limits across AI requests, Web Searches, Vision, and PDFs.
+### 3. Real-Time Web Search Grounding
+- **Live Internet Retrieval**: Grounded research synthesis powered by Tavily Search API.
+- **Inline Citations**: Domain verification badges, numbered reference chips, and source URLs.
 
-### 7. 🛠️ Workspace & Productivity Tools
-- **Prompt Library**: Categorized templates with real-time search, custom prompt creation, and recent prompt tracking.
-- **Chat Management**: One-click message favoriting/bookmarking, in-conversation search with smooth scrolling, and non-destructive conversation branching.
-- **Export & Share**: Conversation export to PDF, Markdown (`.md`), and Plain Text (`.txt`), plus a dedicated read-only SSR share viewer (`/share/[id]`).
-- **Personalized Settings**: Dark/Light/System theme modes, 6-color accent palette, font size scaling, default model selection, and complete JSON workspace data export.
+### 4. Specialized Workspace Modules
+- **Tasks & Roadmap**: Project roadmaps, daily checklists, status filtering, and AI goal breakdown.
+- **Documentation**: Document management with search and responsive reading views.
+- **AI Memory**: Persistent user preferences, career goals, and project context with category filters.
+- **Career & Resume Studio**: Resume strength audit, ATS keyword matching, tailored cover letters, and interview preparation.
+- **Prompt Library**: User-created prompt management, AI prompt generation, search, and category categorization.
+
+### 5. Responsive Mobile UX
+- **Mobile-First Layouts**: Standardized mobile dropdowns (`ResponsiveDropdown`) replacing horizontal option scrolling across viewports (`390px`, `430px`, `768px`).
+- **Touch-Friendly Controls**: Minimum ~44px tap targets, bottom-anchored actions, and full-width card layouts.
+
+---
+
+## 💻 Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/) |
+| **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
+| **Styling** | [Tailwind CSS 3.4](https://tailwindcss.com/) + Custom Glassmorphic System |
+| **Animations** | [Framer Motion 12](https://www.framer.com/motion/) + [GSAP 3](https://greensock.com/gsap/) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Database & Auth** | [Supabase](https://supabase.com/) (`@supabase/ssr` + PostgreSQL RLS) |
+| **AI Providers** | Groq SDK, OpenAI SDK, Google GenAI SDK, Anthropic SDK, OpenRouter |
+| **Search Engine** | [Tavily Search API](https://tavily.com/) |
+| **Document Processing** | Client-side `pdfjs-dist` parser |
+| **Deployment** | [Vercel](https://vercel.com/) |
 
 ---
 
@@ -68,8 +75,8 @@
 ┌──────────────────────────────┐ ┌─────────────────────────────┐
 │      Next.js App Router      │ │      Supabase Cloud         │
 │  /api/chat    /api/usage     │ │  PostgreSQL + RLS Policies  │
-│  /api/suggestions            │ │  (Profiles, Conversations,  │
-│  (Usage Limits + Env Checks) │ │   Messages, Daily Usage)    │
+│  /api/suggestions /api/tasks │ │  (Profiles, Conversations,  │
+│  (Usage Limits + Admin Auth) │ │   Messages, Daily Usage)    │
 └──────────────┬───────────────┘ └─────────────────────────────┘
                │
                ├────────────────────────┬─────────────────────┐
@@ -84,68 +91,29 @@
 
 ---
 
-## 💻 Tech Stack
+## 🔒 Authentication & Security
 
-| Layer | Technology |
-| :--- | :--- |
-| **Framework** | [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/) |
-| **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS 3.4](https://tailwindcss.com/) + Custom Glassmorphism System |
-| **Animations** | [Framer Motion 12](https://www.framer.com/motion/) |
-| **Icons** | [Lucide React](https://lucide.dev/) |
-| **Database & Auth** | [Supabase](https://supabase.com/) (`@supabase/ssr` + PostgreSQL RLS) |
-| **AI Inference** | Groq SDK, OpenAI SDK, Anthropic SDK, Google GenAI SDK, OpenRouter |
-| **Search Engine** | [Tavily Search API](https://tavily.com/) |
-| **Document Processing**| Client-side PDF Parser (`pdf-parse`) |
-| **Deployment** | [Vercel](https://vercel.com/) |
+- **Row Level Security (RLS)**: PostgreSQL Row Level Security policies enforce strict isolation across `profiles`, `conversations`, `messages`, `prompts`, and `usage_records`.
+- **Zero Client Credential Leaks**: All provider API keys (`GROQ_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `TAVILY_API_KEY`) and service keys reside strictly in server-side environment variables.
+- **Server-Side Admin Authorization**: Dedicated admin capabilities (`ADMIN_EMAILS`) are verified server-side via `verifyAdminUser()` with no client-side trust assumptions.
+- **Security Headers**: Configured with `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy`.
 
 ---
 
-## 📁 Project Structure
+## ⚙️ Key Engineering Decisions
 
-```
-ai-chat-ui/
-├── app/
-│   ├── api/
-│   │   ├── chat/route.ts          # AI Streaming & Multimodal Router
-│   │   ├── suggestions/route.ts   # Contextual Follow-up Generator
-│   │   └── usage/route.ts         # User Usage Metrics API
-│   ├── chat-ui/page.tsx           # Main Interactive Workspace
-│   ├── share/[id]/page.tsx        # Standalone Read-Only Shared Chat
-│   ├── login/                     # Authentication (Sign In)
-│   ├── signup/                    # Authentication (Sign Up)
-│   ├── layout.tsx                 # Root Layout & SEO / OG Metadata
-│   ├── manifest.ts                # PWA Web App Manifest
-│   ├── robots.ts                  # SEO Robots.txt Crawler Instructions
-│   └── sitemap.ts                 # Dynamic XML Sitemap
-├── components/
-│   ├── chat/                      # Chat UI (Bubbles, CodeBlock, Input, Attachments)
-│   ├── modals/                    # Modals (Settings, Prompts, Export, Favorites)
-│   ├── landing/                   # Landing Page Interactive Components
-│   └── ui/                        # Reusable UI (Toast, Skeleton, Logo)
-├── hooks/
-│   ├── useSpeechRecognition.ts    # Browser STT Hook
-│   └── useSpeechSynthesis.ts      # Clean TTS Synthesis Hook
-├── lib/
-│   ├── ai/                        # Multi-Provider AI Engine & Stream Resolvers
-│   ├── auth/                      # AuthContext & Session Management
-│   ├── supabase/                  # Supabase Client, Server SSR & Schema
-│   ├── usage/                     # Daily Usage Tracking & Atomic Limits
-│   ├── fileHandling.ts            # PDF & Image Validation & Sanitization
-│   ├── formatTimestamp.ts         # Relative UTC Timestamp Calculator
-│   └── speechText.ts              # Markdown/Code Syntax Stripper for TTS
-├── public/                        # Static Assets & Icons
-├── next.config.js                 # Security Response Headers & Image Patterns
-└── tailwind.config.ts             # Theme Tokens & Glassmorphic Utilities
-```
+1. **Multi-Model Streaming Architecture**: Unified streaming pipeline supporting Server-Sent Events (SSE) and ReadableStream parsing across heterogeneous AI provider APIs.
+2. **Client-Side Document Parsing**: Evaluates and vector-chunks PDF documents directly in the client browser using `pdfjs-dist`, ensuring sensitive documents are never stored permanently on backend servers.
+3. **Unified Responsive Dropdown Standard**: Built a custom, accessible `ResponsiveDropdown` component with keyboard navigation and theme tokens to eliminate mobile horizontal scrolling anti-patterns.
+4. **Resilient Guest Experience**: Implemented a local storage fallback mechanism with automatic migration to Supabase cloud storage when a guest decides to register an account.
 
 ---
 
-## ⚡ Quick Start & Local Development
+## ⚡ Local Setup & Development
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/nyra-ai.git
+git clone https://github.com/pohh09/nyra-ai.git
 cd nyra-ai
 ```
 
@@ -159,27 +127,31 @@ Copy `.env.example` to `.env.local`:
 ```bash
 cp .env.example .env.local
 ```
-Fill in your API keys in `.env.local`:
+
+Configure your API keys in `.env.local`:
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Supabase Auth & Database
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+# Supabase Auth & Cloud Database
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# AI Providers (At least one required)
+# AI Foundation Providers (At least one required)
 GROQ_API_KEY=gsk_...
 OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
 GEMINI_API_KEY=AIzaSy...
+ANTHROPIC_API_KEY=sk-ant-...
 OPENROUTER_API_KEY=sk-or-...
 
-# Real-Time Search
+# Real-Time Web Search
 TAVILY_API_KEY=tvly-...
+
+# Admin Accounts
+ADMIN_EMAILS=your-admin@email.com
 ```
 
 ### 4. Setup Database Schema
-Execute the SQL statements located in [lib/supabase/schema.sql](lib/supabase/schema.sql) in your Supabase SQL Editor to provision tables, triggers, and Row Level Security policies.
+Execute the SQL statements in [`lib/supabase/schema.sql`](lib/supabase/schema.sql) in your Supabase SQL Editor to provision tables, triggers, and Row Level Security policies.
 
 ### 5. Run the Development Server
 ```bash
@@ -187,15 +159,10 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
-
-## 🛡️ Production Security & Quality
-
-- **Zero Client Credential Leaks**: All provider API keys and Supabase service keys are strictly isolated to server-side execution.
-- **Row Level Security (RLS)**: Enforces database-level isolation ensuring users cannot query or mutate records belonging to other accounts.
-- **Security Headers**: Configured with `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy`.
-- **Accessibility & Motion**: Fully keyboard accessible with `aria-label` tags, focus rings, and `@media (prefers-reduced-motion: reduce)` support.
-- **Type Safety**: Strictly typed with TypeScript (`npx tsc --noEmit` passes with 0 errors).
+### 6. Build for Production
+```bash
+npm run build
+```
 
 ---
 
