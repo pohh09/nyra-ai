@@ -9,12 +9,12 @@ type Props = {
 
 export default function StreamingText({ children, streaming }: Props) {
   return (
-    <div className="chatgpt-streaming-wrapper relative">
+    <div className="nyra-streaming-wrapper relative inline">
       {children}
       {streaming && (
         <span
           aria-hidden="true"
-          className="chatgpt-cursor inline-block w-2 sm:w-2.5 h-[1.15em] ml-1 align-[-0.15em] rounded-[2px] bg-[#292633] dark:bg-white shadow-[0_0_8px_rgba(139,92,246,0.4)] select-none"
+          className="nyra-streaming-cursor inline-block w-1.5 sm:w-2 h-[1.1em] ml-1 align-[-0.12em] rounded-full bg-gradient-to-b from-[#E52A83] to-[#B31372] dark:from-pink-400 dark:to-purple-400 shadow-[0_0_8px_rgba(229,42,131,0.5)] select-none pointer-events-none"
         />
       )}
     </div>

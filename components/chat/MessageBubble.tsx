@@ -44,6 +44,7 @@ import {
 import CodeBlock from './CodeBlock';
 import WebSearchCard from './WebSearchCard';
 import SuggestedFollowUps from './SuggestedFollowUps';
+import ThinkingIndicator from './ThinkingIndicator';
 import { WebSource, FileAttachment, ToolCallRecord } from '@/lib/types';
 import { getRelativeTime, getFullTimestamp } from '@/lib/formatTimestamp';
 
@@ -643,15 +644,7 @@ export default function MessageBubble({
                     </ReactMarkdown>
                   </StreamingText>
                 ) : loading ? (
-                  <div className="flex items-center gap-2 py-1.5 select-none animate-[fadeIn_0.15s_ease-out]">
-                    <span className="relative flex h-3 w-3 items-center justify-center">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E52A83]/50 dark:bg-pink-400/50 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E52A83] dark:bg-pink-400 shadow-[0_0_8px_rgba(229,42,131,0.8)] chatgpt-thinking-dot" />
-                    </span>
-                    <span className="text-[13px] sm:text-[14px] text-[#7A6E8C] dark:text-pink-300/70 font-medium tracking-tight">
-                      {thinkingText || 'Thinking...'}
-                    </span>
-                  </div>
+                  <ThinkingIndicator thinkingText={thinkingText || 'Thinking...'} />
                 ) : null}
 
                 {/* SUGGESTED FOLLOW UP PILLS (Only for non-error completed response) */}

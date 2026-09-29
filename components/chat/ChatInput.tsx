@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Plus, ArrowUp, Square, Mic, Globe, Image as ImageIcon, FileText } from 'lucide-react';
+import ThinkingIndicator from './ThinkingIndicator';
 
 type Props = {
   value: string;
@@ -86,25 +87,14 @@ export default function ChatInput({
         <div className="flex items-center justify-center gap-2 mb-2">
           {(isLoading || thinking) && (
             <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-[#E8E4EF] dark:border-purple-400/30 bg-white/95 dark:bg-[#130f24]/95 shadow-md backdrop-blur-xl text-xs animate-[fadeIn_0.15s_ease-out]">
-              {thinking ? (
-                <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-tr from-[#8B6FC9] to-cyan-400 chatgpt-thinking-dot shadow-sm" />
-                  <span className="font-medium text-[#6B52A3] dark:text-purple-200">
-                    {thinkingText || 'Nyra is thinking...'}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-[#8B6FC9] dark:text-purple-300">
-                    <span className="typing-dot bg-[#8B6FC9] dark:bg-purple-300" />
-                    <span className="typing-dot bg-[#8B6FC9] dark:bg-purple-300" />
-                    <span className="typing-dot bg-[#8B6FC9] dark:bg-purple-300" />
-                  </div>
-                  <span className="font-medium text-[#292633] dark:text-slate-200">
-                    Nyra is typing...
-                  </span>
-                </div>
-              )}
+              <ThinkingIndicator
+                variant="pill"
+                thinkingText={
+                  thinking
+                    ? (thinkingText || 'Nyra is thinking...')
+                    : 'Nyra is typing...'
+                }
+              />
 
               {onStop && (
                 <button

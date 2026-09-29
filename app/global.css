@@ -1887,6 +1887,37 @@ html.light .tasks-reminder-btn-active,
 /* 3D Depth Utilities */
 .preserve-3d {
   transform-style: preserve-3d;
+/* Nyra Premium Thinking Wave Dots Animation */
+.nyra-thinking-dot {
+  display: inline-block;
+  animation: nyraThinkingWave 1.4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95) both;
+}
+
+@keyframes nyraThinkingWave {
+  0%, 80%, 100% {
+    transform: scale(0.8) translateY(0px);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1.18) translateY(-2px);
+    opacity: 1;
+  }
+}
+
+/* Nyra Streaming Cursor */
+.nyra-streaming-cursor {
+  animation: nyraCursorBreathe 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes nyraCursorBreathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(0.92);
+  }
 }
 
 /* ChatGPT Style Streaming Animation & Cursor */
