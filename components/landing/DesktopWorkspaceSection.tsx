@@ -160,6 +160,31 @@ export default function DesktopWorkspaceSection() {
   const [demoStreamingText, setDemoStreamingText] = useState('');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number>(1);
+  const [scaledHeight, setScaledHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (!previewContainerRef.current) return;
+      const containerWidth = previewContainerRef.current.clientWidth;
+      if (containerWidth < 760) {
+        const targetWidth = 760;
+        const targetHeight = 520;
+        const computedScale = Math.min(1, containerWidth / targetWidth);
+        setScale(computedScale);
+        setScaledHeight(Math.round(targetHeight * computedScale));
+      } else {
+        setScale(1);
+        setScaledHeight(undefined);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     setDemoMessages(activeScenario.messages);
     setIsDemoTyping(false);
@@ -265,8 +290,29 @@ describe('usePagination', () => {
             viewport={{ once: true, margin: '-40px' }}
             className="lg:col-span-7 xl:col-span-7 order-2 lg:order-1"
           >
-            {/* Desktop Chassis with Near-Black & Pink Highlight Rim */}
-            <div className="relative rounded-[22px] xs:rounded-[28px] sm:rounded-[32px] border border-pink-500/25 bg-[#08030D] shadow-[0_30px_90px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300">
+            {/* Outer Responsive Wrapper for Proportional Scaling */}
+            <div
+              ref={previewContainerRef}
+              className="w-full relative overflow-hidden flex items-center justify-center rounded-[22px] xs:rounded-[28px] sm:rounded-[32px]"
+              style={scaledHeight ? { height: `${scaledHeight}px` } : undefined}
+            >
+              {/* Desktop Chassis with Near-Black & Pink Highlight Rim */}
+              <div
+                className="rounded-[22px] xs:rounded-[28px] sm:rounded-[32px] border border-pink-500/25 bg-[#08030D] shadow-[0_30px_90px_rgba(0,0,0,0.85)] overflow-hidden transition-all duration-300"
+                style={
+                  scale < 1
+                    ? {
+                        width: '760px',
+                        height: '520px',
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top left',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                      }
+                    : { width: '100%' }
+                }
+              >
               {/* 1. TOP WINDOW TITLEBAR & MULTI-TAB IDE BAR */}
               <div className="flex items-center justify-between border-b border-white/10 bg-[#0E0514] px-3 sm:px-5 py-2 sm:py-2.5 transition-colors gap-2">
                 {/* Traffic Lights & Active Tabs */}
@@ -369,7 +415,7 @@ describe('usePagination', () => {
                   </div>
 
                   {/* Conversation Feed */}
-                  <div className="space-y-3.5 max-h-[340px] sm:max-h-[360px] overflow-y-auto pr-1 scrollbar-thin flex-1">
+                  <div className={`space-y-3.5 pr-1 flex-1 ${scale < 1 ? 'overflow-hidden' : 'max-h-[340px] sm:max-h-[360px] overflow-y-auto scrollbar-thin'}`}>
                     {demoMessages.map((msg, index) => (
                       <div
                         key={msg.id}
@@ -413,7 +459,7 @@ describe('usePagination', () => {
                                   )}
                                 </button>
                               </div>
-                              <pre className="overflow-x-auto leading-relaxed max-w-full text-[#FF85C0] font-medium">
+                              <pre className="overflow-hidden leading-relaxed max-w-full text-[#FF85C0] font-medium">
                                 {msg.codeSnippet}
                               </pre>
                             </div>
@@ -482,6 +528,7 @@ describe('usePagination', () => {
                 </div>
               </div>
             </div>
+          </div>
           </motion.div>
 
           {/* RIGHT COLUMN: CONTENTS, SCENARIO SWITCHERS & EXPLANATION */}
