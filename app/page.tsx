@@ -633,7 +633,7 @@ export default function HomePage() {
         className="relative w-full min-h-screen bg-[#050505] text-[#F5F5F7] overflow-x-hidden selection:bg-[#E52A83]/30 selection:text-white transition-colors duration-300"
       >
         {/* PREMIUM AMBIENT GRADIENT & ATMOSPHERIC BACKDROP */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden z-0 select-none">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden overflow-x-clip z-0 select-none">
           {/* Subtle Architectural Texture Grid */}
           <div
             className="absolute inset-0 opacity-[0.018]"
@@ -645,19 +645,19 @@ export default function HomePage() {
           />
 
           {/* Atmospheric Glow Light Sources */}
-          <div className="absolute -top-32 -left-32 w-[650px] h-[650px] rounded-full bg-[#B31372]/[0.06] blur-[160px]" />
-          <div className="absolute top-[28%] -right-40 w-[700px] h-[700px] rounded-full bg-[#E52A83]/[0.05] blur-[170px]" />
-          <div className="absolute top-[55%] -left-36 w-[600px] h-[600px] rounded-full bg-[#FF4FA3]/[0.03] blur-[160px]" />
-          <div className="absolute top-[75%] right-0 w-[650px] h-[650px] rounded-full bg-[#B31372]/[0.05] blur-[150px]" />
+          <div className="absolute -top-32 -left-32 w-[clamp(320px,45vw,650px)] h-[clamp(320px,45vw,650px)] rounded-full bg-[#B31372]/[0.06] blur-[160px]" />
+          <div className="absolute top-[28%] -right-20 sm:-right-40 w-[clamp(360px,50vw,700px)] h-[clamp(360px,50vw,700px)] rounded-full bg-[#E52A83]/[0.05] blur-[170px]" />
+          <div className="absolute top-[55%] -left-20 sm:-left-36 w-[clamp(300px,40vw,600px)] h-[clamp(300px,40vw,600px)] rounded-full bg-[#FF4FA3]/[0.03] blur-[160px]" />
+          <div className="absolute top-[75%] right-0 w-[clamp(320px,45vw,650px)] h-[clamp(320px,45vw,650px)] rounded-full bg-[#B31372]/[0.05] blur-[150px]" />
         </div>
 
         {/* CINEMATIC FLOWING LIGHT RIBBON HERO BACKDROP (Reference Aesthetic: Near-Black + Layered Magenta/Pink Ribbons + Hot Crest Highlight) */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1150px] sm:h-[1280px] lg:h-[1360px] overflow-hidden z-0 select-none">
+        <div className="pointer-events-none absolute inset-x-0 top-0 w-full max-w-full h-[clamp(750px,95vh,980px)] sm:h-[clamp(900px,100vh,1180px)] lg:h-[clamp(1100px,100vh,1360px)] overflow-hidden overflow-x-clip z-0 select-none">
           <svg
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
             viewBox="0 0 1440 1360"
             fill="none"
-            preserveAspectRatio="none"
+            preserveAspectRatio="xMidYMin slice"
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
