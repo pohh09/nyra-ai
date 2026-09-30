@@ -1,0 +1,28 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF4FA3" />
+      <stop offset="50%" stop-color="#E52A83" />
+      <stop offset="100%" stop-color="#9333EA" />
+    </linearGradient>
+    <linearGradient id="favGradB" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="50%" stop-color="#7928CA" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M 6.5 24.5 L 6.5 10.5 C 6.5 7.8 8.6 5.8 11.4 6.6 C 13.5 7.2 15.2 9.2 16.8 11.6 L 21.6 19 C 23.2 21.4 24.6 23.2 25.5 24.2 C 26 24.8 25.4 25.8 24.6 25.8 L 19.5 25.8 C 17.8 25.8 16.3 24.9 15.3 23.4 L 11.2 17.2 L 11.2 24.5 C 11.2 25.3 10.5 26 9.7 26 L 8 26 C 7.2 26 6.5 25.3 6.5 24.5 Z"
+    fill="url(#favGradA)"
+  />
+  <path
+    d="M 25.5 7.5 L 25.5 21.5 C 25.5 24.2 23.4 26.2 20.6 25.4 C 18.5 24.8 16.8 22.8 15.2 20.4 L 10.4 13 C 8.8 10.6 7.4 8.8 6.5 7.8 C 6 7.2 6.6 6.2 7.4 6.2 L 12.5 6.2 C 14.2 6.2 15.7 7.1 16.7 8.6 L 20.8 14.8 L 20.8 7.5 C 20.8 6.7 21.5 6 22.3 6 L 24 6 C 24.8 6 25.5 6.7 25.5 7.5 Z"
+    fill="url(#favGradB)"
+    opacity="0.9"
+  />
+  <path
+    d="M 16 13 L 17.5 16 L 16 19 L 14.5 16 Z"
+    fill="#FFFFFF"
+    opacity="0.9"
+  />
+</svg>

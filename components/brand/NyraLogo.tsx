@@ -1,22 +1,26 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import { NyraIcon, NyraIconVariant } from './NyraIcon';
 
-interface NyraLogoProps {
+export interface NyraLogoProps {
   size?: number | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: NyraIconVariant;
   showText?: boolean;
   className?: string;
   animated?: boolean;
   textClassName?: string;
+  glow?: boolean;
 }
 
 export default function NyraLogo({
   size = 'md',
+  variant = 'primary',
   showText = false,
   className = '',
   animated = false,
   textClassName = '',
+  glow = false,
 }: NyraLogoProps) {
   const pixelSizes = {
     sm: 28,
@@ -26,36 +30,36 @@ export default function NyraLogo({
   };
 
   const dim = typeof size === 'number' ? size : pixelSizes[size] || 36;
+  const iconDim = Math.round(dim * 0.68);
 
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       <div
-        className={`relative flex items-center justify-center rounded-xl overflow-hidden border border-purple-400/30 bg-[#120726] shadow-md shadow-purple-950/40 shrink-0 group-hover:border-purple-400/60 transition-all ${
+        className={`relative flex items-center justify-center rounded-xl overflow-hidden border border-pink-500/25 bg-[#120726] shadow-md shadow-purple-950/40 shrink-0 group-hover:border-pink-500/50 transition-all ${
           animated ? 'hover:scale-105' : ''
         }`}
         style={{ width: `${dim}px`, height: `${dim}px` }}
       >
-        {/* Crisp Image Logo */}
-        <Image
-          src="/logo.png"
-          alt="Nyra AI Logo"
-          width={dim}
-          height={dim}
-          className="object-cover w-full h-full"
-          priority
+        {/* Geometric Nyra Vector Icon */}
+        <NyraIcon
+          size={iconDim}
+          variant={variant}
+          glow={glow}
+          className="transition-transform duration-200"
         />
 
         {/* Ambient subtle glow ring on hover */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-purple-500/10 via-cyan-400/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-pink-500/10 via-purple-500/10 to-transparent pointer-events-none" />
       </div>
 
       {showText && (
         <div className="flex flex-col leading-none">
           <span className={`font-extrabold tracking-tight text-white ${textClassName || 'text-base'}`}>
-            Nyra <span className="bg-gradient-to-r from-purple-300 via-indigo-200 to-cyan-300 bg-clip-text text-transparent">AI</span>
+            Nyra <span className="bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-300 bg-clip-text text-transparent">AI</span>
           </span>
         </div>
       )}
     </div>
   );
 }
+

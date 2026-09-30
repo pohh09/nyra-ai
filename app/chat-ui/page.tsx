@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowUp,
@@ -34,6 +35,8 @@ import {
   Moon,
   Image as ImageIcon,
   BookmarkPlus,
+  User,
+  LogOut,
 } from 'lucide-react';
 
 import { applyTheme, initTheme, ThemeMode } from '@/lib/theme';
@@ -44,7 +47,7 @@ import ModelSelector, { AI_MODELS, DEFAULT_MODEL_ID } from '@/components/chat/Mo
 import { DEFAULT_VISION_MODEL_ID, getModelConfig, validateModelCapabilities } from '@/lib/models';
 import { incrementLocalUsage, formatLimitErrorMessage } from '@/lib/usage/clientUsage';
 import InChatSearch from '@/components/chat/InChatSearch';
-import SettingsModal from '@/components/modals/SettingsModal';
+import SettingsModal, { SettingsTab } from '@/components/modals/SettingsModal';
 import RightPanel from '@/components/layout/RightPanel';
 import PromptsPanel from '@/components/chat/PromptsPanel';
 import ExportModal from '@/components/modals/ExportModal';
@@ -89,7 +92,8 @@ import {
 } from '@/lib/supabase/chatService';
 
 export default function ChatPage() {
-  const { user, profile, preferences, updatePreferences, isGuest } = useAuth();
+  const router = useRouter();
+  const { user, profile, preferences, updatePreferences, isGuest, isLoading: authLoading, signOut } = useAuth();
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
@@ -101,6 +105,13 @@ export default function ChatPage() {
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const [appLoading, setAppLoading] = useState(true);
 
+  // Route protection: redirect unauthenticated / logged-out users to /login
+  useEffect(() => {
+    if (!authLoading && !user && !isGuest) {
+      router.replace('/login');
+    }
+  }, [user, isGuest, authLoading, router]);
+
   // Settings & Customization state
   const [selectedModelId, setSelectedModelId] = useState<string>(DEFAULT_MODEL_ID);
   const [accentColor, setAccentColor] = useState('purple');
@@ -111,6 +122,8 @@ export default function ChatPage() {
 
   // Modals state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>('appearance');
+  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const [isPromptLibraryOpen, setIsPromptLibraryOpen] = useState(false);
   const [promptToSave, setPromptToSave] = useState<string | undefined>(undefined);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -143,6 +156,7 @@ export default function ChatPage() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
   const navMoreRef = useRef<HTMLDivElement>(null);
+  const avatarMenuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const composerTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -380,6 +394,9 @@ export default function ChatPage() {
     function handleClickOutside(e: MouseEvent) {
       if (navMoreRef.current && !navMoreRef.current.contains(e.target as Node)) {
         setIsNavMoreOpen(false);
+      }
+      if (avatarMenuRef.current && !avatarMenuRef.current.contains(e.target as Node)) {
+        setIsAvatarMenuOpen(false);
       }
       if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
         setShowToolsMenu(false);
@@ -1862,115 +1879,179 @@ export default function ChatPage() {
               {/* More Options Dropdown (...) */}
               <div className="relative" ref={navMoreRef}>
                 <button
-                  onClick={() => setIsNavMoreOpen(!isNavMoreOpen)}
+                  onClick={() => {
+                    setIsNavMoreOpen(!isNavMoreOpen);
+                    setIsAvatarMenuOpen(false);
+                  }}
                   className="flex h-9 w-9 sm:h-8.5 sm:w-8.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition items-center justify-center cursor-pointer active:scale-95"
                   title="More conversation options"
+                  aria-label="More conversation options"
                 >
                   <MoreHorizontal size={17} />
                 </button>
 
                 {isNavMoreOpen && (
                   <div className="absolute right-0 top-11 sm:top-10 w-56 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-white dark:bg-[#12051B] shadow-2xl p-1.5 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-2xl">
-                    <button
-                      onClick={() => {
-                        setIsNavMoreOpen(false);
-                        const next: ThemeMode = themeMode === 'light' ? 'dark' : 'light';
-                        setThemeMode(next);
-                        applyTheme(next);
-                        addToast({
-                          type: 'info',
-                          title: next === 'light' ? 'Light mode enabled' : 'Dark mode enabled',
-                        });
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                    >
-                      {themeMode === 'light' ? <Moon size={14} className="text-[#B31372]" /> : <Sun size={14} className="text-amber-400" />}
-                      <span>{themeMode === 'light' ? 'Switch to Dark Theme' : 'Switch to Light Theme'}</span>
-                    </button>
-
+                    {/* Share conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
                         handleShareConversation();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl text-xs flex items-center justify-between text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[38px]"
                     >
-                      <Share2 size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Share conversation</span>
+                      <div className="flex items-center gap-2.5">
+                        <Share2 size={16} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                        <span className="font-medium">Share conversation</span>
+                      </div>
                     </button>
 
+                    {/* Copy conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
                         handleCopyConversation();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl text-xs flex items-center justify-between text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[38px]"
                     >
-                      <Copy size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Copy conversation</span>
+                      <div className="flex items-center gap-2.5">
+                        <Copy size={16} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                        <span className="font-medium">Copy conversation</span>
+                      </div>
                     </button>
 
+                    {/* Export conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
                         setIsExportOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl text-xs flex items-center justify-between text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[38px]"
                     >
-                      <Download size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Export conversation</span>
+                      <div className="flex items-center gap-2.5">
+                        <Download size={16} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                        <span className="font-medium">Export conversation</span>
+                      </div>
                     </button>
 
+                    {/* Bookmark */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
                         setIsFavoritesOpen(true);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl text-xs flex items-center justify-between text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[38px]"
                     >
-                      <Star size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Bookmarks ({bookmarkedIds.length})</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setIsNavMoreOpen(false);
-                        setIsPromptLibraryOpen(true);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                    >
-                      <BookOpen size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Prompt Library</span>
-                    </button>
-
-                    <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
-
-                    <button
-                      onClick={() => {
-                        setIsNavMoreOpen(false);
-                        setIsSettingsOpen(true);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer"
-                    >
-                      <Settings size={14} className="text-[#E52A83] dark:text-pink-400" />
-                      <span>Configuration</span>
+                      <div className="flex items-center gap-2.5">
+                        <Bookmark size={16} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                        <span className="font-medium">Bookmark</span>
+                      </div>
+                      {bookmarkedIds.length > 0 && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold font-mono bg-pink-500/15 text-[#B31372] dark:text-pink-300 border border-pink-500/20">
+                          {bookmarkedIds.length}
+                        </span>
+                      )}
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* User Profile Avatar */}
-              <button
-                onClick={() => setIsSettingsOpen(true)}
-                className="h-8 w-8 sm:h-8.5 sm:w-8.5 rounded-full bg-gradient-to-tr from-[#E52A83] to-[#B31372] text-white font-bold text-xs flex items-center justify-center ring-1 ring-black/5 dark:ring-white/15 shadow-xs transition hover:scale-105 active:scale-95 cursor-pointer ml-1"
-                title={profile?.displayName || user?.email ? `${profile?.displayName || user?.email} (Settings)` : 'Account Settings'}
-              >
-                {profile?.displayName
-                  ? profile.displayName.slice(0, 1).toUpperCase()
-                  : user?.email
-                    ? user.email.slice(0, 1).toUpperCase()
-                    : 'N'}
-              </button>
+              {/* User Profile Avatar & Dropdown Menu */}
+              <div className="relative" ref={avatarMenuRef}>
+                <button
+                  onClick={() => {
+                    setIsAvatarMenuOpen(!isAvatarMenuOpen);
+                    setIsNavMoreOpen(false);
+                  }}
+                  className="h-8 w-8 sm:h-8.5 sm:w-8.5 rounded-full bg-gradient-to-tr from-[#E52A83] to-[#B31372] text-white font-bold text-xs flex items-center justify-center ring-1 ring-black/5 dark:ring-white/15 shadow-xs transition hover:scale-105 active:scale-95 cursor-pointer ml-1"
+                  title={profile?.displayName || user?.email ? `${profile?.displayName || user?.email}` : 'Account & Profile'}
+                  aria-label="Account & Profile menu"
+                >
+                  {profile?.displayName
+                    ? profile.displayName.slice(0, 1).toUpperCase()
+                    : user?.email
+                      ? user.email.slice(0, 1).toUpperCase()
+                      : 'N'}
+                </button>
+
+                {isAvatarMenuOpen && (
+                  <div className="absolute right-0 top-11 sm:top-10 w-60 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-white dark:bg-[#12051B] shadow-2xl p-2 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-2xl">
+                    {/* User Identity Header */}
+                    <div className="p-2.5 rounded-xl bg-[#F8F5FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.06] mb-1.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#E52A83] to-[#B31372] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                          {profile?.displayName
+                            ? profile.displayName.slice(0, 1).toUpperCase()
+                            : user?.email
+                              ? user.email.slice(0, 1).toUpperCase()
+                              : 'N'}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-[#151221] dark:text-[#F3F1FA] truncate leading-tight">
+                            {profile?.displayName || (user?.email ? user.email.split('@')[0] : 'Guest User')}
+                          </p>
+                          <p className="text-[11px] text-[#737082] dark:text-[#9A97A8] truncate leading-tight mt-0.5">
+                            {user?.email || 'Local Session'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Active Mode / Model Indicator */}
+                    <div className="px-2.5 py-1.5 rounded-xl bg-pink-500/5 dark:bg-pink-500/10 border border-pink-500/15 mb-1.5 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0 shadow-[0_0_6px_#10b981]" />
+                        <span className="font-semibold text-[#151221] dark:text-pink-100 truncate text-[11px]">
+                          {AI_MODELS.find((m) => m.id === selectedModelId)?.name || 'Nyra Advanced'}
+                        </span>
+                      </div>
+                      <span className="text-[9.5px] font-mono font-bold text-[#B31372] dark:text-pink-300 uppercase tracking-wide shrink-0">
+                        {user ? 'PRO' : 'FREE'}
+                      </span>
+                    </div>
+
+                    <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
+
+                    {/* Profile & Settings (Navigates directly to Settings -> Profile) */}
+                    <button
+                      onClick={() => {
+                        setIsAvatarMenuOpen(false);
+                        setSettingsInitialTab('account');
+                        setIsSettingsOpen(true);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#261827] dark:text-slate-200 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] hover:text-[#B31372] dark:hover:text-white transition cursor-pointer min-h-[36px]"
+                    >
+                      <User size={16} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                      <span className="font-medium">Profile & Settings</span>
+                    </button>
+
+                    {/* Log out / Sign in */}
+                    {user ? (
+                      <button
+                        onClick={async () => {
+                          setIsAvatarMenuOpen(false);
+                          await signOut();
+                          addToast({ type: 'info', title: 'Signed out of Nyra AI' });
+                          router.replace('/login');
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer min-h-[36px]"
+                      >
+                        <LogOut size={16} className="shrink-0" />
+                        <span className="font-medium">Log out</span>
+                      </button>
+                    ) : (
+                      <a
+                        href="/login"
+                        onClick={() => setIsAvatarMenuOpen(false)}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs flex items-center gap-2.5 text-[#B31372] dark:text-pink-300 hover:bg-[#F7F3FA] dark:hover:bg-white/[0.08] transition cursor-pointer min-h-[36px]"
+                      >
+                        <LogOut size={16} className="rotate-180 shrink-0" />
+                        <span className="font-medium">Sign In / Register</span>
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* In-Chat Search Bar Overlay */}
@@ -2541,6 +2622,7 @@ export default function ChatPage() {
           document.documentElement.setAttribute('data-font-size', size);
         }}
         onClearHistory={handleClearAllHistory}
+        initialTab={settingsInitialTab}
       />
 
       <ExportModal

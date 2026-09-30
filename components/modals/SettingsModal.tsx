@@ -45,7 +45,7 @@ import { loadChats, loadCustomPrompts } from '@/lib/storage';
 import { applyTheme } from '@/lib/theme';
 import { buildClientUsageStats, getTimeUntilUtcMidnight } from '@/lib/usage/clientUsage';
 
-type SettingsTab =
+export type SettingsTab =
   | 'appearance'
   | 'personalization'
   | 'models'
@@ -66,6 +66,7 @@ interface SettingsModalProps {
   fontSize: 'small' | 'normal' | 'large';
   onChangeFontSize: (size: 'small' | 'normal' | 'large') => void;
   onClearHistory: () => void;
+  initialTab?: SettingsTab;
 }
 
 export default function SettingsModal({
@@ -78,9 +79,10 @@ export default function SettingsModal({
   fontSize,
   onChangeFontSize,
   onClearHistory,
+  initialTab = 'appearance',
 }: SettingsModalProps) {
-  const [activeTab, setActiveTab] = useState<SettingsTab>('appearance');
-  const [mobileView, setMobileView] = useState<'menu' | 'detail'>('menu');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+  const [mobileView, setMobileView] = useState<'menu' | 'detail'>(initialTab !== 'appearance' ? 'detail' : 'menu');
   const [confirmClear, setConfirmClear] = useState(false);
   const [themeMode, setThemeMode] = useState<'dark' | 'light' | 'system'>('dark');
   const [isMac, setIsMac] = useState(false);
@@ -130,9 +132,14 @@ export default function SettingsModal({
 
   useEffect(() => {
     if (isOpen) {
-      setMobileView('menu');
+      if (initialTab) {
+        setActiveTab(initialTab);
+        setMobileView(initialTab !== 'appearance' ? 'detail' : 'menu');
+      } else {
+        setMobileView('menu');
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, initialTab]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -912,7 +919,7 @@ export default function SettingsModal({
                   await signOut();
                   addToast({ type: 'info', title: 'Signed out of Nyra AI' });
                   onClose();
-                  router.push('/login');
+                  router.replace('/login');
                 }}
                 className="w-full py-3.5 rounded-xl border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer min-h-[46px]"
               >

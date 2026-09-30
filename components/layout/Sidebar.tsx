@@ -34,6 +34,7 @@ import {
 import { applyTheme, ThemeMode } from '@/lib/theme';
 import { Chat, WorkspaceProject } from '@/lib/types';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { NyraIcon } from '@/components/brand/NyraIcon';
 
 type Props = {
   chats?: Chat[];
@@ -249,8 +250,8 @@ export default function Sidebar({
               className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-[#F4DCE9] dark:hover:bg-white/[0.06] transition text-left cursor-pointer group"
               title="Start a new chat"
             >
-              <div className="relative h-7.5 w-7.5 rounded-xl overflow-hidden shadow-sm shrink-0 border border-[#E8E4EF] dark:border-pink-500/20">
-                <Image src="/logo.png" alt="Nyra AI Logo" fill className="object-cover" />
+              <div className="relative h-7.5 w-7.5 rounded-xl overflow-hidden shadow-sm shrink-0 border border-[#E8E4EF] dark:border-pink-500/20 bg-[#140A24] flex items-center justify-center">
+                <NyraIcon size={18} variant="primary" />
               </div>
               <span className="text-sm font-bold tracking-tight text-[#261827] dark:text-white group-hover:text-[#B31372] dark:group-hover:text-pink-300 transition-colors">
                 Nyra AI
@@ -475,7 +476,7 @@ export default function Sidebar({
                       onClick={async () => {
                         setUserMenuOpen(false);
                         await signOut?.();
-                        router.push('/login');
+                        router.replace('/login');
                       }}
                       className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-[#C77B7B] dark:text-rose-300 hover:bg-[#F9ECEC] dark:hover:bg-rose-500/20 hover:text-[#A85A5A] dark:hover:text-rose-200 transition cursor-pointer min-h-[38px] sm:min-h-[36px]"
                     >

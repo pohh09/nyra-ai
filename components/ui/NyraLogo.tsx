@@ -1,32 +1,35 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { NyraIcon } from '@/components/brand/NyraIcon';
 
 export default function NyraLogo({ size = 80 }: { size?: number }) {
+  const iconSize = Math.round(size * 0.65);
+
   return (
     <div
       className="relative flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      {/* Rotating glow ring */}
+      {/* Rotating ambient glow ring */}
       <motion.div
-        className="absolute inset-0 rounded-full border border-sky-400/30"
+        className="absolute inset-0 rounded-2xl border border-pink-500/30"
         animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 6, ease: 'linear' }}
+        transition={{ repeat: Infinity, duration: 12, ease: 'linear' }}
       />
 
-      {/* Inner glow */}
-      <div className="absolute inset-2 rounded-full bg-sky-500/15 blur-xl" />
+      {/* Inner radial aura */}
+      <div className="absolute inset-2 rounded-2xl bg-gradient-to-tr from-pink-500/20 via-purple-600/20 to-cyan-500/20 blur-xl" />
 
-      {/* Logo text */}
+      {/* Distinctive Nyra Brand Vector Icon */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600 font-bold text-4xl"
+        className="relative z-10 flex items-center justify-center"
       >
-        N
+        <NyraIcon size={iconSize} variant="primary" glow />
       </motion.div>
     </div>
   );
-}
+}

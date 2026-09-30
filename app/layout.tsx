@@ -57,12 +57,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.png', type: 'image/png' },
+      { url: '/nyra-icon.svg', type: 'image/svg+xml' },
       { url: '/logo.png', type: 'image/png' },
     ],
-    shortcut: ['/favicon.ico', '/logo.png'],
-    apple: [{ url: '/logo.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/favicon.svg', '/favicon.ico'],
+    apple: [{ url: '/nyra-icon.svg', sizes: 'any', type: 'image/svg+xml' }],
   },
   robots: {
     index: true,

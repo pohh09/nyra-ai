@@ -279,8 +279,8 @@ export default function HomePage() {
     {
       icon: MessageSquare,
       title: 'Contextual AI Chat',
-      desc: 'Natural conversational AI with fast streaming and multi-turn memory.',
-      points: ['Instant token streaming', 'Full conversation history'],
+      desc: 'Natural conversations with fast token streaming and multi-turn memory.',
+      points: ['Instant token streaming', 'Multi-turn memory'],
       tag: 'AI Chat',
       href: '/chat-ui',
       actionText: 'Try AI Chat',
@@ -297,8 +297,8 @@ export default function HomePage() {
     {
       icon: FileText,
       title: 'PDF & Document Analysis',
-      desc: 'Upload PDFs and documents to summarize contents and ask targeted questions.',
-      points: ['Local document parsing', 'Instant chapter summaries'],
+      desc: 'In-browser document analysis to summarize contents and answer questions.',
+      points: ['In-browser PDF parsing', 'Instant chapter summaries'],
       tag: 'PDF & Documents',
       href: '/documents',
       actionText: 'Analyze Documents',
@@ -306,8 +306,8 @@ export default function HomePage() {
     {
       icon: ImageIcon,
       title: 'Multimodal Vision',
-      desc: 'Analyze screenshots, architecture diagrams, charts, and visual mockups.',
-      points: ['UI & diagram reasoning', 'Chart & visual analysis'],
+      desc: 'Inspect screenshots, architecture diagrams, charts, and visual assets.',
+      points: ['UI & diagram reasoning', 'Visual chart analysis'],
       tag: 'Vision AI',
       href: '/chat-ui',
       actionText: 'Inspect with Vision',
@@ -315,7 +315,7 @@ export default function HomePage() {
     {
       icon: Code2,
       title: 'Code Generation & Studio',
-      desc: 'Write, debug, and refactor clean code with built-in syntax highlighting.',
+      desc: 'Write, debug, and refactor code with clean syntax highlighting.',
       points: ['Syntax-highlighted code', 'One-click copy and edit'],
       tag: 'Code Studio',
       href: '/chat-ui',
@@ -324,7 +324,7 @@ export default function HomePage() {
     {
       icon: Layers,
       title: 'Workspace & Branching',
-      desc: 'Organize conversations into separate project spaces and save them offline.',
+      desc: 'Organize chats into dedicated project spaces with offline local saving.',
       points: ['Custom project spaces', 'Offline local saving'],
       tag: 'Workspaces',
       href: '/chat-ui',
@@ -336,91 +336,85 @@ export default function HomePage() {
   const useCasesList = [
     {
       title: 'Build & Code Applications',
-      tagline: 'Ship TypeScript & React apps, debug errors, and refactor code faster.',
+      tagline: 'Generate, debug, and refactor clean code in TypeScript and React.',
       icon: Code2,
       tag: 'Engineering',
       category: 'Build & Code',
       workflows: [
-        'Scaffold full React 19 hooks, Next.js components, and Tailwind UI',
-        'Analyze runtime stack traces and resolve compile-time TypeScript errors',
-        'Design relational database schemas and write production REST API handlers',
+        'Scaffold React 19 components, custom hooks, and clean UI',
+        'Debug runtime stack traces and TypeScript compile errors',
       ],
-      samplePrompt: 'Build a reusable TypeScript pagination hook in React 19 with page boundaries',
+      samplePrompt: 'Build a reusable TypeScript pagination hook in React 19',
       href: '/chat-ui',
       actionText: 'Start Coding',
     },
     {
       title: 'Document Intelligence & RAG',
-      tagline: 'Analyze multi-page PDFs, extract key figures, and query research papers.',
+      tagline: 'Analyze multi-page PDFs and extract key figures with citations.',
       icon: FileText,
       tag: 'Documents',
       category: 'Document RAG',
       workflows: [
-        'Parse multi-page financial reports, legal contracts, and technical whitepapers',
-        'Extract tabular figures, key clauses, and risk factors with direct page citations',
-        '100% private in-browser vector chunking via PDF.js with zero server uploads',
+        'Parse financial reports, contracts, and technical papers',
+        'Extract data points and tables with direct page citations',
       ],
-      samplePrompt: 'Extract operating margin trends & risk factors from uploaded 10-K report',
+      samplePrompt: 'Extract operating margin trends & risk factors from 10-K report',
       href: '/documents',
       actionText: 'Analyze Documents',
     },
     {
       title: 'Live Web & Market Research',
-      tagline: 'Synthesize real-time internet information with verified citations.',
+      tagline: 'Search the live internet and synthesize verified information.',
       icon: Globe,
       tag: 'Research',
       category: 'Web Grounding',
       workflows: [
-        'Search the live internet for recent documentation, API changes, and tech releases',
-        'Compare framework features, SaaS pricing tiers, and benchmark benchmarks',
-        'Filter noise to generate structured executive summaries with source links',
+        'Search latest documentation, API changes, and tech releases',
+        'Generate executive summaries with direct source links',
       ],
-      samplePrompt: 'Compare Next.js 15 App Router vs Remix with latest benchmark metrics',
+      samplePrompt: 'Compare Next.js 15 App Router vs Remix with latest benchmarks',
       href: '/chat-ui',
       actionText: 'Search the Web',
     },
     {
       title: 'Hands-Free Voice Assistance',
-      tagline: 'Talk naturally to Nyra with microphone speech input and audio equalizers.',
+      tagline: 'Brainstorm ideas and discuss architectures hands-free using voice.',
       icon: Mic,
       tag: 'Voice Mode',
       category: 'Hands-Free AI',
       workflows: [
-        'Brainstorm ideas, product architectures, and meeting agendas hands-free',
-        'Dictate stream-of-consciousness thoughts with live audio waveform equalizers',
-        'Listen to spoken voice responses directly in the desktop or mobile studio',
+        'Dictate thoughts and brainstorm project ideas hands-free',
+        'Listen to natural spoken responses in real time',
       ],
-      samplePrompt: 'Brainstorm microservices architecture for real-time multiplayer whiteboard',
+      samplePrompt: 'Brainstorm microservices architecture for real-time collaboration',
       href: '/chat-ui',
       actionText: 'Try Voice Mode',
     },
     {
       title: 'Multi-Model Workflows & Prompts',
-      tagline: 'Switch top AI models, create reusable personas, and organize projects.',
+      tagline: 'Switch leading AI models and organize project workspaces.',
       icon: Layers,
       tag: 'Productivity',
       category: 'Model Orchestration',
       workflows: [
-        'Toggle instantly between Llama 3.3 70B, Qwen 2.5 72B, and sub-15ms Groq LPUs',
-        'Build custom system personas, specialized developer prompts, and templates',
-        'Organize conversation history into pinned project spaces with offline backup',
+        'Toggle between Llama 3.3 70B, Qwen 2.5, and Groq LPUs',
+        'Organize conversations into pinned project workspaces',
       ],
-      samplePrompt: 'Compare technical explanations between Llama 3.3 70B and Qwen 2.5',
+      samplePrompt: 'Compare technical explanations between Llama 3.3 and Qwen 2.5',
       href: '/chat-ui',
       actionText: 'Open Workspace',
     },
     {
       title: 'Career Planning & Resume Analysis',
-      tagline: 'Optimize resumes with AI, calculate ATS match scores, and bridge skill gaps.',
+      tagline: 'Score resumes against job descriptions and bridge skill gaps.',
       icon: Sparkles,
       tag: 'Career Tools',
       category: 'ATS & Planning',
       workflows: [
-        'Scan your resume against target job descriptions for instant ATS scoring',
-        'Identify missing technical keywords, skill gaps, and experience formatting fixes',
-        'Generate structured study roadmaps and tailored interview preparation guides',
+        'Calculate instant ATS match scores against target jobs',
+        'Identify missing keywords and generate interview preparation guides',
       ],
-      samplePrompt: 'Analyze resume against Senior Full-Stack React & Node.js Engineer posting',
+      samplePrompt: 'Analyze resume against Senior Full-Stack Engineer job description',
       href: '/career',
       actionText: 'Analyze Resume',
     },
@@ -431,10 +425,10 @@ export default function HomePage() {
     {
       id: 'step-1',
       number: '01',
-      title: 'User Prompt & Input',
+      title: 'Ask & Ingest',
       badge: 'Input Layer',
       metric: 'Text • PDF • Vision',
-      shortDesc: 'You type a complex prompt, upload a multi-page PDF document, or attach architectural diagrams.',
+      shortDesc: 'Send a prompt, upload a multi-page PDF, or drop visual images.',
       icon: MessageSquare,
       previewTitle: 'Stage 01: Multimodal Ingestion & Client Pre-Processing',
       previewDetails: [
@@ -448,10 +442,10 @@ export default function HomePage() {
     {
       id: 'step-2',
       number: '02',
-      title: 'Understands & Routes',
+      title: 'Understand & Route',
       badge: 'Neural Router',
       metric: 'Sub-5ms Decisions',
-      shortDesc: 'Nyra reads intent, determines reasoning depth, and dynamically selects the optimal specialized AI model.',
+      shortDesc: 'Analyzes intent and dynamically selects the optimal specialized AI model.',
       icon: Network,
       previewTitle: 'Stage 02: Real-Time Intent Classification & Intelligent Model Selection',
       previewDetails: [
@@ -468,10 +462,10 @@ export default function HomePage() {
     {
       id: 'step-3',
       number: '03',
-      title: 'Retrieves Information',
+      title: 'Retrieve Context',
       badge: 'Context Engine',
       metric: 'Hybrid Retrieval',
-      shortDesc: 'Parses document embeddings privately in-browser and searches live internet sources simultaneously.',
+      shortDesc: 'Parses documents locally in-browser and searches live internet sources.',
       icon: Search,
       previewTitle: 'Stage 03: In-Browser Vector Chunking & Live Web Grounding',
       previewDetails: [
@@ -487,10 +481,10 @@ export default function HomePage() {
     {
       id: 'step-4',
       number: '04',
-      title: 'Generates Response',
+      title: 'Stream Response',
       badge: 'Inference Engine',
       metric: '850+ tok/s LPUs',
-      shortDesc: 'Streams clean answers with syntax-highlighted code, interactive tables, and verified citations.',
+      shortDesc: 'Streams clean answers with syntax-highlighted code and verified citations.',
       icon: Cpu,
       previewTitle: 'Stage 04: Hardware-Accelerated Token Streaming & Markdown Rendering',
       previewDetails: [
@@ -514,21 +508,21 @@ export default function HomePage() {
       icon: Zap,
       title: 'Fast Responses',
       badge: 'Sub-15ms Speed',
-      description: 'Answers start streaming in milliseconds with ultra-fast generation so you never wait.',
+      description: 'Answers stream in milliseconds with hardware-accelerated generation.',
       points: ['Instant time-to-first-token', '300+ words/sec streaming'],
     },
     {
       icon: ShieldCheck,
       title: 'Private Processing',
       badge: '100% In-Browser',
-      description: 'Your PDFs and images are processed on your device and never stored on cloud servers.',
+      description: 'Documents and images process locally and are never stored on servers.',
       points: ['Local document analysis', 'Zero cloud file storage'],
     },
     {
       icon: Globe,
-      title: 'Live Web Information',
+      title: 'Live Information',
       badge: 'Verified Sources',
-      description: 'Retrieves fresh internet facts and technical docs with direct clickable citations.',
+      description: 'Fetches real-time web facts and documentation with clickable citations.',
       points: ['Real-time web research', 'Verified source links'],
     },
   ];
@@ -927,7 +921,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="mt-3 text-sm sm:text-base text-[#A7A7B0] px-2 max-w-2xl leading-relaxed">
-                Six verified core tools engineered directly into Nyra—clean, fast, and ready to use without setup friction.
+                Six core tools engineered for speed, accuracy, and effortless workflow.
               </p>
             </motion.div>
 
@@ -1025,7 +1019,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="mt-3 text-sm sm:text-base text-[#A7A7B0] px-2 max-w-2xl leading-relaxed">
-                Explore real, practical tasks you can accomplish right now—from shipping production TypeScript code to in-browser document research and hands-free voice ideation.
+                Practical everyday tasks you can accomplish immediately inside your workspace.
               </p>
             </motion.div>
 
@@ -1136,7 +1130,7 @@ export default function HomePage() {
               </h2>
 
               <p className="mt-3 text-sm sm:text-base text-[#A7A7B0] px-2 max-w-2xl leading-relaxed">
-                A seamless, privacy-first journey powered by intelligent routing, private in-browser document parsing, and ultra-fast AI streaming.
+                From prompt to verified answer through an intelligent, high-speed AI pipeline.
               </p>
             </motion.div>
 

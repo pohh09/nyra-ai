@@ -1887,6 +1887,8 @@ html.light .tasks-reminder-btn-active,
 /* 3D Depth Utilities */
 .preserve-3d {
   transform-style: preserve-3d;
+}
+
 /* Nyra Premium Thinking Wave Dots Animation */
 .nyra-thinking-dot {
   display: inline-block;
@@ -1981,6 +1983,33 @@ html.light .tasks-reminder-btn-active,
     transform: scale(1.2) translateY(-2px);
     opacity: 1;
   }
+}
+
+/* Custom Smooth Scrollbar for Auth Cards & Panels */
+.custom-smooth-scrollbar {
+  scroll-behavior: smooth !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(229, 42, 131, 0.3) transparent;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-smooth-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-smooth-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-smooth-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(229, 42, 131, 0.25);
+  border-radius: 9999px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.custom-smooth-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 42, 131, 0.55);
 }
 
 /* =========================================

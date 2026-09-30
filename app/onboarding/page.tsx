@@ -84,9 +84,9 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
-        router.push('/login');
+        router.replace('/login');
       } else if (profile?.onboardingCompleted) {
-        router.push('/chat-ui');
+        router.replace('/chat-ui');
       }
     }
   }, [user, profile, authLoading, router]);

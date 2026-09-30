@@ -17,6 +17,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { NyraIcon } from '@/components/brand/NyraIcon';
 
 interface NavbarRevealProps {
   isIntroComplete?: boolean;
@@ -50,7 +51,7 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="relative flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden shadow-sm border border-pink-500/25 bg-[#16091F] shrink-0 group-hover:border-pink-400/50 transition-colors">
-              <Image src="/logo.png" alt="Nyra AI Logo" fill className="object-cover" />
+              <NyraIcon size={20} variant="primary" glow />
             </div>
             <span className="text-sm sm:text-base font-bold tracking-tight text-[#F5F5F7] group-hover:text-pink-200 transition-colors">
               Nyra AI

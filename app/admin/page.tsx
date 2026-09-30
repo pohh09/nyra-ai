@@ -142,7 +142,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
-        router.push('/login?redirect=/admin');
+        router.replace('/login?redirect=/admin');
       } else {
         fetchAdminData();
       }

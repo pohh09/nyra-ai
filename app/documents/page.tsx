@@ -54,7 +54,7 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [user, authLoading, router]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
