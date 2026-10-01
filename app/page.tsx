@@ -68,9 +68,9 @@ const fadeUpStagger: Variants = {
 export default function HomePage() {
   const router = useRouter();
 
-  // 3D Cinematic Intro State (shown on first visit per session or when replayed)
-  const [showIntro, setShowIntro] = useState<boolean>(false);
-  const [isIntroComplete, setIsIntroComplete] = useState<boolean>(true);
+  // 3D Cinematic Intro State (shown before landing page appears or when replayed)
+  const [showIntro, setShowIntro] = useState<boolean>(true);
+  const [isIntroComplete, setIsIntroComplete] = useState<boolean>(false);
   const [logoAssembled, setLogoAssembled] = useState<boolean>(false);
   const [isClientMounted, setIsClientMounted] = useState<boolean>(false);
 
@@ -93,8 +93,21 @@ export default function HomePage() {
   // Session & Reduced Motion Initialization
   useEffect(() => {
     setIsClientMounted(true);
-    setShowIntro(false);
-    setIsIntroComplete(true);
+    setShowIntro(true);
+    setIsIntroComplete(false);
+
+    // Remove scrollbars on landing page
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.add('no-scrollbar');
+      document.body.classList.add('no-scrollbar');
+    }
+
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.remove('no-scrollbar');
+        document.body.classList.remove('no-scrollbar');
+      }
+    };
   }, []);
 
   // Handle 3D Cinematic Intro Completion
@@ -107,6 +120,7 @@ export default function HomePage() {
   const handleReplayIntro = React.useCallback(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('nyra_intro_seen');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     setIsIntroComplete(false);
     setShowIntro(true);
@@ -259,34 +273,41 @@ export default function HomePage() {
       <style jsx global>{`
         html {
           scroll-behavior: smooth;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        body {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* Hide scrollbars for Chrome, Safari, and Opera */
+        ::-webkit-scrollbar {
+          display: none;
+          width: 0px;
+          height: 0px;
+          background: transparent;
         }
 
         ::selection {
           background: rgba(168, 85, 247, 0.3);
           color: #ffffff;
         }
-
-        ::-webkit-scrollbar {
-          width: 7px;
-        }
-        ::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(168, 85, 247, 0.2);
-          border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(168, 85, 247, 0.4);
-        }
       `}</style>
 
       {/* 3D CINEMATIC INTRO OVERLAY */}
-      {isClientMounted && showIntro && <CinematicIntro3D onComplete={handleIntroComplete} />}
+      {(!isClientMounted || showIntro) && (
+        isClientMounted ? (
+          <CinematicIntro3D onComplete={handleIntroComplete} />
+        ) : (
+          <div className="fixed inset-0 z-[9999] bg-[#030006]" />
+        )
+      )}
 
       {/* MAIN CONTAINER */}
       <main
-        className="relative w-full min-h-screen bg-[#050505] text-[#F5F5F7] overflow-x-hidden selection:bg-[#E52A83]/30 selection:text-white transition-colors duration-300"
+        className="relative w-full min-h-screen bg-[#050505] text-[#F5F5F7] overflow-x-hidden no-scrollbar selection:bg-[#E52A83]/30 selection:text-white transition-colors duration-300"
       >
         {/* PREMIUM AMBIENT GRADIENT & ATMOSPHERIC BACKDROP */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden overflow-x-clip z-0 select-none">

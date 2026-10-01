@@ -22,6 +22,19 @@ body {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
+/* Hide scrollbar utility (Chrome, Safari, Firefox, Edge, IE) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Ensure all media and tables fit on screen */
 img,
 video,
