@@ -1,167 +1,409 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Sparkles, Globe, Brain, Rocket } from 'lucide-react';
-import ThemeToggle from '@/components/theme/ThemeToggle';
+import { motion } from 'framer-motion';
+import {
+  Sparkles,
+  ArrowLeft,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
+  Globe,
+  FileText,
+  MessageSquare,
+  Terminal,
+  Layers,
+  Code2,
+  Cpu,
+  Boxes,
+  CheckCircle2,
+  Workflow,
+  Lock,
+} from 'lucide-react';
+import { NyraIcon } from '@/components/brand/NyraIcon';
+
+const PILLARS = [
+  {
+    icon: Boxes,
+    title: 'Zero Context Switching',
+    badge: 'Consolidated Canvas',
+    description:
+      'Instead of juggling 5 different browser tabs for chat, search, PDFs, notes, and tasks, Nyra unites every modality into a continuous, contextual canvas.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Local In-Browser Privacy',
+    badge: '100% Client-Side',
+    description:
+      'Uploaded PDFs and confidential documents are parsed locally in your browser with PDF.js. Your private files are never stored or trained on by external servers.',
+  },
+  {
+    icon: Zap,
+    title: 'Hardware-Accelerated Speed',
+    badge: 'Sub-15ms TTFT',
+    description:
+      'Powered by Groq LPUs and ultra-fast Gemini streaming, responses generate at 300+ tokens/second for instantaneous feedback and coding iteration.',
+  },
+  {
+    icon: Workflow,
+    title: 'Designed for Real Execution',
+    badge: 'Actionable Output',
+    description:
+      'Turn discussions and brainstorming directly into executable TypeScript code, structured task boards, and persistent workspace memory.',
+  },
+];
+
+const MODALITIES = [
+  {
+    icon: MessageSquare,
+    title: 'Multi-Model AI Chat',
+    description: 'Converse, reason, and code across top open-weights models and specialized engines.',
+    href: '/chat-ui',
+    tag: 'Conversation',
+  },
+  {
+    icon: Globe,
+    title: 'Real-Time Web Search',
+    description: 'Ground AI answers with live internet facts and verified domain citations via Tavily.',
+    href: '/chat-ui',
+    tag: 'Grounding',
+  },
+  {
+    icon: FileText,
+    title: 'Document Intelligence & PDFs',
+    description: 'Upload complex multi-page PDFs for page-accurate QA, table parsing, and summaries.',
+    href: '/documents',
+    tag: 'Documents',
+  },
+  {
+    icon: Sparkles,
+    title: 'Prompt Engineering Library',
+    description: 'Save, fork, test, and organize reusable system prompts and production templates.',
+    href: '/chat-ui',
+    tag: 'Prompts',
+  },
+  {
+    icon: Terminal,
+    title: 'Tasks & Planning Workspace',
+    description: 'Break complex workflows into step-by-step checklist execution items.',
+    href: '/tasks',
+    tag: 'Actionable',
+  },
+  {
+    icon: Layers,
+    title: 'Continuous Workspace Memory',
+    description: 'Preserve tech stack preferences and project background across all sessions.',
+    href: '/memory',
+    tag: 'Memory',
+  },
+  {
+    icon: Code2,
+    title: 'Career & ATS Tools',
+    description: 'Score resumes against job specs, identify skill gaps, and simulate custom interviews.',
+    href: '/career',
+    tag: 'Career',
+  },
+];
+
+const TECH_BADGES = [
+  { name: 'Next.js 16', category: 'Framework & App Router' },
+  { name: 'React 19', category: 'Modern UI Engine' },
+  { name: 'TypeScript', category: 'Strict Type Safety' },
+  { name: 'Supabase', category: 'Auth & PostgreSQL Database' },
+  { name: 'Groq LPUs', category: 'Sub-Second LLM Inference' },
+  { name: 'Google Gemini', category: 'Multimodal Vision & Reasoning' },
+  { name: 'OpenAI API', category: 'Advanced Language Models' },
+  { name: 'Tavily Search', category: 'Live Real-Time Web Data' },
+  { name: 'Tailwind CSS', category: 'Unified Dark Design System' },
+];
 
 export default function AboutPage() {
-  const stats = [
-    {
-      icon: Brain,
-      value: '10K+',
-      label: 'AI Conversations',
-    },
-    {
-      icon: Rocket,
-      value: '99%',
-      label: 'Fast Response Rate',
-    },
-    {
-      icon: Globe,
-      value: '24/7',
-      label: 'Worldwide Access',
-    },
-  ];
-
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-white transition-all duration-500">
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* LIGHT */}
-        <div className="absolute top-[-220px] left-[-180px] h-[700px] w-[520px] rounded-full bg-[#E52A83]/10 blur-[160px] dark:hidden" />
-        <div className="absolute bottom-[-220px] right-[-180px] h-[700px] w-[520px] rounded-full bg-[#B31372]/10 blur-[160px] dark:hidden" />
+    <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white selection:bg-pink-500/30 selection:text-white">
+      {/* Ambient Lighting Orbs */}
+      <div className="pointer-events-none absolute top-[-100px] left-1/4 h-[600px] w-[600px] rounded-full bg-[#E52A83]/[0.06] blur-[160px]" />
+      <div className="pointer-events-none absolute top-1/3 right-10 h-[500px] w-[500px] rounded-full bg-[#B31372]/[0.05] blur-[150px]" />
+      <div className="pointer-events-none absolute bottom-20 left-10 h-[600px] w-[600px] rounded-full bg-[#FF4FA3]/[0.04] blur-[180px]" />
 
-        {/* DARK */}
-        <div className="hidden dark:block absolute top-[-220px] left-[-180px] h-[700px] w-[520px] rounded-full bg-[#E52A83]/15 blur-[180px]" />
-        <div className="hidden dark:block absolute bottom-[-220px] right-[-180px] h-[700px] w-[520px] rounded-full bg-[#B31372]/15 blur-[180px]" />
-      </div>
-
-      {/* CONTENT */}
       <div className="relative z-10">
-        {/* NAVBAR */}
-        <header className="backdrop-blur-2xl">
-          <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-5 md:px-8">
-            {/* LEFT */}
+        
+        {/* ========================================================================= */}
+        {/* HEADER / NAVIGATION                                                       */}
+        {/* ========================================================================= */}
+        <header className="sticky top-0 z-50 backdrop-blur-2xl border-b border-white/[0.06] bg-[#0A0512]/80">
+          <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-8 py-3.5 sm:py-4">
+            {/* Left Brand Identity */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#E7B8CF] dark:border-pink-500/20 bg-white/80 dark:bg-white/[0.03] text-[#261827] dark:text-white backdrop-blur-xl transition-all duration-300 hover:scale-[1.03]"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white hover:border-pink-500/40 hover:bg-[#16091F] transition-all"
+                title="Back to Landing Page"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft className="h-4 w-4 text-pink-300" />
               </Link>
 
-              <Link href="/" className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#E52A83] to-[#B31372] text-white shadow-md shadow-pink-500/25">
-                  <Sparkles size={16} />
+              <Link href="/" className="flex items-center gap-2.5 group">
+                <div className="relative flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden border border-pink-500/30 bg-[#16091F] shadow-sm">
+                  <NyraIcon size={18} variant="primary" glow />
                 </div>
-                <div>
-                  <h1 className="text-sm font-semibold text-[#261827] dark:text-white">Nyra</h1>
-                  <p className="text-[11px] text-[#6E6072] dark:text-pink-300/60 font-medium">About</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm sm:text-base font-bold tracking-tight text-[#F5F5F7] group-hover:text-pink-200 transition-colors">
+                    Nyra AI
+                  </span>
+                  <span className="text-[11px] font-mono text-pink-400/80 uppercase tracking-wider">
+                    About
+                  </span>
                 </div>
               </Link>
             </div>
 
-            {/* RIGHT */}
+            {/* Right Action Links */}
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="hidden md:flex items-center justify-center rounded-2xl border border-[#E7B8CF] dark:border-pink-500/20 bg-white/80 dark:bg-white/[0.03] px-5 py-2.5 text-sm font-medium text-[#261827] dark:text-white backdrop-blur-xl transition-all duration-300 hover:scale-[1.02]"
+                className="hidden sm:inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-[#F5F5F7] hover:bg-white/[0.08] transition-all"
               >
                 Login
               </Link>
 
               <Link
                 href="/chat-ui"
-                className="hidden md:flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-pink-500/20 transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#E52A83] via-[#B31372] to-[#801456] hover:from-[#FF4FA3] hover:to-[#B31372] px-4 sm:px-5 py-1.5 text-xs font-bold text-white shadow-lg shadow-pink-950/40 transition-all border border-[#FF4FA3]/30"
               >
-                Get Started
+                <span>Launch Workspace</span>
+                <ArrowRight className="h-3 w-3" />
               </Link>
-
-              <ThemeToggle />
             </div>
           </div>
         </header>
 
-        {/* HERO */}
-        <section className="px-5 pt-12 pb-16 md:px-8 md:pt-16 md:pb-24">
-          <div className="mx-auto max-w-[1400px]">
-            {/* TOP */}
-            <div className="max-w-4xl">
-              <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
-                ABOUT NYRA
-              </p>
+        {/* ========================================================================= */}
+        {/* HERO SECTION                                                             */}
+        {/* ========================================================================= */}
+        <section className="px-4 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 max-w-[1400px] mx-auto">
+          <div className="max-w-4xl space-y-6">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/80 px-4 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl">
+              <Sparkles className="h-3.5 w-3.5 text-pink-400" />
+              <span className="font-mono text-[11px] font-bold tracking-wider uppercase text-pink-300">
+                PRODUCT ARCHITECTURE & MISSION
+              </span>
+            </div>
 
-              <h1 className="text-4xl 2xs:text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.06em] sm:tracking-[-0.08em] leading-[0.95] sm:leading-[0.9] text-[#261827] dark:text-white break-words">
-                Building the
-                <br />
-                future of AI
-                <br />
-                workspaces.
-              </h1>
+            {/* Main Headline */}
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[70px] font-extrabold tracking-tight text-[#F5F5F7] leading-[1.08]">
+              One AI workspace for{' '}
+              <span className="bg-gradient-to-r from-white via-pink-100 to-pink-300 bg-clip-text text-transparent">
+                thinking, building, and getting things done.
+              </span>
+            </h1>
 
-              <p className="mt-8 max-w-3xl text-[16px] leading-8 text-[#6E6072] dark:text-slate-300 md:text-[19px] md:leading-9">
-                Nyra is designed for developers, creators, startups and teams who want a modern AI-first workspace that feels intelligent, minimal and incredibly fast.
+            {/* Supporting Copy */}
+            <p className="text-base sm:text-lg md:text-xl text-[#A7A7B0] leading-relaxed max-w-3xl">
+              Nyra brings AI conversations, web research, documents, prompts, tasks, memory, and career tools into one focused workspace — so you can move from an idea to execution without constantly switching between tools.
+            </p>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* THE FRAGMENTATION PROBLEM VS NYRA                                         */}
+          {/* ========================================================================= */}
+          <div className="mt-16 sm:mt-20 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            {/* The Old Way */}
+            <div className="rounded-3xl border border-white/[0.08] bg-[#0A0512]/60 p-6 sm:p-8 space-y-4">
+              <span className="font-mono text-xs font-bold text-rose-400/90 uppercase tracking-wider block">
+                The Fragmentation Problem
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
+                Modern AI workflows are scattered across disjointed tools.
+              </h2>
+              <p className="text-xs sm:text-sm text-[#A7A7B0] leading-relaxed">
+                Most teams bounce between a generic chatbot tab, a standalone PDF summarizer, a web search engine, a separate notes app, and a task board. Context gets lost at every step, requiring repetitive copy-pasting and manual synchronization.
               </p>
             </div>
 
-            {/* STATS */}
-            <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-3">
-              {stats.map((stat) => {
-                const Icon = stat.icon;
+            {/* The Nyra Solution */}
+            <div className="rounded-3xl border border-pink-500/30 bg-gradient-to-br from-[#160822]/90 to-[#0A0314]/90 p-6 sm:p-8 space-y-4 shadow-xl shadow-pink-950/20">
+              <span className="font-mono text-xs font-bold text-pink-300 uppercase tracking-wider block">
+                The Nyra Solution
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
+                A unified canvas where all intelligence modalities share state.
+              </h2>
+              <p className="text-xs sm:text-sm text-[#D1D1DC] leading-relaxed">
+                Nyra connects deep reasoning models with in-browser document parsing, live Tavily web search citations, persistent project memory, and actionable execution checklists — keeping all your intellectual momentum in one continuous loop.
+              </p>
+            </div>
+          </div>
 
+          {/* ========================================================================= */}
+          {/* 4 ARCHITECTURAL PILLARS                                                  */}
+          {/* ========================================================================= */}
+          <div className="mt-20 sm:mt-28 space-y-10">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+                Architectural Principles
+              </h2>
+              <p className="text-xs sm:text-sm text-[#A7A7B0]">
+                Engineered from the ground up for speed, local privacy, and tangible output.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {PILLARS.map((pillar) => {
+                const IconComp = pillar.icon;
                 return (
                   <div
-                    key={stat.label}
-                    className="rounded-[30px] border border-[#E7B8CF] dark:border-pink-500/20 bg-white dark:bg-[#16091F]/40 p-6 shadow-[0_4px_24px_rgba(38,24,39,0.03)] backdrop-blur-3xl transition-all duration-300 hover:translate-y-[-4px]"
+                    key={pillar.title}
+                    className="rounded-2xl border border-white/[0.08] bg-[#0A0512]/80 p-6 flex flex-col justify-between hover:border-pink-500/30 hover:bg-[#12071E] transition-all group"
                   >
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 shadow-sm">
-                      <Icon size={20} />
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-500/10 text-pink-300 border border-pink-500/20 group-hover:scale-105 transition-transform">
+                          <IconComp className="h-5 w-5" />
+                        </div>
+                        <span className="text-[10.5px] font-mono text-pink-200 bg-white/[0.04] border border-white/10 px-2.5 py-0.5 rounded-full">
+                          {pillar.badge}
+                        </span>
+                      </div>
+
+                      <h3 className="text-base font-bold text-white group-hover:text-pink-200 transition-colors">
+                        {pillar.title}
+                      </h3>
+
+                      <p className="mt-2 text-xs text-[#A7A7B0] leading-relaxed">
+                        {pillar.description}
+                      </p>
                     </div>
-
-                    <h2 className="text-[42px] md:text-[48px] font-bold tracking-[-0.06em] text-[#261827] dark:text-white">
-                      {stat.value}
-                    </h2>
-
-                    <p className="mt-2 text-[14px] text-[#6E6072] dark:text-slate-400">
-                      {stat.label}
-                    </p>
                   </div>
                 );
               })}
             </div>
+          </div>
 
-            {/* MISSION */}
-            <div className="mt-20 rounded-[36px] border border-[#E7B8CF] dark:border-pink-500/20 bg-white dark:bg-gradient-to-b dark:from-[#16091F]/80 dark:to-[#08020D]/90 p-7 md:p-10 shadow-[0_4px_24px_rgba(38,24,39,0.03)] backdrop-blur-3xl">
-              <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
-                OUR MISSION
-              </p>
-
-              <h2 className="text-[34px] md:text-[58px] font-semibold tracking-[-0.06em] leading-[1] text-[#261827] dark:text-white">
-                Create a workspace where AI feels natural, powerful and beautiful.
+          {/* ========================================================================= */}
+          {/* 7 INTEGRATED CAPABILITIES                                                 */}
+          {/* ========================================================================= */}
+          <div className="mt-20 sm:mt-28 space-y-10">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+                What Nyra Brings Together
               </h2>
-
-              <p className="mt-8 max-w-4xl text-[16px] leading-8 text-[#6E6072] dark:text-slate-300 md:text-[19px] md:leading-9">
-                We believe AI interfaces should not feel robotic or overwhelming. Nyra focuses on clarity, speed, intelligent workflows and modern aesthetics that help people think better and build faster.
+              <p className="text-xs sm:text-sm text-[#A7A7B0]">
+                Seven core capabilities operating seamlessly within one interface.
               </p>
+            </div>
 
-              <div className="mt-10 flex flex-wrap gap-4">
-                <Link
-                  href="/chat-ui"
-                  className="flex items-center justify-center rounded-2xl bg-gradient-to-r from-[#E52A83] to-[#B31372] hover:opacity-95 px-7 py-4 text-sm font-bold text-white shadow-md shadow-pink-500/25 transition-all duration-300 hover:scale-[1.02]"
-                >
-                  Get Started
-                </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {MODALITIES.map((item, idx) => {
+                const IconComp = item.icon;
+                return (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className={`group rounded-2xl border border-white/[0.08] bg-[#0A0512]/85 p-6 hover:border-pink-500/35 hover:bg-[#12081C] transition-all flex flex-col justify-between ${
+                      idx === 6 ? 'md:col-span-2 lg:col-span-1' : ''
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-500/10 text-pink-300 border border-pink-500/20 group-hover:scale-105 transition-transform">
+                          <IconComp className="h-5 w-5" />
+                        </div>
+                        <span className="text-[11px] font-mono text-pink-200 bg-white/[0.04] border border-white/10 px-2.5 py-0.5 rounded-full">
+                          {item.tag}
+                        </span>
+                      </div>
 
-                <Link
-                  href="/pricing"
-                  className="flex items-center justify-center rounded-2xl border border-[#E7B8CF] dark:border-pink-500/20 bg-[#FAF8FB] dark:bg-white/[0.03] px-7 py-4 text-sm font-medium text-[#261827] dark:text-white backdrop-blur-xl transition-all duration-300 hover:scale-[1.02]"
-                >
-                  View Pricing
-                </Link>
-              </div>
+                      <h3 className="text-base font-bold text-white group-hover:text-pink-200 transition-colors flex items-center justify-between">
+                        <span>{item.title}</span>
+                        <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 text-pink-300 transition-all" />
+                      </h3>
+
+                      <p className="mt-2 text-xs sm:text-[13px] text-[#A7A7B0] leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-5 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-pink-300/70 group-hover:text-pink-300">
+                      Open in workspace &rarr;
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
+
+          {/* ========================================================================= */}
+          {/* VERIFIED TECHNOLOGY STACK                                                */}
+          {/* ========================================================================= */}
+          <div className="mt-20 sm:mt-28 rounded-3xl border border-white/[0.08] bg-[#0A0512]/60 p-6 sm:p-10 space-y-8">
+            <div className="text-center max-w-2xl mx-auto space-y-1.5">
+              <span className="font-mono text-xs font-bold text-pink-400 uppercase tracking-wider block">
+                Technical Stack
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+                Built with modern, open technologies
+              </h2>
+              <p className="text-xs sm:text-sm text-[#A7A7B0]">
+                Verified full-stack infrastructure delivering low latency, high concurrency, and strict security.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 max-w-4xl mx-auto">
+              {TECH_BADGES.map((tech) => (
+                <div
+                  key={tech.name}
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3.5 flex items-center justify-between hover:border-pink-500/30 transition-colors"
+                >
+                  <span className="text-xs sm:text-sm font-semibold text-white">{tech.name}</span>
+                  <span className="text-[10.5px] font-mono text-pink-300/80">{tech.category}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* FINAL CALL TO ACTION                                                     */}
+          {/* ========================================================================= */}
+          <div className="mt-20 sm:mt-28 text-center rounded-3xl border border-pink-500/25 bg-gradient-to-br from-[#180922]/90 via-[#0E0417]/90 to-[#05020A]/95 p-8 sm:p-14 space-y-6">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Ready to experience a focused AI workspace?
+            </h2>
+            <p className="text-sm sm:text-base text-[#A7A7B0] max-w-xl mx-auto leading-relaxed">
+              Start chatting, parsing documents, and building workflows with zero setup required.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <Link
+                href="/chat-ui"
+                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-[#E52A83] via-[#B31372] to-[#801456] hover:from-[#FF4FA3] hover:to-[#B31372] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-pink-950/50 transition-all hover:scale-[1.02] border border-[#FF4FA3]/30"
+              >
+                <span>Launch Free Workspace</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] px-6 py-3.5 text-sm font-semibold text-white transition-all"
+              >
+                <span>Back to Homepage</span>
+              </Link>
+            </div>
+          </div>
+
         </section>
+
+        {/* FOOTER */}
+        <footer className="border-t border-white/[0.06] py-8 text-center text-xs text-[#8E8E98] font-mono">
+          &copy; 2026 Nyra AI Inc. All rights reserved. &bull;{' '}
+          <Link href="/" className="hover:text-pink-300 transition-colors">
+            Home
+          </Link>{' '}
+          &bull;{' '}
+          <Link href="/chat-ui" className="hover:text-pink-300 transition-colors">
+            Workspace
+          </Link>
+        </footer>
+
       </div>
     </main>
   );

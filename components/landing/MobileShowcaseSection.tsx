@@ -136,12 +136,12 @@ export default function MobileShowcaseSection() {
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-white leading-[1.15]">
             Simple, fast, and{' '}
             <span className="bg-gradient-to-r from-white via-pink-100 to-rose-200 bg-clip-text text-transparent">
-              always with you.
+              mobile-ready.
             </span>
           </h2>
 
           <p className="text-sm sm:text-base text-[#A7A7B0] leading-relaxed max-w-2xl mx-auto font-normal">
-            Clean voice ideation, instant multimodal image reasoning, and one-tap prompt templates designed for everyday touch workflow.
+            Voice ideation, visual reasoning, and quick prompts built for mobile screens.
           </p>
 
           {/* Clean Focus Mode Filter Tabs */}

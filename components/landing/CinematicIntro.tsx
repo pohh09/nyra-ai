@@ -67,26 +67,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
     { size: 2, left: 30, top: 58, z: -550, color: '#e879f9', opacity: 0.7 },
   ], []);
 
-  // Mouse Parallax on Desktop
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!cameraRef.current) return;
-      const xNorm = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
-      const yNorm = (e.clientY / window.innerHeight - 0.5) * 2;
-
-      gsap.to(cameraRef.current, {
-        rotationY: xNorm * 3.5,
-        rotationX: -yNorm * 2.5,
-        duration: 0.8,
-        ease: 'power1.out',
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   const handleSkip = () => {
     if (hasSkipped) return;

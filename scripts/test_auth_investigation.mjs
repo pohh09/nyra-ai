@@ -25,15 +25,14 @@ async function runInvestigation() {
   assert(envContent.includes(SUPABASE_URL), 'Supabase URL matches between client and server');
   assert(envContent.includes(ANON_KEY), 'Supabase publishable key matches between client and server');
 
-  // 2. Check Code Normalization in AuthContext, Login, Signup
+  // 2. Check Code Normalization in AuthContext and AuthCard (Login / Signup)
   console.log('\n2. Verifying Email Normalization & Safe Fallback...');
   const authContext = fs.readFileSync('lib/auth/AuthContext.tsx', 'utf-8');
-  const loginPage = fs.readFileSync('app/login/[[...login]]/page.tsx', 'utf-8');
-  const signupPage = fs.readFileSync('app/signup/[[...signup]]/page.tsx', 'utf-8');
+  const authCard = fs.readFileSync('components/auth/AuthCard.tsx', 'utf-8');
 
   assert(authContext.includes('email.trim().toLowerCase()'), 'AuthContext normalizes email to lowercase');
-  assert(loginPage.includes('email.trim().toLowerCase()'), 'Login page normalizes email to lowercase');
-  assert(signupPage.includes('email.trim().toLowerCase()'), 'Signup page normalizes email to lowercase');
+  assert(authCard.includes('loginEmail.trim().toLowerCase()'), 'AuthCard normalizes login email to lowercase');
+  assert(authCard.includes('signupEmail.trim().toLowerCase()'), 'AuthCard normalizes signup email to lowercase');
 
   // 3. Test Invalid Credentials Error Handling
   console.log('\n3. Testing Supabase Login Error Response...');

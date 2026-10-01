@@ -45,7 +45,7 @@ const DEMO_SCENARIOS: DemoScenario[] = [
     label: 'React 19 & TypeScript',
     icon: Code2,
     model: 'Llama 3.3 70B',
-    speed: '340 tok/s',
+    speed: 'Code',
     activeFile: 'usePagination.ts',
     fileTree: ['usePagination.ts', 'Pagination.tsx', 'pagination.test.ts'],
     messages: [
@@ -72,16 +72,16 @@ export function usePagination(totalItems: number, itemsPerPage = 10, currentPage
 
   return { totalPages, canPrevious, canNext, pageRange };
 }`,
-        followUps: ['Add Vitest unit tests', 'Explain boundary logic', 'Convert to SSR handler'],
+        followUps: ['Add unit tests', 'Explain boundary logic'],
       },
     ],
   },
   {
     id: 'rag',
-    label: 'PDF Document RAG',
+    label: 'PDF Document Analysis',
     icon: FileText,
     model: 'Qwen 2.5 72B',
-    speed: '295 tok/s',
+    speed: 'Docs',
     activeFile: 'financial_synthesis.json',
     fileTree: ['financial_synthesis.json', 'q4_report.pdf', 'balance_matrix.csv'],
     messages: [
@@ -93,7 +93,7 @@ export function usePagination(totalItems: number, itemsPerPage = 10, currentPage
       {
         id: 2,
         sender: 'ai',
-        text: 'Direct vector retrieval from page 48 of the uploaded balance sheet:',
+        text: 'Direct retrieval from page 48 of the uploaded balance sheet:',
         codeHeader: 'financial_synthesis.json',
         codeSnippet: `{
   "fiscal_quarter": "Q4-2025",
@@ -101,16 +101,16 @@ export function usePagination(totalItems: number, itemsPerPage = 10, currentPage
   "free_cash_flow": "$312.0M",
   "confidence_score": 0.998
 }`,
-        followUps: ['Generate summary table', 'Audit currency risk hedges'],
+        followUps: ['Generate summary table', 'Explain calculation'],
       },
     ],
   },
   {
     id: 'search',
-    label: 'Real-Time Web Search',
+    label: 'Live Web Search',
     icon: Globe,
     model: 'Tavily Search API',
-    speed: '315 tok/s',
+    speed: 'Search',
     activeFile: 'form_actions_guide.md',
     fileTree: ['form_actions_guide.md', 'tavily_sources.json', 'search_grounding.log'],
     messages: [
@@ -122,7 +122,7 @@ export function usePagination(totalItems: number, itemsPerPage = 10, currentPage
       {
         id: 2,
         sender: 'ai',
-        text: 'Here is the verified synthesis from current official release notes:',
+        text: 'Verified synthesis from current official release notes:',
         codeHeader: 'form_actions_guide.md',
         codeSnippet: `1. Use \`useActionState\` for pending form states and optimistic feedback.
 2. Pair with \`useFormStatus\` inside child submit buttons to disable double-clicks.
@@ -555,13 +555,13 @@ describe('usePagination', () => {
             {/* Heading & Subtitle */}
             <div className="space-y-3">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
-                Experience the workspace{' '}
+                Interactive workspace{' '}
                 <span className="bg-gradient-to-r from-white via-pink-100 to-rose-200 bg-clip-text text-transparent">
-                  live.
+                  demo.
                 </span>
               </h2>
               <p className="text-sm sm:text-base text-[#A7A7B0] leading-relaxed">
-                Test real-time model streaming, syntax-highlighted code generation, and multi-modal responses directly in your browser.
+                Test live code generation, document Q&amp;A, and web search below.
               </p>
             </div>
 

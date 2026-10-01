@@ -40,12 +40,6 @@ export default function HeroRobotVisual() {
   const smoothBodyX = useSpring(bodyShiftX, { stiffness: 90, damping: 25 });
   const smoothBodyY = useSpring(bodyShiftY, { stiffness: 90, damping: 25 });
 
-  // Arm Motion Springs
-  const leftArmRotate = useMotionValue(0);
-  const rightArmRotate = useMotionValue(0);
-  const smoothLeftArm = useSpring(leftArmRotate, { stiffness: 120, damping: 20 });
-  const smoothRightArm = useSpring(rightArmRotate, { stiffness: 120, damping: 20 });
-
   // Periodic Natural Blinking (every 3.5 - 6 seconds)
   useEffect(() => {
     let blinkTimer: NodeJS.Timeout;
@@ -99,16 +93,14 @@ export default function HeroRobotVisual() {
       eyeOffsetX.set(normX * 16);
       eyeOffsetY.set(normY * 11);
 
-      // Subtle body & arms follow
+      // Subtle body follow
       bodyShiftX.set(normX * 8);
       bodyShiftY.set(normY * 6);
-      leftArmRotate.set(-normX * 9);
-      rightArmRotate.set(-normX * 9);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [headRotateX, headRotateY, eyeOffsetX, eyeOffsetY, bodyShiftX, bodyShiftY, leftArmRotate, rightArmRotate]);
+  }, [headRotateX, headRotateY, eyeOffsetX, eyeOffsetY, bodyShiftX, bodyShiftY]);
 
   // Click Interaction: Speak to the user
   const handleRobotClick = () => {
@@ -417,10 +409,10 @@ export default function HeroRobotVisual() {
           </div>
 
           {/* =========================================================
-              3. TORSO CERAMIC CHASSIS + QUANTUM REACTOR CORE
+              3. TORSO CERAMIC CHASSIS + ARMS SNUG TO BODY + REACTOR CORE
           ========================================================= */}
           <div className="relative -mt-2 z-10 flex flex-col items-center">
-            {/* TORSO SVG CHASSIS */}
+            {/* TORSO SVG CHASSIS WITH INTEGRATED NATURAL ARMS */}
             <svg
               width="210"
               height="150"
@@ -463,6 +455,84 @@ export default function HeroRobotVisual() {
                 fill="#FFFFFF"
                 opacity="0.9"
               />
+
+              {/* =========================================================
+                  LEFT ARM & HAND (SNUG TO TORSO BODY & STOMACH)
+              ========================================================= */}
+              <g id="robotLeftArm">
+                {/* Left Shoulder Joint */}
+                <circle cx="36" cy="22" r="13" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
+                <circle cx="36" cy="22" r="5" fill="#3C2169" />
+                <circle cx="36" cy="22" r="2.5" fill="#8B5CF6" />
+
+                {/* Left Upper Arm Capsule */}
+                <path
+                  d="M26 26 C18 38 18 54 26 66 C30 70 36 68 38 62 C42 50 44 36 38 26 Z"
+                  fill="url(#torsoCeramic3D)"
+                  stroke="#E9D8FD"
+                  strokeWidth="1.2"
+                />
+
+                {/* Left Elbow Joint */}
+                <circle cx="26" cy="66" r="7.5" fill="#1F0D3D" stroke="#4C1D95" strokeWidth="1" />
+                <circle cx="26" cy="66" r="3" fill="#A855F7" />
+
+                {/* Left Forearm Curving Inward to Stomach */}
+                <path
+                  d="M26 66 C26 78 34 92 50 102 C54 104 60 100 58 94 C48 84 38 74 34 64 Z"
+                  fill="url(#torsoCeramic3D)"
+                  stroke="#E9D8FD"
+                  strokeWidth="1.2"
+                />
+
+                {/* Left Wrist Collar */}
+                <rect x="48" y="94" width="10" height="4.5" rx="2" transform="rotate(30 48 94)" fill="#3C2169" />
+
+                {/* Left Hand Fingers Resting Naturally on Body/Stomach */}
+                <rect x="52" y="98" width="4" height="11" rx="2" transform="rotate(20 52 98)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="57" y="97" width="4" height="12" rx="2" transform="rotate(14 57 97)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="62" y="95" width="3.8" height="10.5" rx="1.9" transform="rotate(8 62 95)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="47" y="91" width="3.5" height="7.5" rx="1.7" transform="rotate(45 47 91)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+              </g>
+
+              {/* =========================================================
+                  RIGHT ARM & HAND (SNUG TO TORSO BODY & STOMACH)
+              ========================================================= */}
+              <g id="robotRightArm">
+                {/* Right Shoulder Joint */}
+                <circle cx="174" cy="22" r="13" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
+                <circle cx="174" cy="22" r="5" fill="#3C2169" />
+                <circle cx="174" cy="22" r="2.5" fill="#8B5CF6" />
+
+                {/* Right Upper Arm Capsule */}
+                <path
+                  d="M184 26 C192 38 192 54 184 66 C180 70 174 68 172 62 C168 50 166 36 172 26 Z"
+                  fill="url(#torsoCeramic3D)"
+                  stroke="#E9D8FD"
+                  strokeWidth="1.2"
+                />
+
+                {/* Right Elbow Joint */}
+                <circle cx="184" cy="66" r="7.5" fill="#1F0D3D" stroke="#4C1D95" strokeWidth="1" />
+                <circle cx="184" cy="66" r="3" fill="#A855F7" />
+
+                {/* Right Forearm Curving Inward to Stomach */}
+                <path
+                  d="M184 66 C184 78 176 92 160 102 C156 104 150 100 152 94 C162 84 172 74 176 64 Z"
+                  fill="url(#torsoCeramic3D)"
+                  stroke="#E9D8FD"
+                  strokeWidth="1.2"
+                />
+
+                {/* Right Wrist Collar */}
+                <rect x="152" y="96" width="10" height="4.5" rx="2" transform="rotate(-30 152 96)" fill="#3C2169" />
+
+                {/* Right Hand Fingers Resting Naturally on Body/Stomach */}
+                <rect x="154" y="98" width="4" height="11" rx="2" transform="rotate(-20 154 98)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="149" y="97" width="4" height="12" rx="2" transform="rotate(-14 149 97)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="144" y="95" width="3.8" height="10.5" rx="1.9" transform="rotate(-8 144 95)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+                <rect x="159" y="91" width="3.5" height="7.5" rx="1.7" transform="rotate(-45 159 91)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
+              </g>
             </svg>
 
             {/* Glowing Core Pulse Overlay */}
@@ -475,42 +545,6 @@ export default function HeroRobotVisual() {
               className="absolute top-[60px] xs:top-[68px] sm:top-[74px] w-10 h-10 rounded-full bg-cyan-400/30 blur-md pointer-events-none"
             />
           </div>
-
-          {/* LEFT ARTICULATED ARM (CERAMIC) */}
-          <motion.div
-            style={{
-              rotateZ: smoothLeftArm,
-              transformOrigin: 'top right',
-            }}
-            className="absolute left-[-22px] sm:left-[-34px] top-[95px] sm:top-[125px] z-20 pointer-events-none"
-          >
-            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[36px] xs:w-[42px] sm:w-[52px] h-auto drop-shadow-md">
-              <rect x="10" y="6" width="28" height="22" rx="11" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
-              <rect x="14" y="26" width="20" height="6" rx="3" fill="#3C2169" />
-              <rect x="13" y="32" width="6" height="15" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <rect x="21" y="32" width="6" height="18" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <rect x="29" y="32" width="6" height="16" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <circle cx="24" cy="20" r="3" fill="#8B5CF6" />
-            </svg>
-          </motion.div>
-
-          {/* RIGHT ARTICULATED ARM (CERAMIC) */}
-          <motion.div
-            style={{
-              rotateZ: smoothRightArm,
-              transformOrigin: 'top left',
-            }}
-            className="absolute right-[-22px] sm:right-[-34px] top-[95px] sm:top-[125px] z-20 pointer-events-none"
-          >
-            <svg width="52" height="60" viewBox="0 0 48 56" fill="none" className="w-[36px] xs:w-[42px] sm:w-[52px] h-auto drop-shadow-md">
-              <rect x="10" y="6" width="28" height="22" rx="11" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
-              <rect x="14" y="26" width="20" height="6" rx="3" fill="#3C2169" />
-              <rect x="13" y="32" width="6" height="15" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <rect x="21" y="32" width="6" height="18" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <rect x="29" y="32" width="6" height="16" rx="3" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
-              <circle cx="24" cy="20" r="3" fill="#8B5CF6" />
-            </svg>
-          </motion.div>
 
           {/* =========================================================
               4. ANTI-GRAVITY LEVITATION ENERGY BEAM

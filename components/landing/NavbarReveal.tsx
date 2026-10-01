@@ -31,11 +31,10 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
 
   // Streamlined, high-value nav items
   const navItems = [
-    { label: 'Features', href: '#features', icon: Sparkles },
+    { label: 'About', href: '/about', icon: Globe },
     { label: 'Workspace', href: '#desktop-workspace', icon: Terminal },
     { label: 'Use Cases', href: '#use-cases', icon: Layers },
     { label: 'FAQ', href: '#faq', icon: HelpCircle },
-    { label: 'About', href: '/about', icon: Globe },
   ];
 
   return (
@@ -60,15 +59,25 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-xs font-medium text-[#A7A7B0] hover:text-[#F5F5F7] hover:drop-shadow-[0_0_8px_rgba(255,79,163,0.35)] transition-all duration-200"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) =>
+              item.href.startsWith('/') ? (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-xs font-medium text-[#A7A7B0] hover:text-[#F5F5F7] hover:drop-shadow-[0_0_8px_rgba(255,79,163,0.35)] transition-all duration-200"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="text-xs font-medium text-[#A7A7B0] hover:text-[#F5F5F7] hover:drop-shadow-[0_0_8px_rgba(255,79,163,0.35)] transition-all duration-200"
+                >
+                  {item.label}
+                </a>
+              )
+            )}
           </nav>
 
           {/* Action Buttons */}
@@ -132,7 +141,20 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
           <div className="flex flex-col gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              return (
+              return item.href.startsWith('/') ? (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#A7A7B0] hover:bg-[#16091F] hover:text-[#F5F5F7] transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-pink-400" />
+                    <span>{item.label}</span>
+                  </div>
+                  <ChevronRight className="h-3.5 w-3.5 text-pink-400/50" />
+                </Link>
+              ) : (
                 <a
                   key={item.label}
                   href={item.href}
