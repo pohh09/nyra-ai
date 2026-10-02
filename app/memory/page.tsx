@@ -150,13 +150,14 @@ export default function MemoryPage() {
 
   const activeCount = memories.filter((m) => m.enabled).length;
 
-  const handleToggleMaster = () => {
-    const next = !masterEnabled;
+  const handleToggleMaster = (targetState?: boolean) => {
+    const next = typeof targetState === 'boolean' ? targetState : !masterEnabled;
+    if (next === masterEnabled) return;
     setMasterEnabled(next);
     setMemoryMasterEnabled(next);
     addToast({
       type: next ? 'success' : 'info',
-      title: next ? 'AI Memory is On' : 'AI Memory is Paused',
+      title: next ? 'AI Memory is Active' : 'AI Memory is Paused',
       description: next
         ? 'NYRA will use remembered context in future chats.'
         : 'NYRA will not use or update memories until turned back on.',
@@ -246,9 +247,9 @@ export default function MemoryPage() {
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
-            className="memory-nav-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-purple-400/20 text-xs font-medium text-zinc-300 hover:text-white transition cursor-pointer"
+            className="memory-nav-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-white/[0.04] hover:bg-[#FAF8FB] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-purple-400/20 text-xs font-medium text-[#261827] dark:text-zinc-300 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-2xs"
           >
-            <ArrowLeft size={13} className="text-purple-400" />
+            <ArrowLeft size={13} className="text-purple-600 dark:text-purple-400" />
             <span>Back to Chat</span>
           </Link>
 
@@ -256,11 +257,11 @@ export default function MemoryPage() {
             <span
               className={`text-[11px] px-2.5 py-1 rounded-full border font-medium flex items-center gap-1.5 ${
                 masterEnabled
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 memory-badge-active'
-                  : 'bg-zinc-800/80 border-zinc-700 text-zinc-400 memory-badge-paused'
+                  ? 'bg-emerald-100 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 memory-badge-active'
+                  : 'bg-[#F0EDF5] dark:bg-zinc-800/80 border-[#E8E4EF] dark:border-zinc-700 text-[#6E6072] dark:text-zinc-400 memory-badge-paused'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${masterEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-400'}`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${masterEnabled ? 'bg-emerald-500 dark:bg-emerald-400 animate-pulse' : 'bg-zinc-400'}`} />
               <span>{masterEnabled ? `${activeCount} Active ${activeCount === 1 ? 'Memory' : 'Memories'}` : 'Memory Paused'}</span>
             </span>
           </div>
@@ -268,52 +269,59 @@ export default function MemoryPage() {
 
         {/* Title & Description */}
         <div className="space-y-1 pt-1">
-          <p className="text-[11px] uppercase tracking-wider text-purple-400 font-medium font-mono">
+          <p className="text-[11px] uppercase tracking-wider text-purple-600 dark:text-purple-400 font-medium font-mono">
             Personalized Help
           </p>
-          <h1 className="memory-header-title text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-            <Brain size={26} className="text-purple-500" />
+          <h1 className="memory-header-title text-2xl sm:text-3xl font-bold tracking-tight text-[#261827] dark:text-white flex items-center gap-2">
+            <Brain size={26} className="text-purple-600 dark:text-purple-500" />
             <span>AI Memory</span>
           </h1>
-          <p className="memory-header-desc text-xs sm:text-sm text-zinc-300 max-w-2xl leading-relaxed pt-0.5">
+          <p className="memory-header-desc text-xs sm:text-sm text-[#6E6072] dark:text-zinc-300 max-w-2xl leading-relaxed pt-0.5">
             NYRA remembers useful information you share to provide more personalized help in future conversations.
           </p>
         </div>
 
         {/* Master Control Card */}
-        <div className="memory-card rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="memory-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[#130c26]/90 border border-[#E8E4EF] dark:border-purple-400/25 p-4 sm:p-5 shadow-sm dark:shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Shield size={15} className="text-purple-400" />
-              <h2 className="memory-card-title text-sm font-bold text-white">Full User Control</h2>
+              <Shield size={15} className="text-purple-600 dark:text-purple-400" />
+              <h2 className="memory-card-title text-sm font-bold text-[#261827] dark:text-white">Full User Control</h2>
             </div>
-            <p className="memory-text-subtle text-xs text-zinc-300 leading-relaxed max-w-xl">
+            <p className="memory-text-subtle text-xs text-[#6E6072] dark:text-zinc-300 leading-relaxed max-w-xl">
               {masterEnabled
                 ? 'AI Memory is active. You can edit, pause, or delete any memory below anytime.'
                 : 'AI Memory is currently paused. NYRA will not use or update your saved memories until you turn it back on.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="memory-card-title text-xs font-semibold text-zinc-300">
-              {masterEnabled ? 'Active' : 'Paused'}
-            </span>
+          <div className="flex items-center p-1 rounded-2xl bg-[#F0EDF5] dark:bg-white/[0.06] border border-[#E8E4EF] dark:border-white/10 shrink-0 shadow-inner">
             <button
               type="button"
-              onClick={handleToggleMaster}
-              className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                masterEnabled ? 'bg-purple-600' : 'bg-zinc-700'
+              onClick={() => handleToggleMaster(true)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                masterEnabled
+                  ? 'bg-white dark:bg-[#201538] text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/30'
+                  : 'text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white'
               }`}
-              role="switch"
-              aria-checked={masterEnabled}
-              aria-label="Turn AI Memory on or off"
+              title="Activate AI Memory"
             >
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                  masterEnabled ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
+              <span className={`w-2 h-2 rounded-full ${masterEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-400'}`} />
+              <span>Active</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleToggleMaster(false)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                !masterEnabled
+                  ? 'bg-white dark:bg-[#201538] text-amber-600 dark:text-amber-400 shadow-sm border border-amber-500/30'
+                  : 'text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white'
+              }`}
+              title="Pause AI Memory"
+            >
+              <span className={`w-2 h-2 rounded-full ${!masterEnabled ? 'bg-amber-500' : 'bg-zinc-400'}`} />
+              <span>Paused</span>
             </button>
           </div>
         </div>

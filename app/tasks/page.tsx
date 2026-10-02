@@ -986,14 +986,14 @@ export default function TasksPage() {
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
-            className="tasks-nav-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-purple-400/20 text-xs font-medium text-zinc-300 hover:text-white transition cursor-pointer"
+            className="tasks-nav-pill inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-white/[0.04] hover:bg-[#FAF8FB] dark:hover:bg-white/[0.08] border border-[#E8E4EF] dark:border-purple-400/20 text-xs font-medium text-[#261827] dark:text-zinc-300 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-2xs"
           >
-            <ArrowLeft size={13} className="text-purple-400" />
+            <ArrowLeft size={13} className="text-purple-600 dark:text-purple-400" />
             <span>Back to Chat</span>
           </Link>
 
           {totalCount > 0 && (
-            <span className="tasks-progress-badge text-[11px] px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-400/20 text-purple-200 font-medium">
+            <span className="tasks-progress-badge text-[11px] px-2.5 py-1 rounded-full bg-purple-100 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-400/20 text-purple-700 dark:text-purple-200 font-medium">
               {completedCount} of {totalCount} done
             </span>
           )}
@@ -1002,21 +1002,21 @@ export default function TasksPage() {
         {/* Title & Date */}
         <div className="space-y-0.5 pt-1">
           {todayFormatted && (
-            <p className="tasks-text-subtle text-[11px] uppercase tracking-wider text-purple-400 font-medium font-mono">
+            <p className="tasks-text-subtle text-[11px] uppercase tracking-wider text-purple-600 dark:text-purple-400 font-medium font-mono">
               {todayFormatted}
             </p>
           )}
-          <h1 className="tasks-header-title text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-            <CheckSquare size={24} className="text-purple-500" />
+          <h1 className="tasks-header-title text-2xl sm:text-3xl font-bold tracking-tight text-[#261827] dark:text-white flex items-center gap-2">
+            <CheckSquare size={24} className="text-purple-600 dark:text-purple-500" />
             <span>Tasks & Roadmaps</span>
           </h1>
         </div>
 
         {/* Quick-Add Task & AI Roadmap Box */}
-        <div className="tasks-card rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 p-3 sm:p-4 shadow-xl space-y-3">
+        <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[#130c26]/90 border border-[#E8E4EF] dark:border-purple-400/25 p-3 sm:p-4 shadow-sm dark:shadow-xl space-y-3">
           <form onSubmit={handleQuickAdd} className="flex items-center gap-2">
-            <div className="flex items-center justify-center pl-2 text-purple-400">
-              {isAiMode ? <Sparkles size={18} className="text-purple-400 animate-pulse" /> : <Plus size={18} />}
+            <div className="flex items-center justify-center pl-2 text-purple-600 dark:text-purple-400">
+              {isAiMode ? <Sparkles size={18} className="text-purple-600 dark:text-purple-400 animate-pulse" /> : <Plus size={18} />}
             </div>
             <input
               ref={quickInputRef}
@@ -1028,7 +1028,7 @@ export default function TasksPage() {
               }
               value={quickTitle}
               onChange={(e) => setQuickTitle(e.target.value)}
-              className="tasks-input flex-1 bg-transparent py-2 text-xs sm:text-sm text-white placeholder-zinc-500 outline-none"
+              className="tasks-input flex-1 bg-transparent py-2 text-xs sm:text-sm text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none"
             />
             <button
               type="submit"
@@ -1053,8 +1053,8 @@ export default function TasksPage() {
 
           {/* Quick AI Loading Step Indicator */}
           {isAiLoading && (
-            <div className="p-2.5 rounded-xl bg-purple-950/50 border border-purple-400/30 flex items-center gap-2.5 text-xs text-purple-200 animate-pulse">
-              <Loader2 size={14} className="animate-spin text-purple-400" />
+            <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-400/30 flex items-center gap-2.5 text-xs text-purple-800 dark:text-purple-200 animate-pulse">
+              <Loader2 size={14} className="animate-spin text-purple-600 dark:text-purple-400" />
               <span>{aiLoadingStep}</span>
             </div>
           )}
@@ -1069,8 +1069,8 @@ export default function TasksPage() {
               }}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer shrink-0 ${
                 quickDate === 'today' && !isAiMode
-                  ? 'tasks-quick-chip-active bg-purple-500/25 text-purple-200 border border-purple-400/40'
-                  : 'tasks-quick-chip-inactive bg-white/[0.03] text-zinc-400 hover:text-white'
+                  ? 'tasks-quick-chip-active bg-purple-100 dark:bg-purple-500/25 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-400/40'
+                  : 'tasks-quick-chip-inactive bg-[#F5F3F9] dark:bg-white/[0.03] text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-[#EAE4F5] dark:hover:bg-white/[0.06]'
               }`}
             >
               📅 Today
@@ -1084,8 +1084,8 @@ export default function TasksPage() {
               }}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer shrink-0 ${
                 quickDate === 'tomorrow' && !isAiMode
-                  ? 'tasks-quick-chip-active bg-purple-500/25 text-purple-200 border border-purple-400/40'
-                  : 'tasks-quick-chip-inactive bg-white/[0.03] text-zinc-400 hover:text-white'
+                  ? 'tasks-quick-chip-active bg-purple-100 dark:bg-purple-500/25 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-400/40'
+                  : 'tasks-quick-chip-inactive bg-[#F5F3F9] dark:bg-white/[0.03] text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-[#EAE4F5] dark:hover:bg-white/[0.06]'
               }`}
             >
               📅 Tomorrow
@@ -1096,18 +1096,18 @@ export default function TasksPage() {
               onClick={() => setIsAiMode(!isAiMode)}
               className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
                 isAiMode
-                  ? 'tasks-quick-chip-active bg-gradient-to-r from-purple-600/40 to-violet-600/40 text-purple-100 border border-purple-400/50 shadow-sm'
-                  : 'tasks-quick-chip-inactive bg-white/[0.03] text-purple-300 hover:text-white'
+                  ? 'tasks-quick-chip-active bg-purple-100 dark:bg-gradient-to-r dark:from-purple-600/40 dark:to-violet-600/40 text-purple-800 dark:text-purple-100 border border-purple-300 dark:border-purple-400/50 shadow-xs'
+                  : 'tasks-quick-chip-inactive bg-[#F5F3F9] dark:bg-white/[0.03] text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-white hover:bg-[#EAE4F5] dark:hover:bg-white/[0.06]'
               }`}
             >
-              <Sparkles size={12} className={isAiMode ? 'text-purple-300 animate-pulse' : 'text-purple-400'} />
+              <Sparkles size={12} className={isAiMode ? 'text-purple-600 dark:text-purple-300 animate-pulse' : 'text-purple-600 dark:text-purple-400'} />
               <span>AI Learning Roadmap</span>
             </button>
 
             {/* Quick Suggestions when in AI Mode */}
             {isAiMode && (
               <div className="flex flex-wrap items-center gap-1.5 w-full pt-1.5 pb-0.5">
-                <span className="text-[10px] text-zinc-500 shrink-0 font-medium">Try:</span>
+                <span className="text-[10px] text-[#8C7E92] dark:text-zinc-500 shrink-0 font-medium">Try:</span>
                 {GOAL_SUGGESTIONS.map((sug) => (
                   <button
                     key={sug}
@@ -1117,7 +1117,7 @@ export default function TasksPage() {
                       setQuickTitle(cleanGoal);
                       handleGenerateRoadmap(cleanGoal);
                     }}
-                    className="px-2.5 py-0.5 rounded-full bg-purple-900/30 hover:bg-purple-800/40 border border-purple-400/20 text-[10px] text-purple-200 transition cursor-pointer shrink-0"
+                    className="px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-800/40 border border-purple-200 dark:border-purple-400/20 text-[10px] text-purple-800 dark:text-purple-200 transition cursor-pointer shrink-0"
                   >
                     {sug}
                   </button>
@@ -1153,14 +1153,14 @@ export default function TasksPage() {
           </div>
 
           {/* Desktop Segmented Bar (hidden sm:flex) */}
-          <div className="hidden sm:flex tasks-segmented-bar items-center gap-1.5 p-1 rounded-2xl bg-white/[0.03] border border-purple-400/15 overflow-x-auto custom-scrollbar">
+          <div className="hidden sm:flex tasks-segmented-bar items-center gap-1.5 p-1 rounded-2xl bg-white dark:bg-white/[0.03] border border-[#E8E4EF] dark:border-purple-400/15 overflow-x-auto custom-scrollbar shadow-2xs">
             {hasRoadmap && (
               <button
                 onClick={() => setActiveFilter('roadmap')}
                 className={`py-1.5 px-3.5 rounded-xl text-xs font-medium text-center transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
                   activeFilter === 'roadmap'
-                    ? 'tasks-tab-active bg-purple-500/25 text-purple-200 font-semibold border border-purple-400/40 shadow-sm'
-                    : 'tasks-tab-inactive text-purple-300 hover:text-white'
+                    ? 'tasks-tab-active bg-purple-100 dark:bg-purple-500/25 text-purple-800 dark:text-purple-200 font-semibold border border-purple-300 dark:border-purple-400/40 shadow-xs'
+                    : 'tasks-tab-inactive text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-white hover:bg-purple-50 dark:hover:bg-transparent'
                 }`}
               >
                 <Compass size={13} />
@@ -1172,8 +1172,8 @@ export default function TasksPage() {
               onClick={() => setActiveFilter('today')}
               className={`py-1.5 px-3.5 rounded-xl text-xs font-medium text-center transition cursor-pointer shrink-0 ${
                 activeFilter === 'today'
-                  ? 'tasks-tab-active bg-purple-500/20 text-purple-200 font-semibold border border-purple-400/30 shadow-sm'
-                  : 'tasks-tab-inactive text-zinc-400 hover:text-white'
+                  ? 'tasks-tab-active bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-200 font-semibold border border-purple-300 dark:border-purple-400/30 shadow-xs'
+                  : 'tasks-tab-inactive text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-purple-50/50 dark:hover:bg-transparent'
               }`}
             >
               Today ({todayTasks.length})
@@ -1183,8 +1183,8 @@ export default function TasksPage() {
               onClick={() => setActiveFilter('upcoming')}
               className={`py-1.5 px-3.5 rounded-xl text-xs font-medium text-center transition cursor-pointer shrink-0 ${
                 activeFilter === 'upcoming'
-                  ? 'tasks-tab-active bg-purple-500/20 text-purple-200 font-semibold border border-purple-400/30 shadow-sm'
-                  : 'tasks-tab-inactive text-zinc-400 hover:text-white'
+                  ? 'tasks-tab-active bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-200 font-semibold border border-purple-300 dark:border-purple-400/30 shadow-xs'
+                  : 'tasks-tab-inactive text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-purple-50/50 dark:hover:bg-transparent'
               }`}
             >
               Upcoming ({upcomingTasks.length})
@@ -1194,8 +1194,8 @@ export default function TasksPage() {
               onClick={() => setActiveFilter('completed')}
               className={`py-1.5 px-3.5 rounded-xl text-xs font-medium text-center transition cursor-pointer shrink-0 ${
                 activeFilter === 'completed'
-                  ? 'tasks-tab-active bg-purple-500/20 text-purple-200 font-semibold border border-purple-400/30 shadow-sm'
-                  : 'tasks-tab-inactive text-zinc-400 hover:text-white'
+                  ? 'tasks-tab-active bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-200 font-semibold border border-purple-300 dark:border-purple-400/30 shadow-xs'
+                  : 'tasks-tab-inactive text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-purple-50/50 dark:hover:bg-transparent'
               }`}
             >
               Done ({completedTasks.length})
@@ -1205,8 +1205,8 @@ export default function TasksPage() {
               onClick={() => setActiveFilter('all')}
               className={`py-1.5 px-3.5 rounded-xl text-xs font-medium text-center transition cursor-pointer shrink-0 ${
                 activeFilter === 'all'
-                  ? 'tasks-tab-active bg-purple-500/20 text-purple-200 font-semibold border border-purple-400/30 shadow-sm'
-                  : 'tasks-tab-inactive text-zinc-400 hover:text-white'
+                  ? 'tasks-tab-active bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-200 font-semibold border border-purple-300 dark:border-purple-400/30 shadow-xs'
+                  : 'tasks-tab-inactive text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-purple-50/50 dark:hover:bg-transparent'
               }`}
             >
               All ({tasks.length})
@@ -1215,18 +1215,18 @@ export default function TasksPage() {
 
           {/* Search */}
           <div className="relative w-full sm:w-64 min-w-[180px]">
-            <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400/60" />
+            <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-600/70 dark:text-purple-400/60" />
             <input
               type="text"
               placeholder="Search tasks & topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="tasks-search-input w-full pl-9 pr-7 py-2 sm:py-1.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] focus:bg-white/[0.08] border border-purple-400/15 text-xs text-white placeholder-zinc-500 outline-none focus:border-purple-400/40 transition"
+              className="tasks-search-input w-full pl-9 pr-7 py-2 sm:py-1.5 rounded-2xl bg-white dark:bg-white/[0.03] hover:bg-[#FAF8FB] dark:hover:bg-white/[0.06] focus:bg-white dark:focus:bg-white/[0.08] border border-[#E8E4EF] dark:border-purple-400/15 text-xs text-[#261827] dark:text-white placeholder-[#9E93A2] dark:placeholder-zinc-500 outline-none focus:border-purple-500/50 dark:focus:border-purple-400/40 transition shadow-2xs"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8C7E92] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white"
               >
                 <X size={12} />
               </button>
@@ -1236,21 +1236,21 @@ export default function TasksPage() {
 
         {/* TODAY VIEW WITH FEATURED LEARNING PLAN BANNER */}
         {activeFilter === 'today' && todayRoadmapGroup && (
-          <div className="tasks-card rounded-2xl sm:rounded-3xl bg-[linear-gradient(135deg,#1c123d_0%,#100a26_100%)] border border-purple-400/35 p-4 sm:p-5 shadow-xl space-y-3">
+          <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[linear-gradient(135deg,#1c123d_0%,#100a26_100%)] border border-[#E8E4EF] dark:border-purple-400/35 p-4 sm:p-5 shadow-sm dark:shadow-xl space-y-3">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-purple-500/30 text-purple-200 border border-purple-400/40 font-mono">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-500/30 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-400/40 font-mono">
                     🌟 Today's Learning Plan • Day {todayRoadmapGroup.day}
                   </span>
                   {todayRoadmapGroup.dueDate && (
-                    <span className="text-xs text-purple-300 font-medium flex items-center gap-1">
-                      <Calendar size={11} className="text-purple-400" />
+                    <span className="text-xs text-purple-700 dark:text-purple-300 font-medium flex items-center gap-1">
+                      <Calendar size={11} className="text-purple-600 dark:text-purple-400" />
                       {formatDisplayDate(todayRoadmapGroup.dueDate)}
                     </span>
                   )}
                 </div>
-                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-[#261827] dark:text-white flex items-center gap-2">
                   <span>{todayRoadmapGroup.topic}</span>
                 </h2>
               </div>
@@ -1258,24 +1258,24 @@ export default function TasksPage() {
               {/* Learn more in Chat */}
               <button
                 onClick={() => handleLearnInChat(todayRoadmapGroup.topic, todayRoadmapGroup.chatQuery)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-500/25 hover:bg-purple-500/40 border border-purple-400/40 text-xs font-semibold text-purple-100 hover:text-white transition cursor-pointer shadow-md shadow-purple-600/20 active:scale-95 shrink-0"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-500/25 dark:hover:bg-purple-500/40 border border-purple-300 dark:border-purple-400/40 text-xs font-semibold text-purple-800 dark:text-purple-100 hover:text-purple-950 dark:hover:text-white transition cursor-pointer shadow-xs dark:shadow-md dark:shadow-purple-600/20 active:scale-95 shrink-0"
               >
-                <Sparkles size={13} className="text-purple-300 animate-pulse" />
+                <Sparkles size={13} className="text-purple-600 dark:text-purple-300 animate-pulse" />
                 <span>Learn more in Chat</span>
               </button>
             </div>
 
             {/* Description & Learning Focus */}
             {(todayRoadmapGroup.description || todayRoadmapGroup.learningFocus) && (
-              <div className="p-3 rounded-2xl bg-black/35 border border-purple-400/20 space-y-1.5 text-xs">
+              <div className="p-3 rounded-2xl bg-[#F7F3FA] dark:bg-black/35 border border-[#E8E4EF] dark:border-purple-400/20 space-y-1.5 text-xs">
                 {todayRoadmapGroup.description && (
-                  <p className="text-zinc-200 leading-relaxed">{todayRoadmapGroup.description}</p>
+                  <p className="text-[#4A3E4E] dark:text-zinc-200 leading-relaxed">{todayRoadmapGroup.description}</p>
                 )}
                 {todayRoadmapGroup.learningFocus && (
-                  <div className="flex items-start gap-1.5 text-purple-200 pt-0.5 font-medium">
-                    <Target size={13} className="text-purple-400 mt-0.5 shrink-0" />
+                  <div className="flex items-start gap-1.5 text-purple-800 dark:text-purple-200 pt-0.5 font-medium">
+                    <Target size={13} className="text-purple-600 dark:text-purple-400 mt-0.5 shrink-0" />
                     <span>
-                      <strong className="text-purple-300">What you'll understand:</strong>{' '}
+                      <strong className="text-purple-900 dark:text-purple-300">What you'll understand:</strong>{' '}
                       {todayRoadmapGroup.learningFocus}
                     </span>
                   </div>
@@ -1289,31 +1289,31 @@ export default function TasksPage() {
         {activeFilter === 'roadmap' && hasRoadmap ? (
           <div className="space-y-4 pt-1">
             {/* Roadmap Overview Banner */}
-            <div className="tasks-card rounded-2xl sm:rounded-3xl bg-[linear-gradient(135deg,#181033_0%,#0e0824_100%)] border border-purple-400/30 p-4 sm:p-5 shadow-xl space-y-3">
+            <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[linear-gradient(135deg,#181033_0%,#0e0824_100%)] border border-[#E8E4EF] dark:border-purple-400/30 p-4 sm:p-5 shadow-sm dark:shadow-xl space-y-3">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-200 border border-purple-400/30">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-400/30">
                       Day-by-Day Learning Roadmap
                     </span>
-                    <span className="text-xs text-purple-300 font-medium">
+                    <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">
                       {completedRoadmapTasks} of {totalRoadmapTasks} tasks completed
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-bold text-[#261827] dark:text-white flex items-center gap-2">
                     <span>{roadmapGroups[0]?.tasks[0]?.category || 'Learning Roadmap'}</span>
                   </h2>
                 </div>
 
                 {/* Progress Meter & Clear Action */}
                 <div className="w-full sm:w-60 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] text-zinc-300">
+                  <div className="flex items-center justify-between text-[11px] text-[#6E6072] dark:text-zinc-300">
                     <span>Overall Progress</span>
-                    <span className="font-semibold text-purple-300">
+                    <span className="font-semibold text-purple-700 dark:text-purple-300">
                       {totalRoadmapTasks > 0 ? Math.round((completedRoadmapTasks / totalRoadmapTasks) * 100) : 0}%
                     </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-black/40 border border-purple-400/20 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-[#EAE4F5] dark:bg-black/40 border border-[#E8E4EF] dark:border-purple-400/20 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-purple-500 to-violet-400 transition-all duration-300 rounded-full"
                       style={{
@@ -1324,7 +1324,7 @@ export default function TasksPage() {
                   <div className="flex items-center justify-end pt-1">
                     <button
                       onClick={handleClearRoadmap}
-                      className="text-[10px] text-zinc-500 hover:text-rose-400 transition flex items-center gap-1 cursor-pointer"
+                      className="text-[10px] text-[#8C7E92] hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 transition flex items-center gap-1 cursor-pointer"
                     >
                       <RotateCcw size={10} />
                       <span>Reset Roadmap</span>
@@ -1334,7 +1334,7 @@ export default function TasksPage() {
               </div>
 
               {/* Day filter: Mobile dropdown (sm:hidden) */}
-              <div className="block sm:hidden pt-2 border-t border-purple-400/15">
+              <div className="block sm:hidden pt-2 border-t border-[#E8E4EF] dark:border-purple-400/15">
                 <ResponsiveDropdown<string>
                   options={[
                     { id: 'all', label: `All Days (${roadmapGroups.length})` },
@@ -1353,13 +1353,13 @@ export default function TasksPage() {
               </div>
 
               {/* Day filter: Desktop pills (hidden sm:flex) */}
-              <div className="hidden sm:flex items-center gap-1.5 pt-2 overflow-x-auto custom-scrollbar border-t border-purple-400/15">
+              <div className="hidden sm:flex items-center gap-1.5 pt-2 overflow-x-auto custom-scrollbar border-t border-[#E8E4EF] dark:border-purple-400/15">
                 <button
                   onClick={() => setSelectedRoadmapDay('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 ${
                     selectedRoadmapDay === 'all'
-                      ? 'bg-purple-600/40 text-purple-100 border border-purple-400/40 font-semibold'
-                      : 'bg-white/[0.03] text-zinc-400 hover:text-white'
+                      ? 'bg-purple-600 text-white border border-purple-500 dark:bg-purple-600/40 dark:text-purple-100 dark:border-purple-400/40 font-semibold'
+                      : 'bg-[#F5F3F9] dark:bg-white/[0.03] text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-[#EAE4F5] dark:hover:bg-white/[0.06]'
                   }`}
                 >
                   All Days ({roadmapGroups.length})
@@ -1372,12 +1372,12 @@ export default function TasksPage() {
                       onClick={() => setSelectedRoadmapDay(group.day)}
                       className={`px-3 py-1 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 flex items-center gap-1.5 ${
                         selectedRoadmapDay === group.day
-                          ? 'bg-purple-600/40 text-purple-100 border border-purple-400/40 font-semibold'
-                          : 'bg-white/[0.03] text-zinc-400 hover:text-white'
+                          ? 'bg-purple-600 text-white border border-purple-500 dark:bg-purple-600/40 dark:text-purple-100 dark:border-purple-400/40 font-semibold'
+                          : 'bg-[#F5F3F9] dark:bg-white/[0.03] text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white hover:bg-[#EAE4F5] dark:hover:bg-white/[0.06]'
                       }`}
                     >
                       <span>Day {group.day}</span>
-                      {isDone && <span className="text-[10px] text-emerald-400">✓</span>}
+                      {isDone && <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">✓</span>}
                     </button>
                   );
                 })}
@@ -1396,58 +1396,58 @@ export default function TasksPage() {
                     key={group.day}
                     className={`tasks-card rounded-2xl sm:rounded-3xl border transition-all p-4 sm:p-5 space-y-3.5 ${
                       isDayFinished
-                        ? 'bg-[#100b21]/70 border-purple-400/15 opacity-85'
-                        : 'bg-[#140d2b]/90 border-purple-400/25 shadow-lg'
+                        ? 'bg-[#FAF8FB] dark:bg-[#100b21]/70 border-[#E8E4EF] dark:border-purple-400/15 opacity-85'
+                        : 'bg-white dark:bg-[#140d2b]/90 border-[#E8E4EF] dark:border-purple-400/25 shadow-xs dark:shadow-lg'
                     }`}
                   >
                     {/* Day Header */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-2 border-b border-purple-400/15">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-2 border-b border-[#E8E4EF] dark:border-purple-400/15">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-purple-600/30 text-purple-200 border border-purple-400/40 font-mono">
+                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-purple-100 dark:bg-purple-600/30 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-400/40 font-mono">
                             Day {group.day}
                           </span>
                           {formattedDueDate && (
-                            <span className="text-[11px] text-zinc-400 flex items-center gap-1 font-normal">
-                              <Calendar size={11} className="text-purple-400" />
+                            <span className="text-[11px] text-[#6E6072] dark:text-zinc-400 flex items-center gap-1 font-normal">
+                              <Calendar size={11} className="text-purple-600 dark:text-purple-400" />
                               {formattedDueDate}
                             </span>
                           )}
                           {isDayFinished ? (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 font-medium">
                               ✓ Completed
                             </span>
                           ) : (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-400/20 font-medium">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-500/15 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-400/20 font-medium">
                               {groupCompleted}/{group.tasks.length} tasks
                             </span>
                           )}
                         </div>
-                        <h3 className="text-sm sm:text-base font-bold text-white pt-1">{group.topic}</h3>
+                        <h3 className="text-sm sm:text-base font-bold text-[#261827] dark:text-white pt-1">{group.topic}</h3>
                       </div>
 
                       {/* "Learn more in Chat" Action Button */}
                       <button
                         onClick={() => handleLearnInChat(group.topic, group.chatQuery)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-500/25 hover:bg-purple-500/35 border border-purple-400/35 text-xs font-semibold text-purple-100 hover:text-white transition cursor-pointer shadow-sm shrink-0 active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-500/25 dark:hover:bg-purple-500/35 border border-purple-300 dark:border-purple-400/35 text-xs font-semibold text-purple-800 dark:text-purple-100 hover:text-purple-950 dark:hover:text-white transition cursor-pointer shadow-xs shrink-0 active:scale-95"
                         title="Ask NYRA for deep explanations, interactive code examples, and step-by-step guidance for this topic"
                       >
-                        <Sparkles size={13} className="text-purple-300" />
+                        <Sparkles size={13} className="text-purple-600 dark:text-purple-300" />
                         <span>Learn more in Chat</span>
                       </button>
                     </div>
 
                     {/* Day Focus & Learning Outcome */}
                     {(group.description || group.learningFocus) && (
-                      <div className="p-3 rounded-2xl bg-black/30 border border-purple-400/15 space-y-1.5 text-xs">
+                      <div className="p-3 rounded-2xl bg-[#F7F3FA] dark:bg-black/30 border border-[#E8E4EF] dark:border-purple-400/15 space-y-1.5 text-xs">
                         {group.description && (
-                          <p className="text-zinc-300 leading-relaxed">{group.description}</p>
+                          <p className="text-[#4A3E4E] dark:text-zinc-300 leading-relaxed">{group.description}</p>
                         )}
                         {group.learningFocus && (
-                          <div className="flex items-start gap-1.5 text-purple-200 pt-0.5 font-medium">
-                            <Target size={13} className="text-purple-400 mt-0.5 shrink-0" />
+                          <div className="flex items-start gap-1.5 text-purple-800 dark:text-purple-200 pt-0.5 font-medium">
+                            <Target size={13} className="text-purple-600 dark:text-purple-400 mt-0.5 shrink-0" />
                             <span>
-                              <strong className="text-purple-300">What you'll understand:</strong>{' '}
+                              <strong className="text-purple-900 dark:text-purple-300">What you'll understand:</strong>{' '}
                               {group.learningFocus}
                             </span>
                           </div>
@@ -1457,7 +1457,7 @@ export default function TasksPage() {
 
                     {/* Tasks for this Day */}
                     <div className="space-y-2">
-                      <p className="text-[11px] uppercase tracking-wider font-bold text-zinc-400 font-mono">
+                      <p className="text-[11px] uppercase tracking-wider font-bold text-[#6E6072] dark:text-zinc-400 font-mono">
                         Day {group.day} Action Items:
                       </p>
 
@@ -1472,8 +1472,8 @@ export default function TasksPage() {
                               onClick={() => handleToggle(t.id)}
                               className={`p-2.5 sm:p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer group relative ${
                                 isDone
-                                  ? 'bg-white/[0.015] border-white/[0.04] opacity-60'
-                                  : 'bg-white/[0.03] hover:bg-white/[0.06] border-purple-400/15 hover:border-purple-400/30'
+                                  ? 'bg-[#FAF8FB] dark:bg-white/[0.015] border-[#E8E4EF] dark:border-white/[0.04] opacity-60'
+                                  : 'bg-white dark:bg-white/[0.03] hover:bg-[#FAF8FC] dark:hover:bg-white/[0.06] border-[#E8E4EF] dark:border-purple-400/15 hover:border-purple-300 dark:hover:border-purple-400/30'
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -1483,12 +1483,12 @@ export default function TasksPage() {
                                     e.stopPropagation();
                                     handleToggle(t.id);
                                   }}
-                                  className="shrink-0 p-0.5 text-zinc-400 hover:text-purple-400 transition cursor-pointer"
+                                  className="shrink-0 p-0.5 text-[#8C7E92] hover:text-purple-600 dark:text-zinc-400 dark:hover:text-purple-400 transition cursor-pointer"
                                 >
                                   {isDone ? (
-                                    <CheckCircle2 size={18} className="text-purple-400 fill-purple-400/20" />
+                                    <CheckCircle2 size={18} className="text-purple-600 dark:text-purple-400 fill-purple-600/20 dark:fill-purple-400/20" />
                                   ) : (
-                                    <Circle size={18} className="text-purple-300/60 hover:text-purple-400" />
+                                    <Circle size={18} className="text-purple-400/70 hover:text-purple-600 dark:text-purple-300/60 dark:hover:text-purple-400" />
                                   )}
                                 </button>
 
@@ -1496,8 +1496,8 @@ export default function TasksPage() {
                                   <span
                                     className={`text-xs sm:text-sm font-medium transition block truncate ${
                                       isDone
-                                        ? 'line-through text-zinc-500'
-                                        : 'text-zinc-100 group-hover:text-white'
+                                        ? 'line-through text-[#9E93A2] dark:text-zinc-500'
+                                        : 'text-[#261827] dark:text-zinc-100 group-hover:text-[#B31372] dark:group-hover:text-white'
                                     }`}
                                   >
                                     {t.title}
@@ -1505,7 +1505,7 @@ export default function TasksPage() {
 
                                   {reminderText && (
                                     <span className="tasks-reminder-badge text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-mono font-medium">
-                                      <Bell size={10} className="text-purple-400" />
+                                      <Bell size={10} className="text-purple-600 dark:text-purple-400" />
                                       <span>Reminder: {reminderText}</span>
                                     </span>
                                   )}
@@ -1518,7 +1518,7 @@ export default function TasksPage() {
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 {t.priority === 'high' && !isDone && (
-                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-medium border border-rose-500/30">
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-medium border border-rose-300 dark:border-rose-500/30">
                                     High
                                   </span>
                                 )}
@@ -1531,12 +1531,12 @@ export default function TasksPage() {
                                     }
                                     className={`tasks-action-btn p-1.5 rounded-lg transition cursor-pointer ${
                                       t.reminderTime
-                                        ? 'tasks-reminder-btn-active text-purple-300 bg-purple-500/25 border border-purple-400/30'
-                                        : 'text-zinc-500 hover:text-white hover:bg-white/[0.08]'
+                                        ? 'tasks-reminder-btn-active text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-500/25 border border-purple-300 dark:border-purple-400/30'
+                                        : 'text-[#8C7E92] dark:text-zinc-500 hover:text-[#261827] dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-white/[0.08]'
                                     }`}
                                     title={t.reminderTime ? `Reminder: ${reminderText}` : 'Set task reminder'}
                                   >
-                                    <Bell size={13} className={t.reminderTime ? 'text-purple-400' : ''} />
+                                    <Bell size={13} className={t.reminderTime ? 'text-purple-600 dark:text-purple-400' : ''} />
                                   </button>
 
                                   {/* Clean Quick Reminder Menu */}
@@ -1553,7 +1553,7 @@ export default function TasksPage() {
 
                                 <button
                                   onClick={() => handleOpenEdit(t)}
-                                  className="tasks-action-btn p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/[0.08] transition cursor-pointer"
+                                  className="tasks-action-btn p-1.5 rounded-lg text-[#8C7E92] dark:text-zinc-500 hover:text-[#261827] dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-white/[0.08] transition cursor-pointer"
                                   title="Edit task"
                                 >
                                   <Edit3 size={12} />
@@ -1561,7 +1561,7 @@ export default function TasksPage() {
 
                                 <button
                                   onClick={() => handleDelete(t.id)}
-                                  className="tasks-action-btn p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-white/[0.08] transition cursor-pointer"
+                                  className="tasks-action-btn p-1.5 rounded-lg text-[#8C7E92] dark:text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-purple-100/50 dark:hover:bg-white/[0.08] transition cursor-pointer"
                                   title="Delete task"
                                 >
                                   <Trash2 size={12} />
@@ -1583,18 +1583,18 @@ export default function TasksPage() {
         {activeFilter !== 'roadmap' || !hasRoadmap ? (
           <div className="space-y-2 pt-1">
             {displayedTasks.length === 0 ? (
-              <div className="tasks-empty-card py-14 px-4 text-center rounded-3xl border border-purple-400/15 bg-white/[0.02] space-y-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-400/25 flex items-center justify-center text-purple-400 mx-auto">
+              <div className="tasks-empty-card py-14 px-4 text-center rounded-3xl border border-[#E8E4EF] dark:border-purple-400/15 bg-white dark:bg-white/[0.02] shadow-xs space-y-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-400/25 flex items-center justify-center text-purple-600 dark:text-purple-400 mx-auto">
                   <Check size={20} />
                 </div>
-                <h3 className="tasks-header-title text-sm font-semibold text-white">
+                <h3 className="tasks-header-title text-sm font-semibold text-[#261827] dark:text-white">
                   {activeFilter === 'completed'
                     ? 'No completed tasks yet'
                     : activeFilter === 'upcoming'
                     ? 'No upcoming tasks'
                     : 'All caught up for today!'}
                 </h3>
-                <p className="tasks-text-subtle text-xs text-zinc-400 max-w-xs mx-auto">
+                <p className="tasks-text-subtle text-xs text-[#6E6072] dark:text-zinc-400 max-w-xs mx-auto">
                   {activeFilter === 'completed'
                     ? 'Tasks you check off will appear here.'
                     : 'Type a task above or click "AI Learning Roadmap" to create a structured plan.'}
@@ -1612,8 +1612,8 @@ export default function TasksPage() {
                     onClick={() => handleToggle(t.id)}
                     className={`p-3 sm:p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 group cursor-pointer select-none active:scale-[0.99] relative ${
                       isDone
-                        ? 'tasks-item-card-done bg-white/[0.015] border-white/[0.04] opacity-50 hover:opacity-75'
-                        : 'tasks-item-card bg-white/[0.03] hover:bg-white/[0.06] border-purple-400/15 hover:border-purple-400/30 shadow-sm'
+                        ? 'tasks-item-card-done bg-[#FAF8FB] dark:bg-white/[0.015] border-[#E8E4EF] dark:border-white/[0.04] opacity-60 hover:opacity-75'
+                        : 'tasks-item-card bg-white dark:bg-white/[0.03] hover:bg-[#FAF8FC] dark:hover:bg-white/[0.06] border-[#E8E4EF] dark:border-purple-400/15 hover:border-purple-300 dark:hover:border-purple-400/30 shadow-xs'
                     }`}
                   >
                     {/* Left: 1-Tap Circular Checkbox + Title */}
@@ -1624,12 +1624,12 @@ export default function TasksPage() {
                           e.stopPropagation();
                           handleToggle(t.id);
                         }}
-                        className="shrink-0 flex items-center justify-center p-0.5 text-zinc-400 hover:text-purple-400 transition cursor-pointer"
+                        className="shrink-0 flex items-center justify-center p-0.5 text-[#8C7E92] hover:text-purple-600 dark:text-zinc-400 dark:hover:text-purple-400 transition cursor-pointer"
                       >
                         {isDone ? (
-                          <CheckCircle2 size={20} className="text-purple-400 fill-purple-400/20" />
+                          <CheckCircle2 size={20} className="text-purple-600 dark:text-purple-400 fill-purple-600/20 dark:fill-purple-400/20" />
                         ) : (
-                          <Circle size={20} className="hover:text-purple-400 text-purple-300/60" />
+                          <Circle size={20} className="hover:text-purple-600 text-purple-400/70 dark:text-purple-300/60 dark:hover:text-purple-400" />
                         )}
                       </button>
 
@@ -1637,8 +1637,8 @@ export default function TasksPage() {
                         <p
                           className={`tasks-item-title text-xs sm:text-sm font-medium transition ${
                             isDone
-                              ? 'tasks-item-title-done line-through text-zinc-500'
-                              : 'text-zinc-100 group-hover:text-white'
+                              ? 'tasks-item-title-done line-through text-[#9E93A2] dark:text-zinc-500'
+                              : 'text-[#261827] dark:text-zinc-100 group-hover:text-[#B31372] dark:group-hover:text-white'
                           }`}
                         >
                           {t.title || 'Untitled Task'}
@@ -1646,21 +1646,21 @@ export default function TasksPage() {
 
                         <div className="flex flex-wrap items-center gap-2 pt-0.5">
                           {t.roadmapDay && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-400/30 font-medium">
+                            <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-400/30 font-medium">
                               Day {t.roadmapDay}: {t.roadmapTopic}
                             </span>
                           )}
 
                           {formattedDate && (
-                            <span className="tasks-text-subtle text-[10px] text-zinc-400 flex items-center gap-1 font-normal">
-                              <Clock size={10} className="text-purple-400" />
+                            <span className="tasks-text-subtle text-[10px] text-[#6E6072] dark:text-zinc-400 flex items-center gap-1 font-normal">
+                              <Clock size={10} className="text-purple-600 dark:text-purple-400" />
                               {formattedDate}
                             </span>
                           )}
 
                           {reminderText && (
                             <span className="tasks-reminder-badge text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-mono font-medium">
-                              <Bell size={10} className="text-purple-400" />
+                              <Bell size={10} className="text-purple-600 dark:text-purple-400" />
                               <span>{reminderText}</span>
                             </span>
                           )}
@@ -1676,15 +1676,15 @@ export default function TasksPage() {
                       {t.roadmapTopic && (
                         <button
                           onClick={() => handleLearnInChat(t.roadmapTopic || t.title, t.chatQuery)}
-                          className="p-1.5 rounded-lg text-purple-300 hover:text-white hover:bg-purple-500/20 transition cursor-pointer"
+                          className="p-1.5 rounded-lg text-purple-700 dark:text-purple-300 hover:text-purple-900 dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-purple-500/20 transition cursor-pointer"
                           title="Learn more in Chat"
                         >
-                          <Sparkles size={13} className="text-purple-400" />
+                          <Sparkles size={13} className="text-purple-600 dark:text-purple-400" />
                         </button>
                       )}
 
                       {t.priority === 'high' && !isDone && (
-                        <span className="tasks-badge-high text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-medium border border-rose-500/30 flex items-center gap-0.5">
+                        <span className="tasks-badge-high text-[10px] px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-medium border border-rose-300 dark:border-rose-500/30 flex items-center gap-0.5">
                           <Flame size={10} />
                           High
                         </span>
@@ -1698,12 +1698,12 @@ export default function TasksPage() {
                           }
                           className={`tasks-action-btn p-1.5 rounded-lg transition cursor-pointer ${
                             t.reminderTime
-                              ? 'tasks-reminder-btn-active text-purple-300 bg-purple-500/25 border border-purple-400/30'
-                              : 'text-zinc-500 hover:text-white hover:bg-white/[0.08]'
+                              ? 'tasks-reminder-btn-active text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-500/25 border border-purple-300 dark:border-purple-400/30'
+                              : 'text-[#8C7E92] dark:text-zinc-500 hover:text-[#261827] dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-white/[0.08]'
                           }`}
                           title={t.reminderTime ? `Reminder: ${reminderText}` : 'Set reminder'}
                         >
-                          <Bell size={13} className={t.reminderTime ? 'text-purple-400' : ''} />
+                          <Bell size={13} className={t.reminderTime ? 'text-purple-600 dark:text-purple-400' : ''} />
                         </button>
 
                         {/* Clean Quick Reminder Menu */}
@@ -1720,7 +1720,7 @@ export default function TasksPage() {
 
                       <button
                         onClick={() => handleOpenEdit(t)}
-                        className="tasks-action-btn p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/[0.08] transition cursor-pointer"
+                        className="tasks-action-btn p-1.5 rounded-lg text-[#8C7E92] dark:text-zinc-500 hover:text-[#261827] dark:hover:text-white hover:bg-purple-100/50 dark:hover:bg-white/[0.08] transition cursor-pointer"
                         title="Edit task"
                       >
                         <Edit3 size={13} />
@@ -1728,7 +1728,7 @@ export default function TasksPage() {
 
                       <button
                         onClick={() => handleDelete(t.id)}
-                        className="tasks-action-btn p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-white/[0.08] transition cursor-pointer"
+                        className="tasks-action-btn p-1.5 rounded-lg text-[#8C7E92] dark:text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-purple-100/50 dark:hover:bg-white/[0.08] transition cursor-pointer"
                         title="Delete task"
                       >
                         <Trash2 size={13} />
@@ -1770,16 +1770,16 @@ export default function TasksPage() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="tasks-modal-card relative w-full max-w-sm rounded-3xl bg-[#140e28]/98 border border-purple-400/25 shadow-2xl p-5 space-y-4"
+              className="tasks-modal-card relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#140e28]/98 border border-[#E8E4EF] dark:border-purple-400/25 shadow-2xl p-5 space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h3 className="tasks-modal-title text-sm font-bold text-white flex items-center gap-1.5">
-                  <Edit3 size={15} className="text-purple-400" />
+                <h3 className="tasks-modal-title text-sm font-bold text-[#261827] dark:text-white flex items-center gap-1.5">
+                  <Edit3 size={15} className="text-purple-600 dark:text-purple-400" />
                   <span>Edit Task</span>
                 </h3>
                 <button
                   onClick={() => setEditingTask(null)}
-                  className="tasks-action-btn text-zinc-400 hover:text-white cursor-pointer"
+                  className="tasks-action-btn text-[#8C7E92] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white cursor-pointer"
                 >
                   <X size={15} />
                 </button>
@@ -1787,20 +1787,20 @@ export default function TasksPage() {
 
               <form onSubmit={handleSaveEdit} className="space-y-3.5">
                 <div>
-                  <label className="tasks-modal-label block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 mb-1">
                     Task Title
                   </label>
                   <input
                     type="text"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    className="tasks-modal-input w-full px-3.5 py-2 rounded-2xl bg-white/[0.04] border border-purple-400/20 text-xs sm:text-sm text-white outline-none focus:border-purple-400/60 transition"
+                    className="tasks-modal-input w-full px-3.5 py-2 rounded-2xl bg-[#F8F7FB] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-purple-400/20 text-xs sm:text-sm text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition"
                     autoFocus
                   />
                 </div>
 
                 <div>
-                  <label className="tasks-modal-label block text-xs font-medium text-zinc-300 mb-1">
+                  <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 mb-1">
                     Description / Focus
                   </label>
                   <input
@@ -1808,31 +1808,31 @@ export default function TasksPage() {
                     placeholder="Optional notes or context..."
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
-                    className="tasks-modal-input w-full px-3.5 py-2 rounded-2xl bg-white/[0.04] border border-purple-400/20 text-xs text-white outline-none focus:border-purple-400/60 transition"
+                    className="tasks-modal-input w-full px-3.5 py-2 rounded-2xl bg-[#F8F7FB] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-purple-400/20 text-xs text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="tasks-modal-label block text-xs font-medium text-zinc-300 mb-1">
+                    <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 mb-1">
                       Due Date
                     </label>
                     <input
                       type="date"
                       value={editDueDate}
                       onChange={(e) => setEditDueDate(e.target.value)}
-                      className="tasks-modal-input w-full px-3 py-1.5 rounded-2xl bg-white/[0.04] border border-purple-400/20 text-xs text-white outline-none focus:border-purple-400/60 transition cursor-pointer"
+                      className="tasks-modal-input w-full px-3 py-1.5 rounded-2xl bg-[#F8F7FB] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-purple-400/20 text-xs text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition cursor-pointer"
                     />
                   </div>
 
                   <div>
-                    <label className="tasks-modal-label block text-xs font-medium text-zinc-300 mb-1">
+                    <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 mb-1">
                       Priority
                     </label>
                     <select
                       value={editPriority}
                       onChange={(e) => setEditPriority(e.target.value as TaskPriority)}
-                      className="tasks-modal-select w-full px-3 py-1.5 rounded-2xl bg-[#1a1233] border border-purple-400/20 text-xs text-white outline-none focus:border-purple-400/60 transition cursor-pointer"
+                      className="tasks-modal-select w-full px-3 py-1.5 rounded-2xl bg-[#F8F7FB] dark:bg-[#1a1233] border border-[#E8E4EF] dark:border-purple-400/20 text-xs text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition cursor-pointer"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -1843,14 +1843,14 @@ export default function TasksPage() {
 
                 {/* Reminder Settings */}
                 <div className="space-y-1.5 pt-1">
-                  <label className="tasks-modal-label block text-xs font-medium text-zinc-300 flex items-center gap-1">
-                    <Bell size={12} className="text-purple-400" />
+                  <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 flex items-center gap-1">
+                    <Bell size={12} className="text-purple-600 dark:text-purple-400" />
                     <span>Task Reminder</span>
                   </label>
                   <select
                     value={editReminderPreset}
                     onChange={(e) => setEditReminderPreset(e.target.value)}
-                    className="tasks-modal-select w-full px-3 py-1.5 rounded-2xl bg-[#1a1233] border border-purple-400/20 text-xs text-white outline-none focus:border-purple-400/60 transition cursor-pointer"
+                    className="tasks-modal-select w-full px-3 py-1.5 rounded-2xl bg-[#F8F7FB] dark:bg-[#1a1233] border border-[#E8E4EF] dark:border-purple-400/20 text-xs text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition cursor-pointer"
                   >
                     <option value="none">No reminder</option>
                     <option value="15m">In 15 minutes</option>
@@ -1865,7 +1865,7 @@ export default function TasksPage() {
                       type="datetime-local"
                       value={editReminderCustom}
                       onChange={(e) => setEditReminderCustom(e.target.value)}
-                      className="tasks-modal-input w-full px-3 py-1.5 mt-1 rounded-2xl bg-white/[0.04] border border-purple-400/20 text-xs text-white outline-none focus:border-purple-400/60 transition cursor-pointer"
+                      className="tasks-modal-input w-full px-3 py-1.5 mt-1 rounded-2xl bg-[#F8F7FB] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-purple-400/20 text-xs text-[#261827] dark:text-white outline-none focus:border-purple-500 dark:focus:border-purple-400/60 transition cursor-pointer"
                     />
                   )}
                 </div>
@@ -1874,7 +1874,7 @@ export default function TasksPage() {
                   <button
                     type="button"
                     onClick={() => setEditingTask(null)}
-                    className="tasks-action-btn px-3 py-1.5 rounded-full text-xs font-medium text-zinc-400 hover:text-white cursor-pointer"
+                    className="tasks-action-btn px-3 py-1.5 rounded-full text-xs font-medium text-[#6E6072] dark:text-zinc-400 hover:text-[#261827] dark:hover:text-white cursor-pointer"
                   >
                     Cancel
                   </button>

@@ -96,12 +96,16 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
         }
         buffer = '';
       }
-      // Safety guard: if stream ended while inside think or if thinkBuffer has un-emitted text,
-      // output the buffered text so the user receives the complete response
-      if (insideThink && thinkBuffer.trim().length > 0) {
-        onCleanText(thinkBuffer.trim());
-      } else if (emittedChars === 0 && thinkBuffer.trim().length > 0) {
-        onCleanText(thinkBuffer.trim());
+      // Safety guard: only emit fallback text if stream ended without emitting anything
+      // and ensure any internal thinking tags or internal thoughts are stripped
+      if (emittedChars === 0 && thinkBuffer.trim().length > 0) {
+        const cleaned = thinkBuffer
+          .replace(/<think>[\s\S]*?<\/think>/gi, '')
+          .replace(/<think>[\s\S]*/gi, '')
+          .trim();
+        if (cleaned) {
+          onCleanText(cleaned);
+        }
       }
     },
   };

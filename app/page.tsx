@@ -68,8 +68,8 @@ const fadeUpStagger: Variants = {
 export default function HomePage() {
   const router = useRouter();
 
-  // 3D Cinematic Intro State (shown before landing page appears or when replayed)
-  const [showIntro, setShowIntro] = useState<boolean>(true);
+  // 3D Cinematic Intro State (controlled globally by AppStartupIntro on startup; locally only for replay)
+  const [showIntro, setShowIntro] = useState<boolean>(false);
   const [isIntroComplete, setIsIntroComplete] = useState<boolean>(false);
   const [logoAssembled, setLogoAssembled] = useState<boolean>(false);
   const [isClientMounted, setIsClientMounted] = useState<boolean>(false);
@@ -93,8 +93,20 @@ export default function HomePage() {
   // Session & Reduced Motion Initialization
   useEffect(() => {
     setIsClientMounted(true);
-    setShowIntro(true);
-    setIsIntroComplete(false);
+
+    // Listen for global startup intro completion
+    const handleGlobalIntroDone = () => {
+      setIsIntroComplete(true);
+      setShowIntro(false);
+    };
+
+    window.addEventListener('nyra:intro-complete', handleGlobalIntroDone);
+
+    // Fallback in case navigated internally where intro already completed
+    const fallbackTimer = setTimeout(() => {
+      setIsIntroComplete(true);
+      setShowIntro(false);
+    }, 2600);
 
     // Remove scrollbars on landing page
     if (typeof document !== 'undefined') {
@@ -103,6 +115,8 @@ export default function HomePage() {
     }
 
     return () => {
+      window.removeEventListener('nyra:intro-complete', handleGlobalIntroDone);
+      clearTimeout(fallbackTimer);
       if (typeof document !== 'undefined') {
         document.documentElement.classList.remove('no-scrollbar');
         document.body.classList.remove('no-scrollbar');
@@ -119,7 +133,6 @@ export default function HomePage() {
   // Replay Intro Handler (callable from footer)
   const handleReplayIntro = React.useCallback(() => {
     if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('nyra_intro_seen');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     setIsIntroComplete(false);

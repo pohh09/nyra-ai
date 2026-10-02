@@ -44,6 +44,7 @@ import { DailyUsageStats } from '@/lib/types';
 import { loadChats, loadCustomPrompts } from '@/lib/storage';
 import { applyTheme } from '@/lib/theme';
 import { buildClientUsageStats, getTimeUntilUtcMidnight } from '@/lib/usage/clientUsage';
+import InstallButton from '@/components/pwa/InstallButton';
 
 export type SettingsTab =
   | 'appearance'
@@ -1138,10 +1139,13 @@ export default function SettingsModal({
             <div className="flex flex-wrap justify-center gap-2 text-xs text-[#737082] dark:text-slate-300 pt-2">
               <span className="px-2.5 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-[#EBEAEF] dark:border-white/10">Next.js 16</span>
               <span className="px-2.5 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-[#EBEAEF] dark:border-white/10">TypeScript</span>
-              <span className="px-2.5 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-[#EBEAEF] dark:border-white/10">Supabase</span>
+              <span className="px-2.5 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-[#EBEAEF] dark:border-white/10">PWA Ready</span>
               <span className="px-2.5 py-1 rounded-full bg-white dark:bg-white/[0.06] border border-[#EBEAEF] dark:border-white/10">Multi-Provider AI</span>
             </div>
-            <p className="text-[11px] text-[#92909B] dark:text-slate-500 pt-4">
+            <div className="pt-2 flex justify-center">
+              <InstallButton variant="pill" onInstalled={onClose} />
+            </div>
+            <p className="text-[11px] text-[#92909B] dark:text-slate-500 pt-3">
               &copy; 2026 Nyra AI Platform. All rights reserved.
             </p>
           </div>

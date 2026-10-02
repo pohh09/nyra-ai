@@ -35,6 +35,7 @@ import { applyTheme, ThemeMode } from '@/lib/theme';
 import { Chat, WorkspaceProject } from '@/lib/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { NyraIcon } from '@/components/brand/NyraIcon';
+import InstallButton from '@/components/pwa/InstallButton';
 
 type Props = {
   chats?: Chat[];
@@ -68,7 +69,7 @@ type MenuState = {
   y: number;
 };
 
-const SECTION_ORDER = ['Today', 'Yesterday', 'Previous 7 Days', 'Previous 30 Days', 'Older'] as const;
+const SECTION_ORDER = ['Today', 'Yesterday', 'Previous 7 days', 'Older'] as const;
 const MENU_WIDTH = 180;
 const MENU_HEIGHT_ESTIMATE = 200;
 
@@ -190,8 +191,7 @@ export default function Sidebar({
 
     if (timestamp >= startOfToday) return 'Today';
     if (timestamp >= startOfYesterday) return 'Yesterday';
-    if (diff < 7) return 'Previous 7 Days';
-    if (diff < 30) return 'Previous 30 Days';
+    if (diff < 7) return 'Previous 7 days';
     return 'Older';
   };
 
@@ -324,8 +324,11 @@ export default function Sidebar({
             )}
           </div>
 
-          {/* Quick Nav: Tasks, Memory, Documents, Research & Career */}
-          <div className="mt-2 space-y-0.5">
+          {/* Workspace Hierarchy */}
+          <div className="mt-3 px-0.5 space-y-0.5">
+            <p className="px-2 pb-1 text-[10.5px] font-semibold uppercase tracking-wider text-[#92909B] dark:text-zinc-500">
+              Workspace
+            </p>
             <Link
               href="/tasks"
               onClick={() => onCloseMobile?.()}
@@ -384,6 +387,9 @@ export default function Sidebar({
             CHAT CONVERSATIONS LIST
         ========================================================= */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-1 space-y-3 scrollbar-thin">
+          <p className="px-2 pt-1 pb-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-[#92909B] dark:text-zinc-500">
+            Recent conversations
+          </p>
           {/* PINNED CHATS */}
           {pinnedChats.length > 0 && (
             <div>
@@ -422,6 +428,9 @@ export default function Sidebar({
             BOTTOM USER FOOTER: Profile & Settings (ChatGPT Style)
         ========================================================= */}
         <div className="p-2 border-t border-[#E8E4EF] dark:border-white/[0.06]">
+          {/* PWA Install Button (Only visible if browser supports & not yet installed) */}
+          <InstallButton variant="sidebar" className="mb-1" />
+
           <div className="relative">
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -447,6 +456,9 @@ export default function Sidebar({
                 ref={userMenuRef}
                 className="absolute bottom-12 left-0 z-50 w-full overflow-hidden rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-1.5 shadow-2xl backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out] space-y-0.5"
               >
+                {/* Install Option inside user menu */}
+                <InstallButton variant="menu" onInstalled={() => setUserMenuOpen(false)} />
+
                 <button
                   onClick={() => {
                     setUserMenuOpen(false);

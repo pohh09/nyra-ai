@@ -3,11 +3,13 @@ import './global.css';
 import type { Metadata, Viewport } from 'next';
 import { AuthProvider } from '@/lib/auth/AuthContext';
 import Providers from './providers';
+import PwaRegister from '@/components/pwa/PwaRegister';
+import AppStartupIntro from '@/components/startup/AppStartupIntro';
 
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FAF8FB' },
-    { media: '(prefers-color-scheme: dark)', color: '#050505' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B0112' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -21,6 +23,8 @@ export const metadata: Metadata = {
     default: 'Nyra AI — Futuristic Intelligent Workspace',
     template: '%s | Nyra AI',
   },
+  applicationName: 'Nyra AI',
+  manifest: '/manifest.webmanifest',
   description:
     'High-capability AI workspace for deep reasoning, research, multimodal image vision, multi-PDF document analysis, and production-grade code synthesis.',
   keywords: [
@@ -58,12 +62,28 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
       { url: '/favicon.ico', sizes: 'any' },
       { url: '/nyra-icon.svg', type: 'image/svg+xml' },
-      { url: '/logo.png', type: 'image/png' },
     ],
     shortcut: ['/favicon.svg', '/favicon.ico'],
-    apple: [{ url: '/nyra-icon.svg', sizes: 'any', type: 'image/svg+xml' }],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Nyra AI',
+    startupImage: [
+      {
+        url: '/splash/apple-splash.png',
+        media: '(orientation: portrait)',
+      },
+      {
+        url: '/splash/apple-splash-1290x2796.png',
+        media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
+      },
+    ],
   },
   robots: {
     index: true,
@@ -78,9 +98,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="apple-touch-startup-image" href="/splash/apple-splash.png" />
+      </head>
       <body>
         <AuthProvider>
           <Providers>
+            <AppStartupIntro />
+            <PwaRegister />
             {children}
           </Providers>
         </AuthProvider>

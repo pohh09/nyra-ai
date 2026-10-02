@@ -242,7 +242,12 @@ export default function MessageBubble({
     }
   };
 
-  const displayContent = content;
+  // Clean content of inline __SOURCES__ and protect standalone short numerical answers (e.g. "4.", "50.")
+  // from being wrongly parsed by CommonMark as empty ordered lists (<ol start="4"><li></li></ol>)
+  const rawCleanContent = content.includes('__SOURCES__') ? content.split('__SOURCES__')[0].trim() : content;
+  const displayContent = /^\s*\d+\.\s*$/.test(rawCleanContent)
+    ? rawCleanContent.replace(/^(\s*\d+)\./, '$1\\.')
+    : rawCleanContent;
 
   // Check if response is an error message
   const isErrorMessage =
@@ -261,6 +266,7 @@ export default function MessageBubble({
       parsedSources = JSON.parse(parts[1].trim());
     } catch (e) { }
   }
+
 
   // Context-Aware Action Detection
   const isCode = content.includes('```') || /function |const |import |class |def |export |async |interface |<[A-Z]\w+/i.test(content);
@@ -600,11 +606,26 @@ export default function MessageBubble({
                         ul({ children }) {
                           return <ul className="list-disc pl-4.5 sm:pl-6 my-2.5 sm:my-3 space-y-1 sm:space-y-1.5 text-[#261827] dark:text-[#f1eff7]">{children}</ul>;
                         },
-                        ol({ children }) {
-                          return <ol className="list-decimal pl-4.5 sm:pl-6 my-2.5 sm:my-3 space-y-1 sm:space-y-1.5 text-[#261827] dark:text-[#f1eff7]">{children}</ol>;
+                        ol({ node, children, start, ...props }: any) {
+                          return (
+                            <ol
+                              start={start}
+                              className="list-decimal pl-4.5 sm:pl-6 my-2.5 sm:my-3 space-y-1 sm:space-y-1.5 text-[#261827] dark:text-[#f1eff7]"
+                              {...props}
+                            >
+                              {children}
+                            </ol>
+                          );
                         },
-                        li({ children }) {
-                          return <li className="chat-message-text chat-markdown-li leading-[1.65] sm:leading-[1.7] pl-0.5 transition-all duration-200 text-[#261827] dark:text-[#f1eff7]">{highlightChildren(children, searchQuery)}</li>;
+                        li({ node, children, ...props }: any) {
+                          return (
+                            <li
+                              className="chat-message-text chat-markdown-li leading-[1.65] sm:leading-[1.7] pl-0.5 transition-all duration-200 text-[#261827] dark:text-[#f1eff7]"
+                              {...props}
+                            >
+                              {highlightChildren(children, searchQuery)}
+                            </li>
+                          );
                         },
                         a({ href, children }) {
                           return (

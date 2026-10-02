@@ -1608,6 +1608,7 @@ html.light .tasks-header-desc,
 html.light .tasks-card,
 [data-theme="light"] .tasks-card {
   background-color: #FFFFFF !important;
+  background-image: none !important;
   border-color: #E8E4EF !important;
   box-shadow: 0 4px 20px rgba(41, 38, 51, 0.04) !important;
 }

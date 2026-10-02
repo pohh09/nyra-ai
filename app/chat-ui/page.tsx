@@ -41,6 +41,7 @@ import {
 
 import { applyTheme, initTheme, ThemeMode } from '@/lib/theme';
 import Sidebar from '@/components/layout/Sidebar';
+import { NyraIcon } from '@/components/brand/NyraIcon';
 import MessageBubble from '@/components/chat/MessageBubble';
 import ImagePreview from '@/components/chat/ImagePreview';
 import ModelSelector, { AI_MODELS, DEFAULT_MODEL_ID } from '@/components/chat/ModelSelector';
@@ -189,6 +190,10 @@ export default function ChatPage() {
   }, [speechError, addToast]);
 
   const currentChat = chats.find((chat) => chat.id === currentChatId);
+  const chatsRef = useRef<Chat[]>(chats);
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const isUserScrolledUpRef = useRef<boolean>(false);
   const rafScrollIdRef = useRef<number | null>(null);
@@ -1084,81 +1089,91 @@ export default function ChatPage() {
         pdfText;
 
       try {
+        const payloadData = {
+          messages: nextMessages.map((m) => ({
+            role: m.role,
+            content: m.content,
+            image: m.image,
+            images: m.images,
+            pdfContext:
+              m.pdfContext ||
+              m.attachments?.map((a) => a.extractedText).filter(Boolean).join('\n\n') ||
+              (m.pdfName ? targetPdfText : undefined),
+          })),
+          pdfText: targetPdfText || undefined,
+          attachments: targetPdfs.map((p) => ({
+            id: p.id,
+            name: p.name,
+            type: p.type,
+            size: p.size,
+            pages: p.pages,
+            status: p.status,
+            extractedText: p.extractedText,
+          })),
+          pdfDocuments: targetPdfs.map((p) => ({
+            name: p.name,
+            pages: p.pages,
+            text: p.extractedText,
+          })),
+          model: selectedModelId,
+          webSearch: webSearch || deepResearch,
+          deepResearch,
+          mode: deepResearch ? 'research' : undefined,
+          isContinuation,
+          partialResponse: isContinuation ? initialContent : undefined,
+          projectInstructions: (() => {
+            const chatObj = (chatsRef.current || chats).find((c) => c.id === chatId);
+            const effProjId = chatObj?.projectId || activeProjectId;
+            const curProj = projects.find((p) => p.id === effProjId);
+            return curProj?.instructions || undefined;
+          })(),
+          workspaceFiles: (() => {
+            const chatObj = (chatsRef.current || chats).find((c) => c.id === chatId);
+            const effProjId = chatObj?.projectId || activeProjectId;
+            const curProj = projects.find((p) => p.id === effProjId);
+            return curProj?.files?.map((f) => ({
+              name: f.name,
+              pages: f.pages,
+              text: f.extractedText,
+            })) || undefined;
+          })(),
+          workspaceNotes: (() => {
+            const chatObj = (chatsRef.current || chats).find((c) => c.id === chatId);
+            const effProjId = chatObj?.projectId || activeProjectId;
+            const curProj = projects.find((p) => p.id === effProjId);
+            return curProj?.notes || undefined;
+          })(),
+          userMemories: formatMemoriesForPrompt() || undefined,
+          userOnboardingPreferences: (() => {
+            if (profile?.interests?.length || profile?.goals?.length || profile?.preferredResponseStyle?.length || profile?.experienceLevel) {
+              return {
+                interests: profile.interests,
+                goals: profile.goals,
+                workStyle: profile.preferredResponseStyle,
+                experienceLevel: profile.experienceLevel,
+              };
+            }
+            try {
+              const local = localStorage.getItem('nyra_onboarding_prefs');
+              return local ? JSON.parse(local) : undefined;
+            } catch (e) {
+              return undefined;
+            }
+          })(),
+        };
+
+        console.log('[SEND HANDLER: API REQUEST PAYLOAD]', {
+          chatId,
+          model: selectedModelId,
+          messageCount: payloadData.messages.length,
+          lastUserMessage: payloadData.messages[payloadData.messages.length - 1],
+          messages: payloadData.messages,
+        });
+
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: nextMessages.map((m) => ({
-              role: m.role,
-              content: m.content,
-              image: m.image,
-              images: m.images,
-              pdfContext:
-                m.pdfContext ||
-                m.attachments?.map((a) => a.extractedText).filter(Boolean).join('\n\n') ||
-                (m.pdfName ? targetPdfText : undefined),
-            })),
-            pdfText: targetPdfText || undefined,
-            attachments: targetPdfs.map((p) => ({
-              id: p.id,
-              name: p.name,
-              type: p.type,
-              size: p.size,
-              pages: p.pages,
-              status: p.status,
-              extractedText: p.extractedText,
-            })),
-            pdfDocuments: targetPdfs.map((p) => ({
-              name: p.name,
-              pages: p.pages,
-              text: p.extractedText,
-            })),
-            model: selectedModelId,
-            webSearch: webSearch || deepResearch,
-            deepResearch,
-            mode: deepResearch ? 'research' : undefined,
-            isContinuation,
-            partialResponse: isContinuation ? initialContent : undefined,
-            projectInstructions: (() => {
-              const chatObj = chats.find((c) => c.id === chatId);
-              const effProjId = chatObj?.projectId || activeProjectId;
-              const curProj = projects.find((p) => p.id === effProjId);
-              return curProj?.instructions || undefined;
-            })(),
-            workspaceFiles: (() => {
-              const chatObj = chats.find((c) => c.id === chatId);
-              const effProjId = chatObj?.projectId || activeProjectId;
-              const curProj = projects.find((p) => p.id === effProjId);
-              return curProj?.files?.map((f) => ({
-                name: f.name,
-                pages: f.pages,
-                text: f.extractedText,
-              })) || undefined;
-            })(),
-            workspaceNotes: (() => {
-              const chatObj = chats.find((c) => c.id === chatId);
-              const effProjId = chatObj?.projectId || activeProjectId;
-              const curProj = projects.find((p) => p.id === effProjId);
-              return curProj?.notes || undefined;
-            })(),
-            userMemories: formatMemoriesForPrompt() || undefined,
-            userOnboardingPreferences: (() => {
-              if (profile?.interests?.length || profile?.goals?.length || profile?.preferredResponseStyle?.length || profile?.experienceLevel) {
-                return {
-                  interests: profile.interests,
-                  goals: profile.goals,
-                  workStyle: profile.preferredResponseStyle,
-                  experienceLevel: profile.experienceLevel,
-                };
-              }
-              try {
-                const local = localStorage.getItem('nyra_onboarding_prefs');
-                return local ? JSON.parse(local) : undefined;
-              } catch (e) {
-                return undefined;
-              }
-            })(),
-          }),
+          body: JSON.stringify(payloadData),
           signal: controller.signal,
         });
 
@@ -1197,20 +1212,23 @@ export default function ChatPage() {
             const chunk = decoder.decode(value, { stream: true });
             if (chunk) {
               streamAccumulated += chunk;
+              console.log('[STREAM CHUNK RECEIVED]', { chunk, totalLength: streamAccumulated.length });
               setThinking(false);
 
               const separator = initialContent && (initialContent.endsWith(' ') || initialContent.endsWith('\n') || streamAccumulated.startsWith(' ') || streamAccumulated.startsWith('\n')) ? '' : ' ';
               const currentFullContent = initialContent ? initialContent + separator + streamAccumulated : streamAccumulated;
 
-              setChats((prev) =>
-                prev.map((chat) => {
+              setChats((prev) => {
+                const updatedChats = prev.map((chat) => {
                   if (chat.id !== chatId) return chat;
                   const updated = chat.messages.map((m) =>
                     m.id === assistantMessage.id ? { ...m, content: currentFullContent } : m
                   );
                   return { ...chat, messages: updated, updatedAt: Date.now() };
-                })
-              );
+                });
+                chatsRef.current = updatedChats;
+                return updatedChats;
+              });
 
               // Follow streaming response with buttery-smooth RAF glider
               followStreamingScroll();
@@ -1226,6 +1244,12 @@ export default function ChatPage() {
 
         const finalSeparator = initialContent && (initialContent.endsWith(' ') || initialContent.endsWith('\n') || streamAccumulated.startsWith(' ') || streamAccumulated.startsWith('\n')) ? '' : ' ';
         const finalFullContent = initialContent ? initialContent + finalSeparator + streamAccumulated : streamAccumulated;
+
+        console.log('[STREAM COMPLETE FULL RESPONSE]', {
+          chatId,
+          assistantMessageId: assistantMessage.id,
+          finalFullContent,
+        });
 
         // Fetch dynamic follow-up suggestions non-blockingly
         const lastUserMsg = [...nextMessages].reverse().find((m) => m.role === 'user');
@@ -1257,8 +1281,8 @@ export default function ChatPage() {
           console.error('Failed to load suggestions:', suggErr);
         }
 
-        setChats((prev) =>
-          prev.map((chat) => {
+        setChats((prev) => {
+          const updatedChats = prev.map((chat) => {
             if (chat.id !== chatId) return chat;
             const updated = chat.messages.map((m) =>
               m.id === assistantMessage.id
@@ -1266,8 +1290,10 @@ export default function ChatPage() {
                 : m
             );
             return { ...chat, messages: updated, updatedAt: Date.now() };
-          })
-        );
+          });
+          chatsRef.current = updatedChats;
+          return updatedChats;
+        });
 
         // Save completed assistant message to cloud
         if (user?.id) {
@@ -1391,16 +1417,17 @@ export default function ChatPage() {
       return;
     }
 
+    const activeChats = chatsRef.current || chats;
     let targetChatId = currentChatId;
-    let baseMessages = messages;
+    const existingChat = activeChats.find((c) => c.id === targetChatId);
+    let baseMessages: Msg[] = [];
 
     const chatTitle =
       textToSend.trim().slice(0, 32) ||
       (readyPdfs.length > 0 ? readyPdfs[0].name : selectedImages.length > 0 ? 'Image Analysis' : 'New Chat');
 
-    const existingChat = chats.find((c) => c.id === targetChatId);
     if (!targetChatId || !existingChat) {
-      const newChatId = targetChatId || Date.now().toString();
+      const newChatId = targetChatId || `chat_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       const newChat: Chat = {
         id: newChatId,
         projectId: activeProjectId || undefined,
@@ -1409,14 +1436,18 @@ export default function ChatPage() {
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
-      setChats((prev) => [newChat, ...prev.filter((c) => c.id !== newChatId && c.messages && c.messages.length > 0)]);
       targetChatId = newChat.id;
       setCurrentChatId(newChat.id);
       baseMessages = [];
+      const updatedList = [newChat, ...activeChats.filter((c) => c.id !== newChatId && c.messages && c.messages.length > 0)];
+      chatsRef.current = updatedList;
+      setChats(updatedList);
 
       if (user?.id) {
         saveCloudConversation(user.id, newChat);
       }
+    } else {
+      baseMessages = existingChat.messages ? [...existingChat.messages] : [];
     }
 
     const defaultPrompt = readyPdfs.length > 0
@@ -1436,8 +1467,11 @@ export default function ChatPage() {
       });
     }
 
+    const userMessageId = `user_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const assistantMessageId = `asst_${Date.now() + 1}_${Math.random().toString(36).slice(2, 7)}`;
+
     const userMessage: Msg = {
-      id: Date.now().toString(),
+      id: userMessageId,
       role: 'user',
       content: textToSend.trim() || defaultPrompt,
       mode: deepResearch ? 'research' : undefined,
@@ -1451,7 +1485,7 @@ export default function ChatPage() {
     };
 
     const assistantMessage: Msg = {
-      id: (Date.now() + 1).toString(),
+      id: assistantMessageId,
       role: 'assistant',
       content: '',
       modelId: selectedModelId,
@@ -1461,8 +1495,8 @@ export default function ChatPage() {
 
     const nextMessages = [...baseMessages, userMessage, assistantMessage];
 
-    setChats((prev) =>
-      prev.map((chat) => {
+    setChats((prev) => {
+      const updatedChats = prev.map((chat) => {
         if (chat.id !== targetChatId) return chat;
         const newTitle =
           chat.messages.length === 0
@@ -1474,8 +1508,10 @@ export default function ChatPage() {
           messages: nextMessages,
           updatedAt: Date.now(),
         };
-      })
-    );
+      });
+      chatsRef.current = updatedChats;
+      return updatedChats;
+    });
 
     if (user?.id && targetChatId) {
       saveCloudConversation(user.id, {
@@ -2111,28 +2147,84 @@ export default function ChatPage() {
                 onScroll={handleChatScroll}
                 className="flex-1 overflow-y-auto pb-36 sm:pb-40 md:pb-44 px-3 sm:px-6 md:px-8 custom-scrollbar"
               >
-                <div className="w-full max-w-4xl lg:max-w-5xl xl:max-w-[1120px] mx-auto">
+                <div className="w-full max-w-3xl mx-auto">
                   {messages.length === 0 ? (
-                    /* EMPTY STATE HERO: MINIMAL CLAUDE/CHATGPT STYLE GREETING */
-                    <div className="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-280px)] sm:min-h-[calc(100vh-320px)] select-none">
+                    /* EMPTY STATE HERO: CENTERED NYRA WELCOME STATE */
+                    <div className="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-270px)] sm:min-h-[calc(100vh-300px)] select-none">
                       <motion.div
-                        key={greetingData.greeting}
-                        initial={{ opacity: 0, y: 6 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
-                        className="flex flex-col items-center max-w-xl mx-auto space-y-2.5 -translate-y-4 sm:-translate-y-6"
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        className="flex flex-col items-center max-w-xl mx-auto space-y-3 -translate-y-4 sm:-translate-y-8"
                       >
-                        {/* Dynamic Greeting */}
-                        <h1 className="chat-greeting-title text-2xl sm:text-[28px] md:text-[34px] font-semibold tracking-tight leading-snug">
-                          {greetingData.greeting}
+                        {/* Luminous Nyra Icon Centerpiece */}
+                        <div className="relative mb-1 flex items-center justify-center">
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-[#E52A83]/30 via-[#9333EA]/20 to-transparent blur-xl" />
+                          <div className="relative h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#16091F] via-[#24103A] to-[#12051B] border border-[#E8E4EF] dark:border-pink-500/25 flex items-center justify-center shadow-lg shadow-pink-950/30">
+                            <NyraIcon size={26} variant="primary" />
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <h1 className="text-2xl sm:text-[32px] font-bold tracking-tight text-[#261827] dark:text-white">
+                          Nyra
                         </h1>
 
-                        {/* Optional Natural Subtitle */}
-                        {greetingData.subtitle && (
-                          <p className="chat-greeting-subtitle text-sm sm:text-base font-normal max-w-md">
-                            {greetingData.subtitle}
-                          </p>
-                        )}
+                        {/* Prompt Question */}
+                        <p className="text-sm sm:text-base text-[#6E6072] dark:text-zinc-400 max-w-md font-normal leading-relaxed">
+                          What can I help you build, research, or figure out?
+                        </p>
+
+                        {/* 4 Clean Suggestion Prompts */}
+                        <div className="pt-4 flex flex-wrap items-center justify-center gap-2 max-w-lg">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeepResearch(true);
+                              setInput('Research the latest breakthroughs and architecture in ');
+                              composerTextareaRef.current?.focus();
+                            }}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+                          >
+                            <Search size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                            <span>Research a topic</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              pdfInputRef.current?.click();
+                            }}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+                          >
+                            <FileText size={14} className="text-[#38bdf8] dark:text-sky-400 shrink-0" />
+                            <span>Analyze a document</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setInput('Help me build a web application with Next.js and Tailwind CSS');
+                              composerTextareaRef.current?.focus();
+                            }}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+                          >
+                            <Code2 size={14} className="text-[#c084fc] dark:text-purple-400 shrink-0" />
+                            <span>Help me build something</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setInput('Help me plan a structured step-by-step roadmap and architecture for my next project');
+                              composerTextareaRef.current?.focus();
+                            }}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
+                          >
+                            <Layers size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
+                            <span>Plan my next project</span>
+                          </button>
+                        </div>
                       </motion.div>
                     </div>
                   ) : (

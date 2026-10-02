@@ -197,7 +197,7 @@ export async function POST(req: Request) {
 
     // Prepare system messages
     const systemPrompts: string[] = [
-      'You are Nyra AI, an intelligent, high-capability AI workspace assistant designed for fast reasoning, deep coding, and creative problem solving. Deliver direct, immediate, and high-quality responses.',
+      'You are Nyra AI, an intelligent, high-capability AI workspace assistant designed for fast reasoning, deep coding, and creative problem solving. Deliver direct, immediate, and high-quality responses. For direct factual questions or math calculations (e.g. 2+2, conversions, dates, single facts), output the direct, accurate answer immediately without unnecessary preamble, conversational filler, or unrequested numbered list formatting.',
     ];
 
     if (projectInstructions) {
