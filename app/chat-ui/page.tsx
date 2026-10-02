@@ -2149,82 +2149,26 @@ export default function ChatPage() {
               >
                 <div className="w-full max-w-3xl mx-auto">
                   {messages.length === 0 ? (
-                    /* EMPTY STATE HERO: CENTERED NYRA WELCOME STATE */
-                    <div className="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-270px)] sm:min-h-[calc(100vh-300px)] select-none">
+                    /* EMPTY STATE HERO: MINIMAL CLAUDE/CHATGPT STYLE GREETING */
+                    <div className="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-280px)] sm:min-h-[calc(100vh-320px)] select-none">
                       <motion.div
-                        initial={{ opacity: 0, y: 8 }}
+                        key={greetingData.greeting}
+                        initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeOut' }}
-                        className="flex flex-col items-center max-w-xl mx-auto space-y-3 -translate-y-4 sm:-translate-y-8"
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        className="flex flex-col items-center max-w-xl mx-auto space-y-2.5 -translate-y-4 sm:-translate-y-6"
                       >
-                        {/* Luminous Nyra Icon Centerpiece */}
-                        <div className="relative mb-1 flex items-center justify-center">
-                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-[#E52A83]/30 via-[#9333EA]/20 to-transparent blur-xl" />
-                          <div className="relative h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#16091F] via-[#24103A] to-[#12051B] border border-[#E8E4EF] dark:border-pink-500/25 flex items-center justify-center shadow-lg shadow-pink-950/30">
-                            <NyraIcon size={26} variant="primary" />
-                          </div>
-                        </div>
-
-                        {/* Title */}
-                        <h1 className="text-2xl sm:text-[32px] font-bold tracking-tight text-[#261827] dark:text-white">
-                          Nyra
+                        {/* Dynamic Greeting */}
+                        <h1 className="chat-greeting-title text-2xl sm:text-[28px] md:text-[34px] font-semibold tracking-tight leading-snug">
+                          {greetingData.greeting}
                         </h1>
 
-                        {/* Prompt Question */}
-                        <p className="text-sm sm:text-base text-[#6E6072] dark:text-zinc-400 max-w-md font-normal leading-relaxed">
-                          What can I help you build, research, or figure out?
-                        </p>
-
-                        {/* 4 Clean Suggestion Prompts */}
-                        <div className="pt-4 flex flex-wrap items-center justify-center gap-2 max-w-lg">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDeepResearch(true);
-                              setInput('Research the latest breakthroughs and architecture in ');
-                              composerTextareaRef.current?.focus();
-                            }}
-                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-                          >
-                            <Search size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
-                            <span>Research a topic</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              pdfInputRef.current?.click();
-                            }}
-                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-                          >
-                            <FileText size={14} className="text-[#38bdf8] dark:text-sky-400 shrink-0" />
-                            <span>Analyze a document</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setInput('Help me build a web application with Next.js and Tailwind CSS');
-                              composerTextareaRef.current?.focus();
-                            }}
-                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-                          >
-                            <Code2 size={14} className="text-[#c084fc] dark:text-purple-400 shrink-0" />
-                            <span>Help me build something</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setInput('Help me plan a structured step-by-step roadmap and architecture for my next project');
-                              composerTextareaRef.current?.focus();
-                            }}
-                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E8E4EF] dark:border-white/10 bg-[#FFFFFF] dark:bg-white/[0.04] hover:bg-[#F4DCE9] dark:hover:bg-white/[0.08] hover:border-[#B31372]/30 dark:hover:border-pink-500/30 text-xs sm:text-[13px] font-medium text-[#261827] dark:text-zinc-200 transition-all cursor-pointer shadow-2xs hover:scale-[1.02] active:scale-[0.98]"
-                          >
-                            <Layers size={14} className="text-[#E52A83] dark:text-pink-400 shrink-0" />
-                            <span>Plan my next project</span>
-                          </button>
-                        </div>
+                        {/* Optional Natural Subtitle */}
+                        {greetingData.subtitle && (
+                          <p className="chat-greeting-subtitle text-sm sm:text-base font-normal max-w-md">
+                            {greetingData.subtitle}
+                          </p>
+                        )}
                       </motion.div>
                     </div>
                   ) : (
