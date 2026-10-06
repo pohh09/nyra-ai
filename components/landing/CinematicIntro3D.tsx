@@ -18,6 +18,7 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
   const [showBrandText, setShowBrandText] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
+  // Skip handler with smooth fade exit
   const handleSkip = React.useCallback(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('nyra_intro_seen', 'true');
@@ -40,6 +41,7 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
     }
   }, []);
 
+  // Keyboard shortcut: Escape to skip
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleSkip();
@@ -48,6 +50,7 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSkip]);
 
+  // Main Intro Animation Sequence (~2.6s total)
   useEffect(() => {
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
@@ -61,14 +64,18 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
       return;
     }
 
+    // Step 1 -> 2: Left V & Right V glide in from -100vw and +100vw (1000ms)
+    // Step 2: Logo lock-in moment at t = 1000ms
     const lockTimer = setTimeout(() => {
       setHasFormed(true);
     }, 1000);
 
+    // Step 3: Brand text & subtitle appear at t = 1200ms
     const textTimer = setTimeout(() => {
       setShowBrandText(true);
     }, 1200);
 
+    // Step 4: Scene 2 Transition — Smooth fade into landing page at t = 2200ms
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
       if (containerRef.current) {
@@ -106,6 +113,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#030006] text-white select-none overflow-hidden"
       style={{ perspective: 1200 }}
     >
+      {/* =========================================================
+          AMBIENT VOLUMETRIC COLOR GLOW (Scene Lighting)
+      ========================================================= */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0">
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
@@ -115,6 +125,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
         />
       </div>
 
+      {/* =========================================================
+          TOP-RIGHT SKIP INTRO PILL
+      ========================================================= */}
       <div className="absolute top-6 right-6 z-50">
         <button
           type="button"
@@ -127,7 +140,11 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
         </button>
       </div>
 
+      {/* =========================================================
+          SCENE 1: ANIMATED NYRA LOGO OPENING CENTERPIECE
+      ========================================================= */}
       <div className="relative z-10 flex flex-col items-center justify-center">
+        {/* Vector Nyra Neural Logo */}
         <div className="relative p-6 flex items-center justify-center overflow-visible">
           <svg
             width="512"
@@ -140,6 +157,7 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
             className="w-[200px] xs:w-[240px] sm:w-[290px] md:w-[330px] lg:w-[360px] h-auto drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] filter"
           >
             <defs>
+              {/* Volumetric Ribbon A Gradient (Left Inverted V) */}
               <linearGradient id="introRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
                 <stop offset="0%" stopColor="#FFA0D2" />
                 <stop offset="20%" stopColor="#FF54A7" />
@@ -148,6 +166,7 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
                 <stop offset="100%" stopColor="#6B21A8" />
               </linearGradient>
 
+              {/* Volumetric Ribbon B Gradient (Right Upright V) */}
               <linearGradient id="introRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
                 <stop offset="0%" stopColor="#E9D5FF" />
                 <stop offset="20%" stopColor="#C084FC" />
@@ -156,18 +175,21 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
                 <stop offset="100%" stopColor="#06B6D4" />
               </linearGradient>
 
+              {/* Specular Razor-Sharp Glass Highlight */}
               <linearGradient id="introGlassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
                 <stop offset="40%" stopColor="#FFFFFF" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
               </linearGradient>
 
+              {/* Inner Core Filament */}
               <linearGradient id="introFilament" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
                 <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
                 <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
               </linearGradient>
 
+              {/* Synapse Prism Facets */}
               <linearGradient id="introFacetNorth" x1="50%" y1="0%" x2="50%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
                 <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.7" />
@@ -189,6 +211,10 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
               </linearGradient>
             </defs>
 
+            {/* =========================================================
+                PIECE 1: LEFT V ELEMENT
+                Travels smoothly from offscreen left (-100vw) to center
+            ========================================================= */}
             <motion.g
               initial={{ x: '-100vw', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -221,6 +247,10 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
               />
             </motion.g>
 
+            {/* =========================================================
+                PIECE 2: RIGHT V ELEMENT
+                Travels smoothly from offscreen right (+100vw) to center
+            ========================================================= */}
             <motion.g
               initial={{ x: '100vw', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -254,6 +284,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
               />
             </motion.g>
 
+            {/* =========================================================
+                CENTRAL QUANTUM SYNAPSE PRISM (Burst on assembly)
+            ========================================================= */}
             <motion.g
               initial={{ scale: 0, opacity: 0 }}
               animate={hasFormed ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
@@ -280,23 +313,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
               />
             </motion.g>
           </svg>
-
-          {hasFormed && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            >
-              <img
-                src="/herologo.png"
-                alt="Nyra AI Master Logo"
-                className="w-[190px] xs:w-[230px] sm:w-[280px] md:w-[320px] lg:w-[350px] h-auto object-contain drop-shadow-[0_25px_60px_rgba(236,72,153,0.5)]"
-              />
-            </motion.div>
-          )}
         </div>
 
+        {/* Brand Wordmark & Tagline Reveal */}
         <div className="mt-4 flex flex-col items-center text-center overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 15 }}

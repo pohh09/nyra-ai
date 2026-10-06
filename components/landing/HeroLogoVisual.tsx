@@ -37,10 +37,13 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
       return;
     }
 
+    // Step 1 -> 2: Left V & Right V travel from -100vw and +100vw (1000ms)
+    // Step 2: Logo lock-in moment at exactly t = 1000ms
     const assembleTimer = setTimeout(() => {
       setHasAssembled(true);
     }, 1000);
 
+    // Step 3: Hold for 400ms (t = 1400ms), then trigger hero content and telemetry cards
     const heroContentTimer = setTimeout(() => {
       setShowTelemetry(true);
       onAssembled?.();
@@ -57,14 +60,18 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
       ref={containerRef}
       className="relative w-full max-w-[420px] xs:max-w-[520px] sm:max-w-[660px] lg:max-w-[780px] xl:max-w-[880px] mx-auto min-h-[480px] xs:min-h-[540px] sm:min-h-[620px] lg:min-h-[700px] flex items-center justify-center select-none overflow-visible bg-transparent pointer-events-auto"
     >
+      {/* =========================================================
+          PRIMARY FLOATING ANIMATED NYRA LOGO
+      ========================================================= */}
       <div className="relative z-20 flex flex-col items-center justify-center overflow-visible bg-transparent cursor-default">
+        {/* Continuous Smooth Ambient Floating Oscillation */}
         <motion.div
           animate={
             prefersReducedMotion || !hasAssembled
               ? {}
               : {
-                y: [-8, 8, -8],
-              }
+                  y: [-8, 8, -8],
+                }
           }
           transition={{
             duration: 6,
@@ -73,142 +80,311 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
           }}
           className="relative flex flex-col items-center justify-center overflow-visible bg-transparent"
         >
-          <div className="relative w-[300px] xs:w-[360px] sm:w-[460px] md:w-[510px] lg:w-[560px] xl:w-[620px] h-[300px] xs:h-[360px] sm:h-[460px] md:h-[510px] lg:h-[560px] xl:h-[620px] flex items-center justify-center overflow-visible bg-transparent">
-            {/* Ambient Radial Backlight Glow */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              <div className="w-[85%] h-[85%] rounded-full bg-gradient-to-tr from-pink-600/25 via-purple-600/30 to-cyan-500/25 blur-3xl opacity-85 animate-pulse" style={{ animationDuration: '6s' }} />
-              <div className="absolute w-[60%] h-[60%] rounded-full bg-cyan-500/20 blur-2xl" />
-            </div>
-
-            {/* Glowing Celestial Orbital Rings from Benchmark */}
+          {/* Logo Container Box */}
+          <div className="relative w-[280px] xs:w-[340px] sm:w-[440px] md:w-[490px] lg:w-[550px] xl:w-[610px] h-[280px] xs:h-[340px] sm:h-[440px] md:h-[490px] lg:h-[550px] xl:h-[610px] flex items-center justify-center overflow-visible bg-transparent">
+            {/* =========================================================
+                PIECE 1: LEFT V ELEMENT (Inverted V Ribbon)
+                Starts completely offscreen to the LEFT (-100vw)
+                Flies in over 1000ms to exact final position (x: 0)
+            ========================================================= */}
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.88 }}
-              animate={hasAssembled ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.88 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-visible"
+              initial={prefersReducedMotion ? false : { x: '-100vw', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                duration: 1.0,
+                ease: [0.16, 1, 0.3, 1], // Polished physical decelerating easing
+              }}
+              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+              style={{ willChange: 'transform' }}
             >
               <svg
                 width="100%"
                 height="100%"
-                viewBox="0 0 600 600"
+                viewBox="0 0 512 512"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full overflow-visible"
+                overflow="visible"
+                style={{ overflow: 'visible' }}
+                className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
               >
                 <defs>
-                  <linearGradient id="heroOrbitGradA" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#EC4899" stopOpacity="0.85" />
-                    <stop offset="45%" stopColor="#A855F7" stopOpacity="0.35" />
-                    <stop offset="80%" stopColor="#38BDF8" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#06B6DA" stopOpacity="0.95" />
+                  {/* Volumetric Chromatic Gradient for Ribbon A (Left Inverted V) */}
+                  <linearGradient id="heroRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
+                    <stop offset="0%" stopColor="#FFA0D2" />
+                    <stop offset="18%" stopColor="#FF54A7" />
+                    <stop offset="42%" stopColor="#E52A83" />
+                    <stop offset="68%" stopColor="#B31372" />
+                    <stop offset="85%" stopColor="#801456" />
+                    <stop offset="100%" stopColor="#581C87" />
                   </linearGradient>
 
-                  <linearGradient id="heroOrbitGradB" x1="100%" y1="0%" x2="0%" y2="0%">
-                    <stop offset="0%" stopColor="#06B6DA" stopOpacity="0.8" />
-                    <stop offset="50%" stopColor="#818CF8" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#EC4899" stopOpacity="0.8" />
+                  {/* Razor-Sharp Specular Glass Edge Highlight */}
+                  <linearGradient id="heroGlassSheenA" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                    <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
+                    <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
 
-                  <radialGradient id="nodeFlareA" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#FFFFFF" />
-                    <stop offset="50%" stopColor="#06B6DA" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#06B6DA" stopOpacity="0" />
-                  </radialGradient>
+                  {/* Inner Filament Grad */}
+                  <linearGradient id="heroFilamentGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                  </linearGradient>
 
-                  <radialGradient id="nodeFlareB" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#FFFFFF" />
-                    <stop offset="50%" stopColor="#EC4899" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#EC4899" stopOpacity="0" />
-                  </radialGradient>
+                  {/* Secondary Soft Highlight Reflection */}
+                  <linearGradient id="heroSoftSheenA" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                  </linearGradient>
                 </defs>
 
-                <g transform="rotate(-20 300 300)">
-                  <ellipse
-                    cx="300"
-                    cy="300"
-                    rx="265"
-                    ry="84"
-                    fill="none"
-                    stroke="url(#heroOrbitGradA)"
-                    strokeWidth="1.8"
-                    className="opacity-80"
-                  />
-                  <circle cx="560" cy="300" r="10" fill="url(#nodeFlareA)" />
-                  <circle cx="560" cy="300" r="3.5" fill="#FFFFFF" />
-                  <circle cx="40" cy="290" r="3" fill="#EC4899" />
-                </g>
+                {/* Main Volumetric Ribbon Body */}
+                <path
+                  d="M 104 392 L 104 168 C 104 125 138 93 182 106 C 216 115 243 147 269 186 L 346 304 C 371 342 394 371 408 387 C 416 397 406 413 394 413 L 312 413 C 285 413 261 398 245 374 L 179 275 L 179 392 C 179 405 168 416 155 416 L 128 416 C 115 416 104 405 104 392 Z"
+                  fill="url(#heroRibbonA)"
+                  stroke="#FF94CC"
+                  strokeWidth="2.5"
+                />
 
-                <g transform="rotate(24 300 300)">
-                  <ellipse
-                    cx="300"
-                    cy="300"
-                    rx="280"
-                    ry="92"
-                    fill="none"
-                    stroke="url(#heroOrbitGradB)"
-                    strokeWidth="1.4"
-                    strokeDasharray="4 6"
-                    className="opacity-70"
-                  />
-                  <circle cx="28" cy="300" r="8" fill="url(#nodeFlareB)" />
-                  <circle cx="28" cy="300" r="3" fill="#FFFFFF" />
-                  <circle cx="572" cy="310" r="3" fill="#06B6DA" />
-                </g>
+                {/* Inner Luminous Energy Filament Line */}
+                <path
+                  d="M 142 388 L 142 172 C 142 144 158 126 182 132 C 202 138 222 160 244 190 L 324 308 C 342 334 358 358 372 374"
+                  stroke="url(#heroFilamentGradA)"
+                  strokeWidth="1.8"
+                  strokeDasharray="6 8"
+                  strokeLinecap="round"
+                  fill="none"
+                  opacity="0.8"
+                />
+
+                {/* Outer Glass Bevel Highlight Rim */}
+                <path
+                  d="M 108 380 L 108 172 C 108 135 138 106 178 116 C 206 123 232 152 258 190 L 336 308 C 358 342 382 372 396 388"
+                  stroke="url(#heroGlassSheenA)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+
+                {/* Inner Chamfer Refraction Rim */}
+                <path
+                  d="M 175 388 L 175 272 L 243 372 C 258 394 280 408 304 408 L 388 408"
+                  stroke="url(#heroSoftSheenA)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                />
               </svg>
             </motion.div>
 
-            {/* Master 3D Nyra Logo Render */}
+            {/* =========================================================
+                PIECE 2: RIGHT V ELEMENT (Upright V Ribbon)
+                Starts completely offscreen to the RIGHT (+100vw)
+                Flies in over 1000ms to exact final position (x: 0)
+            ========================================================= */}
             <motion.div
-              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9, y: 16 }}
-              animate={hasAssembled ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.9, y: 16 }}
-              transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-[78%] h-[78%] flex items-center justify-center select-none pointer-events-none"
+              initial={prefersReducedMotion ? false : { x: '100vw', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                duration: 1.0,
+                ease: [0.16, 1, 0.3, 1], // Symmetrical entrance easing
+              }}
+              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+              style={{ willChange: 'transform' }}
             >
-              <div className="relative w-full h-full flex items-center justify-center">
-                <img
-                  src="/herologo.png"
-                  alt="Nyra AI 3D Master Brand Logo"
-                  className="w-full h-full object-contain drop-shadow-[0_28px_60px_rgba(236,72,153,0.3)] filter pointer-events-none select-none transition-transform"
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 512 512"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                overflow="visible"
+                style={{ overflow: 'visible' }}
+                className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
+              >
+                <defs>
+                  {/* Volumetric Chromatic Gradient for Ribbon B (Right Upright V) */}
+                  <linearGradient id="heroRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
+                    <stop offset="0%" stopColor="#E9D5FF" />
+                    <stop offset="20%" stopColor="#C084FC" />
+                    <stop offset="45%" stopColor="#9333EA" />
+                    <stop offset="70%" stopColor="#6366F1" />
+                    <stop offset="88%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#06B6D4" />
+                  </linearGradient>
+
+                  {/* Razor-Sharp Specular Glass Edge Highlight */}
+                  <linearGradient id="heroGlassSheenB" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                    <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
+                    <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                  </linearGradient>
+
+                  {/* Inner Filament Grad */}
+                  <linearGradient id="heroFilamentGradB" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                  </linearGradient>
+
+                  {/* Secondary Soft Highlight Reflection */}
+                  <linearGradient id="heroSoftSheenB" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Main Volumetric Ribbon Body */}
+                <path
+                  d="M 408 120 L 408 344 C 408 387 374 419 330 406 C 296 397 269 365 243 326 L 166 208 C 141 170 118 141 104 125 C 96 115 106 99 118 99 L 200 99 C 227 99 251 114 267 138 L 333 237 L 333 120 C 333 107 344 96 357 96 L 384 96 C 397 96 408 107 408 120 Z"
+                  fill="url(#heroRibbonB)"
+                  stroke="#A5B4FC"
+                  strokeWidth="2.5"
                 />
 
-                {/* Sparkling Central Diamond Flare */}
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={hasAssembled ? { scale: [0, 1.25, 1], opacity: [0, 1, 0.95] } : { scale: 0, opacity: 0 }}
-                  transition={{ duration: 0.8, delay: 0.35, ease: 'easeOut' }}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                >
-                  <div className="relative w-16 h-16 flex items-center justify-center">
-                    <div className="absolute w-20 h-20 rounded-full bg-cyan-300/35 blur-md animate-pulse" />
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M 24 6 Q 24 24 42 24 Q 24 24 24 42 Q 24 24 6 24 Q 24 24 24 6 Z"
-                        fill="#FFFFFF"
-                        className="drop-shadow-[0_0_12px_rgba(6,182,218,0.95)]"
-                      />
-                      <circle cx="24" cy="24" r="3" fill="#FFFFFF" />
-                    </svg>
-                  </div>
-                </motion.div>
-              </div>
+                {/* Inner Luminous Energy Filament Line */}
+                <path
+                  d="M 370 124 L 370 340 C 370 368 354 386 330 380 C 310 374 290 352 268 322 L 188 204 C 170 178 154 154 140 138"
+                  stroke="url(#heroFilamentGradB)"
+                  strokeWidth="1.8"
+                  strokeDasharray="6 8"
+                  strokeLinecap="round"
+                  fill="none"
+                  opacity="0.8"
+                />
+
+                {/* Outer Glass Bevel Highlight Rim */}
+                <path
+                  d="M 404 132 L 404 340 C 404 376 376 404 336 394 C 308 387 282 358 256 320 L 178 202 C 156 168 132 138 118 122"
+                  stroke="url(#heroGlassSheenB)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  fill="none"
+                  opacity="0.9"
+                />
+
+                {/* Inner Chamfer Refraction Rim */}
+                <path
+                  d="M 337 124 L 337 240 L 269 140 C 254 118 232 104 208 104 L 124 104"
+                  stroke="url(#heroSoftSheenB)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </svg>
             </motion.div>
 
-            <div className="absolute -bottom-8 w-[60%] h-8 bg-gradient-to-t from-pink-500/10 via-purple-600/15 to-transparent blur-xl rounded-full pointer-events-none" />
+            {/* =========================================================
+                CENTRAL FACETED QUANTUM PRISM SYNAPSE & STARFLARE
+                Locks into place at t = 1000ms when both V pieces meet
+            ========================================================= */}
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={hasAssembled ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+            >
+              <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 512 512"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                overflow="visible"
+                style={{ overflow: 'visible' }}
+                className="w-full h-full"
+              >
+                <defs>
+                  <linearGradient id="synapseNorth" x1="50%" y1="0%" x2="50%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                    <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.7" />
+                  </linearGradient>
+
+                  <linearGradient id="synapseEast" x1="100%" y1="50%" x2="0%" y2="50%">
+                    <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.5" />
+                  </linearGradient>
+
+                  <linearGradient id="synapseSouth" x1="50%" y1="100%" x2="50%" y2="0%">
+                    <stop offset="0%" stopColor="#E52A83" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4" />
+                  </linearGradient>
+
+                  <linearGradient id="synapseWest" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#E52A83" stopOpacity="0.6" />
+                  </linearGradient>
+                </defs>
+
+                {/* Diamond Facet 1: North */}
+                <path d="M 256 204 L 296 256 L 256 256 Z" fill="url(#synapseNorth)" />
+
+                {/* Diamond Facet 2: East */}
+                <path d="M 296 256 L 256 308 L 256 256 Z" fill="url(#synapseEast)" />
+
+                {/* Diamond Facet 3: South */}
+                <path d="M 256 308 L 216 256 L 256 256 Z" fill="url(#synapseSouth)" />
+
+                {/* Diamond Facet 4: West */}
+                <path d="M 216 256 L 256 204 L 256 256 Z" fill="url(#synapseWest)" />
+
+                {/* Diamond Outer Chamfer Border */}
+                <path
+                  d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.8"
+                  className="drop-shadow-[0_0_12px_#FFFFFF]"
+                />
+
+                {/* Cross-Facet Dividers */}
+                <line x1="256" y1="204" x2="256" y2="308" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+                <line x1="216" y1="256" x2="296" y2="256" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+
+                {/* Glowing Core Synapse Node */}
+                <circle
+                  cx="256"
+                  cy="256"
+                  r="7"
+                  fill="#38BDF8"
+                  className="animate-pulse shadow-lg"
+                />
+
+                {/* 4-Point Micro Starflare */}
+                <path
+                  d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
+                  fill="#FFFFFF"
+                  opacity="0.95"
+                  className="animate-spin"
+                  style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
+                />
+              </svg>
+            </motion.div>
           </div>
         </motion.div>
       </div>
 
+      {/* =========================================================
+          4 FLOATING TELEMETRY VALUE CARDS AROUND LOGO
+          Fade in at t = 1400ms after logo finishes assembly
+      ========================================================= */}
 
+      {/* 1. TOP-LEFT: Fast Inference Speed */}
       <motion.div
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
         animate={
           showTelemetry
             ? {
-              opacity: 1,
-              scale: 1,
-              y: prefersReducedMotion ? 0 : [-6, 6, -6],
-              x: prefersReducedMotion ? 0 : [-2, 2, -2],
-            }
+                opacity: 1,
+                scale: 1,
+                y: prefersReducedMotion ? 0 : [-6, 6, -6],
+                x: prefersReducedMotion ? 0 : [-2, 2, -2],
+              }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -236,16 +412,17 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         </div>
       </motion.div>
 
+      {/* 2. TOP-RIGHT: Multi-Model Reasoning */}
       <motion.div
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
         animate={
           showTelemetry
             ? {
-              opacity: 1,
-              scale: 1,
-              y: prefersReducedMotion ? 0 : [6, -6, 6],
-              x: prefersReducedMotion ? 0 : [2, -2, 2],
-            }
+                opacity: 1,
+                scale: 1,
+                y: prefersReducedMotion ? 0 : [6, -6, 6],
+                x: prefersReducedMotion ? 0 : [2, -2, 2],
+              }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -273,16 +450,17 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         </div>
       </motion.div>
 
+      {/* 3. BOTTOM-LEFT: Live Web Search */}
       <motion.div
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
         animate={
           showTelemetry
             ? {
-              opacity: 1,
-              scale: 1,
-              y: prefersReducedMotion ? 0 : [7, -7, 7],
-              x: prefersReducedMotion ? 0 : [-3, 3, -3],
-            }
+                opacity: 1,
+                scale: 1,
+                y: prefersReducedMotion ? 0 : [7, -7, 7],
+                x: prefersReducedMotion ? 0 : [-3, 3, -3],
+              }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -308,16 +486,17 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         </div>
       </motion.div>
 
+      {/* 4. BOTTOM-RIGHT: Multimodal Document & Privacy */}
       <motion.div
         initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
         animate={
           showTelemetry
             ? {
-              opacity: 1,
-              scale: 1,
-              y: prefersReducedMotion ? 0 : [-7, 7, -7],
-              x: prefersReducedMotion ? 0 : [3, -3, 3],
-            }
+                opacity: 1,
+                scale: 1,
+                y: prefersReducedMotion ? 0 : [-7, 7, -7],
+                x: prefersReducedMotion ? 0 : [3, -3, 3],
+              }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
