@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { TaskItem } from '@/lib/types';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
-// In-memory server task store fallback for unauthenticated / offline requests
 let serverTasks: TaskItem[] = [
   {
     id: 'task_demo_1',

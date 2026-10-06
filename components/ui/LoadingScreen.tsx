@@ -10,10 +10,8 @@ export default function LoadingScreen() {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Logo */}
       <NyraLogo />
 
-      {/* Brand name */}
       <motion.h1
         className="mt-6 text-2xl font-semibold dark:text-white text-[#292633] tracking-wide"
         initial={{ opacity: 0, y: 10 }}
@@ -23,7 +21,6 @@ export default function LoadingScreen() {
         nyra
       </motion.h1>
 
-      {/* Tagline */}
       <motion.p
         className="text-sm dark:text-zinc-400 text-[#686477] mt-1"
         initial={{ opacity: 0 }}
@@ -33,7 +30,6 @@ export default function LoadingScreen() {
         Think faster. Build smarter.
       </motion.p>
 
-      {/* Animated dots */}
       <div className="flex gap-1.5 mt-6">
         <div className="w-2 h-2 dark:bg-zinc-400 bg-[#8B6FC9] rounded-full animate-bounce" />
         <div className="w-2 h-2 dark:bg-zinc-400 bg-[#8B6FC9] rounded-full animate-bounce [animation-delay:0.2s]" />

@@ -1,9 +1,5 @@
 import { AIModelConfig, AIProvider } from './types';
 
-/**
- * 4 Simplified Workspace AI Modes
- * Clear, purposeful modes mapped internally to optimal neural models
- */
 export const USER_FACING_MODELS: AIModelConfig[] = [
   {
     id: 'fast',
@@ -115,13 +111,9 @@ export const USER_FACING_MODELS: AIModelConfig[] = [
   },
 ];
 
-/**
- * Full Model Catalog (Preserved for backend stream resolvers, fallback resilience & API compatibility)
- */
 export const AI_MODELS: AIModelConfig[] = [
   ...USER_FACING_MODELS,
 
-  // Additional Backend & Extended Models
   {
     id: 'openai-gpt-4o-mini',
     name: 'GPT-4o Mini',
@@ -286,17 +278,14 @@ export const DEFAULT_VISION_MODEL_ID = 'google-gemini-3-6-flash';
 export function getModelConfig(modelId: string): AIModelConfig {
   if (!modelId) return USER_FACING_MODELS[1];
 
-  // Direct ID match in user-facing models
   const directFacing = USER_FACING_MODELS.find((m) => m.id === modelId);
   if (directFacing) return directFacing;
 
-  // Map legacy IDs to new simplified workspace modes
-  if (modelId === 'llama-3.1-8b-instant') return USER_FACING_MODELS[0]; // Fast
-  if (modelId === 'qwen/qwen3.6-27b' || modelId === 'default') return USER_FACING_MODELS[1]; // Balanced
-  if (modelId === 'llama-3.3-70b-versatile' || modelId === 'code') return USER_FACING_MODELS[2]; // Advanced
-  if (modelId === 'deepseek-r1-distill-llama-70b' || modelId === 'openrouter-deepseek-r1') return USER_FACING_MODELS[3]; // Reasoning
+  if (modelId === 'llama-3.1-8b-instant') return USER_FACING_MODELS[0]; 
+  if (modelId === 'qwen/qwen3.6-27b' || modelId === 'default') return USER_FACING_MODELS[1]; 
+  if (modelId === 'llama-3.3-70b-versatile' || modelId === 'code') return USER_FACING_MODELS[2]; 
+  if (modelId === 'deepseek-r1-distill-llama-70b' || modelId === 'openrouter-deepseek-r1') return USER_FACING_MODELS[3]; 
 
-  // Check full AI_MODELS list or modelIdentifier
   const fullMatch = AI_MODELS.find(
     (m) => m.id === modelId || m.modelIdentifier === modelId
   );
@@ -309,8 +298,6 @@ export function validateModelCapabilities(
   modelId: string,
   options: { hasImages?: boolean; hasPdfs?: boolean }
 ): { valid: boolean; error?: string; suggestedModelId?: string } {
-  // In the browser, non-public process.env keys are not exposed.
-  // The server-side API route dynamically validates and routes models with active environment keys.
   if (typeof window !== 'undefined') {
     return { valid: true };
   }
@@ -393,22 +380,14 @@ export function hasAnyActiveProvider(): boolean {
   );
 }
 
-/**
- * Safely resolves an active, configured model.
- * If the requested model is unconfigured (e.g. Groq missing but Gemini/OpenAI configured),
- * it seamlessly falls back to the primary working configured model.
- * When needsVision is true, automatically routes to a configured vision model (Gemini / OpenAI).
- */
 export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean): AIModelConfig {
   const requested = modelId ? getModelConfig(modelId) : null;
 
   if (needsVision) {
-    // If requested model natively supports vision and its provider is configured, use it
     if (requested && requested.supportsVision && isProviderConfigured(requested.provider) && requested.provider !== 'groq') {
       return requested;
     }
 
-    // Automatically route to configured vision model (Gemini -> OpenAI -> OpenRouter -> Anthropic)
     if (isProviderConfigured('gemini')) {
       return (
         AI_MODELS.find((m) => m.provider === 'gemini' && m.supportsVision) ||
@@ -435,13 +414,10 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
     }
   }
 
-  // If the requested model belongs to a configured provider, use it
   if (requested && isProviderConfigured(requested.provider)) {
     return requested;
   }
 
-  // If a generic mode was requested (e.g. fast, balanced, advanced, reasoning) or default,
-  // first check user facing models with configured providers
   const configuredFacingModels = USER_FACING_MODELS.filter((m) => isProviderConfigured(m.provider));
   if (configuredFacingModels.length > 0) {
     if (requested) {
@@ -453,10 +429,8 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
     return configuredFacingModels[0];
   }
 
-  // If Groq is not configured, fall back to ANY configured provider in AI_MODELS
   const configuredModels = AI_MODELS.filter((m) => isProviderConfigured(m.provider));
   if (configuredModels.length > 0) {
-    // Priority order: Gemini -> OpenAI -> Anthropic -> OpenRouter
     const gemini = configuredModels.find((m) => m.provider === 'gemini');
     if (gemini) return gemini;
     const openai = configuredModels.find((m) => m.provider === 'openai');
@@ -468,6 +442,5 @@ export function resolveActiveModelConfig(modelId?: string, needsVision?: boolean
     return configuredModels[0];
   }
 
-  // Fallback to default Nyra model structure if no providers configured yet
   return USER_FACING_MODELS[1];
 }

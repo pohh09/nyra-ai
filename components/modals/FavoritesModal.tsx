@@ -25,7 +25,6 @@ export default function FavoritesModal({
 }: FavoritesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Handle ESC key to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -38,7 +37,6 @@ export default function FavoritesModal({
 
   if (!isOpen) return null;
 
-  // Aggregate all bookmarked messages across all chats
   const bookmarkedItems: Array<{
     chatId: string;
     chatTitle: string;
@@ -57,7 +55,6 @@ export default function FavoritesModal({
     });
   });
 
-  // Filter by search query
   const filteredItems = searchQuery.trim()
     ? bookmarkedItems.filter(
         (item) =>
@@ -69,7 +66,6 @@ export default function FavoritesModal({
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6">
-        {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -78,7 +74,6 @@ export default function FavoritesModal({
           className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md"
         />
 
-        {/* Modal Window */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -86,7 +81,6 @@ export default function FavoritesModal({
           transition={{ duration: 0.2 }}
           className="relative z-10 w-full max-w-2xl max-h-[88dvh] flex flex-col rounded-[22px] sm:rounded-[28px] border border-[#E8E4EF] dark:border-purple-500/20 bg-white dark:bg-[#0E0B1A] text-[#292633] dark:text-white shadow-2xl dark:shadow-[0_24px_80px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden"
         >
-          {/* Header */}
           <div className="px-5 sm:px-6 py-4 sm:py-5 border-b border-[#E8E4EF] dark:border-white/[0.08] flex items-center justify-between bg-white dark:bg-[#0E0B1A]">
             <div className="flex items-center gap-3 min-w-0">
               <div className="h-9 sm:h-10 w-9 sm:w-10 rounded-xl sm:rounded-2xl bg-[#EEE8FA] dark:bg-[#8B6FC9]/15 border border-[#E8E4EF] dark:border-[#8B6FC9]/30 flex items-center justify-center text-[#8B6FC9] dark:text-[#C4B5FD] shadow-xs shrink-0">
@@ -114,7 +108,6 @@ export default function FavoritesModal({
             </button>
           </div>
 
-          {/* Search Bar if multiple items */}
           {bookmarkedItems.length > 2 && (
             <div className="px-5 sm:px-6 pt-3.5 sm:pt-4 bg-white dark:bg-[#0E0B1A]">
               <div className="relative flex items-center">
@@ -138,7 +131,6 @@ export default function FavoritesModal({
             </div>
           )}
 
-          {/* List of Favorites */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-3.5 scrollbar-thin bg-white dark:bg-[#0E0B1A]">
             {filteredItems.length === 0 ? (
               <div className="py-12 sm:py-16 text-center">
@@ -160,7 +152,6 @@ export default function FavoritesModal({
                   key={item.message.id}
                   className="group relative rounded-2xl border border-[#E8E4EF] dark:border-white/[0.08] bg-[#F9F8FD] dark:bg-white/[0.03] hover:bg-[#F3EEFA]/70 dark:hover:bg-white/[0.06] hover:border-[#8B6FC9]/40 dark:hover:border-purple-500/30 p-3.5 sm:p-4.5 transition-all duration-200 shadow-xs"
                 >
-                  {/* Origin Thread Header */}
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <MessageSquare size={13} className="text-[#8B6FC9] dark:text-[#C4B5FD] shrink-0" />
@@ -193,7 +184,6 @@ export default function FavoritesModal({
                     </div>
                   </div>
 
-                  {/* Message Content Snippet */}
                   <p
                     onClick={() => onNavigateToMessage(item.chatId, item.message.id)}
                     className="text-xs sm:text-[13px] text-[#292633] dark:text-zinc-200 leading-relaxed line-clamp-4 cursor-pointer hover:text-[#8B6FC9] dark:hover:text-white transition font-sans bg-white dark:bg-[#07050E] p-3 rounded-xl border border-[#E8E4EF] dark:border-white/[0.06]"
@@ -222,7 +212,6 @@ export default function FavoritesModal({
             )}
           </div>
 
-          {/* Footer */}
           <div className="px-5 sm:px-6 py-3.5 border-t border-[#E8E4EF] dark:border-white/[0.08] bg-[#F8F7FB] dark:bg-[#0A0714] flex items-center justify-between text-xs text-[#686477] dark:text-zinc-400">
             <span className="text-[11px] sm:text-xs">Saved messages are preserved in your local session.</span>
             <button

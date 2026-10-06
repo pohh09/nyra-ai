@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================
-   RESPONSIVE BASE & MOBILE OPTIMIZATIONS
-========================================= */
 html {
   max-width: 100vw;
   overflow-x: hidden;
@@ -22,7 +19,6 @@ body {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
-/* Hide scrollbar utility (Chrome, Safari, Firefox, Edge, IE) */
 .no-scrollbar::-webkit-scrollbar {
   display: none !important;
   width: 0px !important;
@@ -35,7 +31,6 @@ body {
   scrollbar-width: none !important;
 }
 
-/* Ensure all media and tables fit on screen */
 img,
 video,
 canvas,
@@ -48,10 +43,6 @@ pre,
 code {
   max-width: 100%;
 }
-
-/* =========================================
-   NYRA AI - 2026 CINEMATIC DEEP PURPLE & LUMINOUS MAGENTA COLOR SYSTEM
-========================================= */
 
 :root {
   --background: #050505;
@@ -88,8 +79,7 @@ code {
   --text-main: #F5F5F7;
   --text-muted: #A7A7B0;
 
-  /* Accent Color Default (Luminous Hot Pink & Magenta) */
-  --accent-primary: #E52A83;
+    --accent-primary: #E52A83;
   --accent-from: #B31372;
   --accent-via: #E52A83;
   --accent-to: #FF4FA3;
@@ -98,14 +88,9 @@ code {
   --accent-badge-bg: rgba(229, 42, 131, 0.15);
   --accent-badge-text: #FFD4E8;
 
-  /* Font Size Default (Normal) */
-  --chat-font-size: 14.5px;
+    --chat-font-size: 14.5px;
   --chat-line-height: 1.65;
 }
-
-/* =========================================
-   ACCENT COLOR THEME SYSTEM
-========================================= */
 
 :root {
   --accent: #E52A83;
@@ -272,9 +257,6 @@ html.light .chat-send-btn,
   color: var(--accent-badge-text, #FFD4E8) !important;
 }
 
-/* =========================================
-   CHATGPT STYLE EDIT MESSAGE CONTAINER
-========================================= */
 .chat-edit-box {
   background: #16091F !important;
   border: 1px solid var(--accent-border, rgba(229, 42, 131, 0.35)) !important;
@@ -347,10 +329,6 @@ html.light .chat-edit-send-btn:hover:not(:disabled),
   filter: brightness(1.08);
   box-shadow: 0 4px 14px var(--accent-glow, rgba(229, 42, 131, 0.5)) !important;
 }
-
-/* =========================================
-   CHAT FONT SIZE SYSTEM
-========================================= */
 
 :root {
   --chat-font-size: 15px;
@@ -436,10 +414,6 @@ html.light .chat-edit-send-btn:hover:not(:disabled),
   font-size: var(--chat-h3-size) !important;
 }
 
-/* =========================================
-   LIGHT MODE DESIGN SYSTEM (SOFT COHERENT PALETTE)
-========================================= */
-
 html.light,
 [data-theme="light"] {
   --background: #FAF8FB;
@@ -509,10 +483,6 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* =========================================
-   CUSTOM SCROLLBAR
-========================================= */
-
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -538,10 +508,6 @@ html.light ::-webkit-scrollbar-thumb {
 html.light ::-webkit-scrollbar-thumb:hover {
   background: rgba(179, 19, 114, 0.5);
 }
-
-/* =========================================
-   KEYFRAME ANIMATIONS & FLOATS
-========================================= */
 
 @keyframes orbFloat {
 
@@ -577,10 +543,6 @@ html.light ::-webkit-scrollbar-thumb:hover {
   animation: pulseGlow 6s ease-in-out infinite;
 }
 
-/* =========================================
-   ATMOSPHERIC BACKGROUNDS
-========================================= */
-
 .nyra-ambient-canvas {
   background: #050505;
   background-image:
@@ -589,14 +551,12 @@ html.light ::-webkit-scrollbar-thumb:hover {
     linear-gradient(180deg, #16091F 0%, #0E0514 30%, #08020D 65%, #050505 100%);
 }
 
-/* Light mode clean soft background */
 html.light .nyra-ambient-canvas,
 [data-theme="light"] .nyra-ambient-canvas {
   background: #FAF8FB !important;
   background-image: none !important;
 }
 
-/* Remove black bottom gradient from chatscreen in light mode */
 html.light [class*="bg-gradient-to-t from-black"],
 [data-theme="light"] [class*="bg-gradient-to-t from-black"],
 html.light .chatscreen-bottom-bar,
@@ -605,7 +565,6 @@ html.light .chatscreen-bottom-bar,
   background-image: none !important;
 }
 
-/* Telegram Signature Soft Lavender User Message Bubble */
 html.light .chat-user-bubble,
 [data-theme="light"] .chat-user-bubble {
   background: #EEE8FA !important;
@@ -621,11 +580,6 @@ html.light .chat-accent-button,
   box-shadow: 0 4px 16px rgba(139, 111, 201, 0.2) !important;
 }
 
-/* =========================================
-   LIGHT MODE COMPONENT CONTRAST OVERRIDES (SCOPED)
-========================================= */
-
-/* Seamless Canvas Flow for AI responses in light theme */
 html.light .chat-assistant-container,
 [data-theme="light"] .chat-assistant-container {
   background: transparent !important;
@@ -663,16 +617,11 @@ html.light .chat-assistant-body strong,
   font-weight: 650 !important;
 }
 
-/* Sidebar in light theme */
 html.light aside.chat-sidebar,
 [data-theme="light"] aside.chat-sidebar {
   background-color: #F5F3F9 !important;
   border-color: #E8E4EF !important;
 }
-
-/* =========================================
-   LIGHT MODE CHAT INPUT BAR (COMPOSER)
-========================================= */
 
 html.light .chat-composer-box,
 [data-theme="light"] .chat-composer-box {
@@ -694,7 +643,6 @@ html.light .chat-composer-box:focus-within,
   box-shadow: 0 4px 24px rgba(139, 111, 201, 0.12), 0 0 0 3px rgba(139, 111, 201, 0.1) !important;
 }
 
-/* Light Mode Composer Textarea */
 html.light .chat-composer-box textarea,
 html.light .chat-composer-textarea,
 [data-theme="light"] .chat-composer-box textarea,
@@ -711,13 +659,11 @@ html.light .chat-composer-textarea::placeholder,
   opacity: 1 !important;
 }
 
-/* Light Mode Composer Divider */
 html.light .chat-composer-box .border-t,
 [data-theme="light"] .chat-composer-box .border-t {
   border-color: #E8E4EF !important;
 }
 
-/* Deep Research Active in Light Mode */
 html.light .chat-composer-box button[class*="bg-gradient-to-r from-amber-500"],
 [data-theme="light"] .chat-composer-box button[class*="bg-gradient-to-r from-amber-500"] {
   background: #F9F4EB !important;
@@ -732,7 +678,6 @@ html.light .chat-composer-box button[class*="bg-gradient-to-r from-amber-500"] s
   color: #9C773E !important;
 }
 
-/* Inactive Send button in light mode */
 html.light .chat-composer-box button:disabled,
 html.light .chat-composer-box button[class*="cursor-not-allowed"],
 [data-theme="light"] .chat-composer-box button:disabled,
@@ -748,10 +693,6 @@ html.light .chat-composer-box button[class*="cursor-not-allowed"] svg,
 [data-theme="light"] .chat-composer-box button[class*="cursor-not-allowed"] svg {
   color: #92909B !important;
 }
-
-/* =========================================
-   LIGHT MODE TABLES (SOFT NEUTRAL)
-========================================= */
 
 html.light .chat-table-wrapper,
 html.light [class*="chat-table-wrapper"],
@@ -803,10 +744,6 @@ html.light tr:hover td,
   background-color: #F8F7FB !important;
 }
 
-/* =========================================
-   LIGHT MODE INLINE CODE & CALLOUTS (SOFT LAVENDER)
-========================================= */
-
 html.light .chat-inline-code,
 html.light code:not(pre code),
 [data-theme="light"] .chat-inline-code,
@@ -824,10 +761,6 @@ html.light blockquote,
   background-color: #F5F3F9 !important;
   color: #292633 !important;
 }
-
-/* =========================================
-   LIGHT MODE SUGGESTED FOLLOW-UP PILLS (SOFT NEUTRAL)
-========================================= */
 
 html.light .suggested-followup-pill,
 html.light [class*="bg-[#160f2b]"],
@@ -852,10 +785,6 @@ html.light .suggested-followup-pill span,
 [data-theme="light"] .suggested-followup-pill span {
   color: #292633 !important;
 }
-
-/* =========================================
-   LIGHT MODE CODE BLOCKS (SOFT ELEVATED)
-========================================= */
 
 html.light .chat-code-block,
 html.light [class*="bg-[#0c0918]"],
@@ -903,10 +832,6 @@ html.light .chat-code-block code,
   background-color: transparent !important;
 }
 
-/* =========================================
-   DYNAMIC GREETING & SUBTITLE (DARK & LIGHT)
-========================================= */
-
 .chat-greeting-title {
   color: #ffffff;
 }
@@ -924,10 +849,6 @@ html.light .chat-greeting-subtitle,
 [data-theme="light"] .chat-greeting-subtitle {
   color: #686477 !important;
 }
-
-/* =========================================
-   CHATGPT STYLE STOP / PAUSE BUTTON
-========================================= */
 
 .chat-stop-button {
   background-color: #ffffff !important;
@@ -965,9 +886,6 @@ html.light .chat-stop-button svg,
   color: #ffffff !important;
 }
 
-/* =========================================
-   CAREER & RESUME STUDIO - LIGHT THEME
-========================================= */
 html.light .career-page-root,
 [data-theme="light"] .career-page-root {
   background-color: #F8F7FB !important;
@@ -1172,9 +1090,6 @@ html.light .career-empty-icon,
   color: #8B6FC9 !important;
 }
 
-/* =========================================
-   AI MEMORY STUDIO - LIGHT THEME
-========================================= */
 html.light .memory-page-root,
 [data-theme="light"] .memory-page-root {
   background-color: #F8F7FB !important;
@@ -1415,9 +1330,6 @@ html.light .memory-badge-paused,
   border-color: #E8E4EF !important;
 }
 
-/* =========================================
-   DOCUMENTS STUDIO - LIGHT THEME
-========================================= */
 html.light .docs-page-root,
 [data-theme="light"] .docs-page-root {
   background-color: #F8F7FB !important;
@@ -1586,9 +1498,6 @@ html.light .docs-text-body,
   color: #292633 !important;
 }
 
-/* =========================================
-   TASKS STUDIO - LIGHT THEME
-========================================= */
 html.light .tasks-page-root,
 [data-theme="light"] .tasks-page-root {
   background-color: #F8F7FB !important;
@@ -1795,7 +1704,6 @@ html.light .tasks-badge-high,
   border-color: #ECCECE !important;
 }
 
-/* Reminder Popover & Badges - Dark & Light System */
 .tasks-reminder-popover {
   background-color: #17102e;
   border: 1px solid rgba(192, 132, 252, 0.3);
@@ -1898,12 +1806,10 @@ html.light .tasks-reminder-btn-active,
   border: 1px solid #8B6FC9 !important;
 }
 
-/* 3D Depth Utilities */
 .preserve-3d {
   transform-style: preserve-3d;
 }
 
-/* Nyra Premium Thinking Wave Dots Animation */
 .nyra-thinking-dot {
   display: inline-block;
   animation: nyraThinkingWave 1.4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95) both;
@@ -1920,7 +1826,6 @@ html.light .tasks-reminder-btn-active,
   }
 }
 
-/* Nyra Streaming Cursor */
 .nyra-streaming-cursor {
   animation: nyraCursorBreathe 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
@@ -1936,7 +1841,6 @@ html.light .tasks-reminder-btn-active,
   }
 }
 
-/* ChatGPT Style Streaming Animation & Cursor */
 .chatgpt-cursor {
   animation: chatgptCursorBlink 0.8s ease-in-out infinite;
 }
@@ -1967,7 +1871,6 @@ html.light .tasks-reminder-btn-active,
   }
 }
 
-/* ChatGPT Typing Wave Dots Animation */
 .typing-dot {
   display: inline-block;
   width: 5px;
@@ -1999,7 +1902,6 @@ html.light .tasks-reminder-btn-active,
   }
 }
 
-/* Custom Smooth Scrollbar for Auth Cards & Panels */
 .custom-smooth-scrollbar {
   scroll-behavior: smooth !important;
   scrollbar-width: thin;
@@ -2025,10 +1927,6 @@ html.light .tasks-reminder-btn-active,
 .custom-smooth-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(229, 42, 131, 0.55);
 }
-
-/* =========================================
-   ACCESSIBILITY - REDUCED MOTION
-========================================= */
 
 @media (prefers-reduced-motion: reduce) {
 

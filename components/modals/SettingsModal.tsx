@@ -88,13 +88,11 @@ export default function SettingsModal({
   const [themeMode, setThemeMode] = useState<'dark' | 'light' | 'system'>('dark');
   const [isMac, setIsMac] = useState(false);
 
-  // Voice state
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>('');
   const [voiceRate, setVoiceRate] = useState<number>(1);
   const [speechRecSupported, setSpeechRecSupported] = useState(false);
 
-  // Usage stats state
   const [usageStats, setUsageStats] = useState<DailyUsageStats | null>(null);
   const [loadingUsage, setLoadingUsage] = useState(false);
 
@@ -175,7 +173,6 @@ export default function SettingsModal({
 
   useEffect(() => {
     if (isOpen) {
-      // Instantly load client usage so the user sees real, accurate metrics with zero delay
       setUsageStats(buildClientUsageStats(Boolean(user), null));
       setLoadingUsage(true);
       fetch('/api/usage')
@@ -397,7 +394,6 @@ export default function SettingsModal({
       case 'appearance':
         return (
           <div className="space-y-6">
-            {/* THEME SELECTION */}
             <div>
               <div className="mb-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8]">Theme Mode</h3>
@@ -447,7 +443,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* ACCENT COLOR */}
             <div>
               <div className="mb-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8]">Accent Highlight</h3>
@@ -489,7 +484,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* CHAT FONT SIZE */}
             <div>
               <div className="mb-2.5">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8]">Chat Font Size</h3>
@@ -562,7 +556,6 @@ export default function SettingsModal({
               </button>
             </div>
 
-            {/* Experience Level */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8] block mb-2">
                 Technical Depth
@@ -588,7 +581,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Interests */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8] block mb-2">
                 Core Domains
@@ -629,7 +621,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Work Style */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8] block mb-2">
                 Collaboration Style
@@ -668,7 +659,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Custom Directives / Persona Instructions */}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-[#737082] dark:text-[#9A97A8] block mb-2">
                 Custom Directives & Formatting
@@ -787,7 +777,6 @@ export default function SettingsModal({
 
         return (
           <div className="space-y-4">
-            {/* Plan & Quota Health Header */}
             <div className="p-4 rounded-2xl border border-[#EBEAEF] dark:border-white/[0.08] bg-white dark:bg-[#151224] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <div>
                 <div className="flex items-center gap-2">
@@ -824,7 +813,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Feature Usage Meters */}
             <div className="space-y-3">
               <UsageMeter
                 title="AI Generation Requests"
@@ -856,7 +844,6 @@ export default function SettingsModal({
               />
             </div>
 
-            {/* Guest Upgrade Banner */}
             {!user && (
               <div className="p-4 rounded-2xl border border-[#B31372]/30 dark:border-pink-500/30 bg-gradient-to-br from-[#F4DCE9]/50 to-transparent dark:from-pink-950/20 dark:to-transparent flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                 <div>
@@ -877,7 +864,6 @@ export default function SettingsModal({
               </div>
             )}
 
-            {/* Policy & Quota Details */}
             <div className="p-3.5 rounded-xl border border-[#EBEAEF] dark:border-white/[0.06] bg-[#F7F6FA]/60 dark:bg-white/[0.02] text-[11px] text-[#737082] dark:text-[#9A97A8] leading-relaxed flex items-start gap-2">
               <Info size={14} className="text-[#B31372] dark:text-pink-400 shrink-0 mt-0.5" />
               <span>
@@ -1163,14 +1149,9 @@ export default function SettingsModal({
           transition={{ duration: 0.18, ease: 'easeOut' }}
           className="w-full h-[100dvh] md:h-[88dvh] md:max-h-[850px] md:max-w-3xl md:rounded-3xl border-0 md:border border-[#EBEAEF] dark:border-white/10 bg-[#F7F6FA] dark:bg-[#0B0914] text-[#151221] dark:text-[#F3F1FA] md:shadow-2xl flex flex-col md:flex-row overflow-hidden relative"
         >
-          {/* ======================================================== */}
-          {/* MOBILE VIEW (< md / < 768px) — Fullscreen App Navigation */}
-          {/* ======================================================== */}
           <div className="flex md:hidden flex-col h-full w-full bg-[#F7F6FA] dark:bg-[#0B0914]">
             {mobileView === 'menu' ? (
-              /* MOBILE ROOT MENU */
               <div className="flex flex-col h-full">
-                {/* Header */}
                 <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3.5 bg-white dark:bg-[#120F1F] border-b border-[#EBEAEF] dark:border-white/[0.08] shrink-0 shadow-2xs">
                   <div className="flex items-center gap-2">
                     <button
@@ -1190,7 +1171,6 @@ export default function SettingsModal({
                   </button>
                 </header>
 
-                {/* Grouped Category List */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
                   {SETTINGS_SECTIONS.map((section, sIdx) => (
                     <div key={sIdx} className="space-y-1.5">
@@ -1236,9 +1216,7 @@ export default function SettingsModal({
                 </div>
               </div>
             ) : (
-              /* MOBILE DETAIL VIEW */
               <div className="flex flex-col h-full">
-                {/* Sticky Detail Header */}
                 <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3.5 bg-white dark:bg-[#120F1F] border-b border-[#EBEAEF] dark:border-white/[0.08] shrink-0 shadow-2xs">
                   <button
                     onClick={() => setMobileView('menu')}
@@ -1258,7 +1236,6 @@ export default function SettingsModal({
                   </button>
                 </header>
 
-                {/* Detail Content */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4 pb-10">
                   {renderActiveTabContent()}
                 </div>
@@ -1266,11 +1243,7 @@ export default function SettingsModal({
             )}
           </div>
 
-          {/* ======================================================== */}
-          {/* DESKTOP VIEW (>= md / >= 768px) — Classic 2-Column Sidebar */}
-          {/* ======================================================== */}
           <div className="hidden md:flex flex-row w-full h-full">
-            {/* Desktop Left Sidebar Tabs */}
             <div className="w-56 bg-[#F2F1F7] dark:bg-[#090712] border-r border-[#EBEAEF] dark:border-white/10 p-4 shrink-0 flex flex-col justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-[#151221] dark:text-white mb-2">
@@ -1320,7 +1293,6 @@ export default function SettingsModal({
               </div>
             </div>
 
-            {/* Desktop Right Content Panel */}
             <div className="flex-1 p-6 bg-white dark:bg-[#130f24] overflow-y-auto custom-scrollbar flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between border-b border-[#EBEAEF] dark:border-white/10 pb-3 mb-5">

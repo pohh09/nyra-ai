@@ -39,7 +39,6 @@ export default function ModelSelector({
 
   const selectedModel = getModelConfig(selectedModelId);
 
-  // Fetch active provider availability from server
   useEffect(() => {
     fetch('/api/models')
       .then((res) => res.json())
@@ -164,7 +163,6 @@ export default function ModelSelector({
               dropUp ? 'bottom-10 left-0' : 'top-10 right-0 sm:left-0 sm:right-auto'
             } w-[290px] sm:w-[340px] max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-purple-400/25 bg-[#FFFFFF] dark:bg-[#130f24]/98 backdrop-blur-2xl shadow-[0_10px_40px_rgba(41,38,51,0.08)] dark:shadow-[0_10px_40px_rgba(10,5,20,0.9),0_0_20px_rgba(168,85,247,0.15)] overflow-hidden p-2 z-50 animate-[fadeIn_0.1s_ease-out]`}
           >
-            {/* Header */}
             <div className="px-2.5 py-1.5 border-b border-[#E8E4EF] dark:border-purple-400/15 mb-1.5 flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#92909B] dark:text-slate-400 font-mono">
                 AI Workspace Mode
@@ -174,7 +172,6 @@ export default function ModelSelector({
               </span>
             </div>
 
-            {/* Model Modes List */}
             <div className="space-y-1">
               {USER_FACING_MODELS.map((model) => {
                 const isSelected =

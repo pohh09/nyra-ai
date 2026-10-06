@@ -39,7 +39,6 @@ export default function SharePage() {
   useEffect(() => {
     if (!shareId) return;
 
-    // 1. Check if stored in localStorage shared conversations cache
     try {
       const cached = localStorage.getItem(`nyra_share_${shareId}`);
       if (cached) {
@@ -47,7 +46,6 @@ export default function SharePage() {
         return;
       }
 
-      // 2. Check if the active chats in localStorage have this ID
       const savedChats = localStorage.getItem('nyra_saved_chats');
       if (savedChats) {
         const chats = JSON.parse(savedChats);
@@ -58,7 +56,6 @@ export default function SharePage() {
         }
       }
 
-      // 3. Fallback mock / sample shared conversation
       setConversation({
         id: shareId,
         title: 'Shared AI Research & Architecture Discussion',
@@ -108,7 +105,6 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-slate-100 text-[#292633] flex flex-col selection:bg-[#8B6FC9]/30 transition-colors">
-      {/* Top Navbar */}
       <header className="sticky top-0 z-40 border-b dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14]/90 bg-white/90 backdrop-blur-xl px-4 md:px-8 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
           <Link
@@ -154,7 +150,6 @@ export default function SharePage() {
         </div>
       </header>
 
-      {/* Main Conversation Stream */}
       <main className="flex-1 max-w-3xl w-full mx-auto px-3 sm:px-4 md:px-8 py-6 sm:py-8 space-y-6">
         <div className="rounded-2xl border dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14] bg-white p-3.5 sm:p-4 mb-6 flex items-center justify-between text-xs dark:text-white/70 text-[#686477] shadow-sm">
           <div>
@@ -228,7 +223,6 @@ export default function SharePage() {
         })}
       </main>
 
-      {/* Export Modal */}
       <ExportModal
         isOpen={isExportOpen}
         onClose={() => setIsExportOpen(false)}

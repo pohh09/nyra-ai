@@ -15,7 +15,6 @@ export default function HeroRobotVisual() {
   const router = useRouter();
   const robotContainerRef = useRef<HTMLDivElement>(null);
 
-  // Mouse & Eye Tracking State
   const [isHovered, setIsHovered] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
@@ -23,7 +22,6 @@ export default function HeroRobotVisual() {
   const [speechText, setSpeechText] = useState<string | null>(null);
   const [mood, setMood] = useState<'neutral' | 'curious' | 'thinking' | 'happy'>('neutral');
 
-  // Spring physics for buttery-smooth head & gaze motion
   const headRotateX = useMotionValue(0);
   const headRotateY = useMotionValue(0);
   const smoothHeadX = useSpring(headRotateX, { stiffness: 150, damping: 22 });
@@ -34,13 +32,11 @@ export default function HeroRobotVisual() {
   const smoothEyeX = useSpring(eyeOffsetX, { stiffness: 240, damping: 18 });
   const smoothEyeY = useSpring(eyeOffsetY, { stiffness: 240, damping: 18 });
 
-  // Floating Body Position Tracking
   const bodyShiftX = useMotionValue(0);
   const bodyShiftY = useMotionValue(0);
   const smoothBodyX = useSpring(bodyShiftX, { stiffness: 90, damping: 25 });
   const smoothBodyY = useSpring(bodyShiftY, { stiffness: 90, damping: 25 });
 
-  // Periodic Natural Blinking (every 3.5 - 6 seconds)
   useEffect(() => {
     let blinkTimer: NodeJS.Timeout;
     const triggerBlink = () => {
@@ -54,7 +50,6 @@ export default function HeroRobotVisual() {
     return () => clearTimeout(blinkTimer);
   }, []);
 
-  // Periodic Autonomous "Thinking" Pulse (every 10 - 13 seconds)
   useEffect(() => {
     const thinkInterval = setInterval(() => {
       if (!isHovered && !isSpeaking) {
@@ -70,7 +65,6 @@ export default function HeroRobotVisual() {
     return () => clearInterval(thinkInterval);
   }, [isHovered, isSpeaking]);
 
-  // Global Mouse Cursor Tracking
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!robotContainerRef.current) return;
@@ -81,19 +75,15 @@ export default function HeroRobotVisual() {
       const deltaX = e.clientX - centerX;
       const deltaY = e.clientY - centerY;
 
-      // Clamped normalized coordinates [-1 to 1]
       const normX = Math.max(-1, Math.min(1, deltaX / (window.innerWidth / 2)));
       const normY = Math.max(-1, Math.min(1, deltaY / (window.innerHeight / 2)));
 
-      // 3D Head rotation angles
-      headRotateY.set(normX * 16); // yaw
-      headRotateX.set(-normY * 12); // pitch
+      headRotateY.set(normX * 16); 
+      headRotateX.set(-normY * 12); 
 
-      // Eye Pupil offsets inside visor (in pixels)
       eyeOffsetX.set(normX * 16);
       eyeOffsetY.set(normY * 11);
 
-      // Subtle body follow
       bodyShiftX.set(normX * 8);
       bodyShiftY.set(normY * 6);
     };
@@ -102,7 +92,6 @@ export default function HeroRobotVisual() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [headRotateX, headRotateY, eyeOffsetX, eyeOffsetY, bodyShiftX, bodyShiftY]);
 
-  // Click Interaction: Speak to the user
   const handleRobotClick = () => {
     const quotes = [
       'Ready to build and think with you.',
@@ -129,17 +118,10 @@ export default function HeroRobotVisual() {
       className="relative w-full max-w-[340px] xs:max-w-[440px] sm:max-w-[560px] lg:max-w-[680px] xl:max-w-[740px] mx-auto min-h-[420px] xs:min-h-[480px] sm:min-h-[560px] lg:min-h-[640px] flex items-center justify-center select-none overflow-visible"
       style={{ perspective: 1200 }}
     >
-      {/* =========================================================
-          AMBIENT VOLUMETRIC ATMOSPHERE
-      ========================================================= */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        {/* Core Soft Ambient Violet Sphere */}
         <div className="h-[280px] xs:h-[360px] sm:h-[460px] lg:h-[540px] w-[280px] xs:w-[360px] sm:w-[460px] lg:w-[540px] rounded-full bg-gradient-to-tr from-[#8B5CF6]/22 via-[#7C3AED]/14 to-[#38BDF8]/12 blur-[70px] sm:blur-[120px]" />
       </div>
 
-      {/* =========================================================
-          SPEECH / TELEMETRY BUBBLE ON INTERACTION
-      ========================================================= */}
       <AnimatePresence>
         {speechText && (
           <motion.div
@@ -157,15 +139,11 @@ export default function HeroRobotVisual() {
               {speechText}
             </span>
             <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-300 shrink-0" />
-            {/* Bubble arrow pointer */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-[#1E0F38]" />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* =========================================================
-          MAIN INTERACTIVE ROBOT COMPANION ENTITY (ENLARGED)
-      ========================================================= */}
       <motion.div
         style={{
           x: smoothBodyX,
@@ -183,7 +161,6 @@ export default function HeroRobotVisual() {
         }}
         onClick={handleRobotClick}
       >
-        {/* Continuous Autonomous Floating / Breathing */}
         <motion.div
           animate={{
             y: [-9, 9, -9],
@@ -197,9 +174,6 @@ export default function HeroRobotVisual() {
           className="relative flex flex-col items-center scale-[0.84] xs:scale-95 sm:scale-110 lg:scale-120"
           style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* =========================================================
-              1. ROBOT HEAD ASSEMBLY (3D Ceramic Chassis + Glass Visor)
-          ========================================================= */}
           <motion.div
             style={{
               rotateX: smoothHeadX,
@@ -208,7 +182,6 @@ export default function HeroRobotVisual() {
             }}
             className="relative z-30 transition-transform duration-75"
           >
-            {/* HEAD SVG CHASSIS & VISOR */}
             <svg
               width="260"
               height="200"
@@ -218,7 +191,6 @@ export default function HeroRobotVisual() {
               className="drop-shadow-[0_25px_45px_rgba(0,0,0,0.65)] w-[240px] xs:w-[275px] sm:w-[305px] md:w-[330px] h-auto"
             >
               <defs>
-                {/* 3D Pearlescent White Ceramic Helmet Gradient */}
                 <radialGradient id="helmetCeramic3D" cx="45%" cy="30%" r="65%">
                   <stop offset="0%" stopColor="#FFFFFF" />
                   <stop offset="35%" stopColor="#F5F0FC" />
@@ -227,14 +199,12 @@ export default function HeroRobotVisual() {
                   <stop offset="100%" stopColor="#6C539D" />
                 </radialGradient>
 
-                {/* Specular Highlight along Top Crest */}
                 <linearGradient id="crestHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
                   <stop offset="40%" stopColor="#FFFFFF" stopOpacity="0.3" />
                   <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                 </linearGradient>
 
-                {/* Deep Curved Obsidian Visor Glass */}
                 <linearGradient id="visorObsidianGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#0B0418" />
                   <stop offset="40%" stopColor="#15082E" />
@@ -242,7 +212,6 @@ export default function HeroRobotVisual() {
                   <stop offset="100%" stopColor="#2D125A" />
                 </linearGradient>
 
-                {/* Curved Multi-layer Glass Glare */}
                 <linearGradient id="visorGlassGlare" x1="0%" y1="0%" x2="100%" y2="60%">
                   <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.5" />
                   <stop offset="30%" stopColor="#FFFFFF" stopOpacity="0.12" />
@@ -250,14 +219,12 @@ export default function HeroRobotVisual() {
                   <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                 </linearGradient>
 
-                {/* Ear Pod Rim Glowing Accent */}
                 <linearGradient id="earPodGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#C084FC" />
                   <stop offset="50%" stopColor="#7C3AED" />
                   <stop offset="100%" stopColor="#4C1D95" />
                 </linearGradient>
 
-                {/* Torso Ceramic Shell */}
                 <radialGradient id="torsoCeramic3D" cx="50%" cy="30%" r="70%">
                   <stop offset="0%" stopColor="#FFFFFF" />
                   <stop offset="40%" stopColor="#F5F0FC" />
@@ -265,7 +232,6 @@ export default function HeroRobotVisual() {
                   <stop offset="100%" stopColor="#9B84C8" />
                 </radialGradient>
 
-                {/* Core Reactor Glow */}
                 <radialGradient id="reactorCoreGlow" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#FFFFFF" />
                   <stop offset="25%" stopColor="#38BDF8" />
@@ -275,19 +241,16 @@ export default function HeroRobotVisual() {
                 </radialGradient>
               </defs>
 
-              {/* EAR POD (LEFT) with Glowing Ring */}
               <circle cx="28" cy="100" r="22" fill="url(#helmetCeramic3D)" stroke="#9C87C9" strokeWidth="1.5" />
               <circle cx="28" cy="100" r="16" fill="#1A0C33" />
               <circle cx="28" cy="100" r="12" stroke="url(#earPodGlow)" strokeWidth="2.5" fill="none" />
               <circle cx="28" cy="100" r="6" fill="#A855F7" className="animate-pulse" />
 
-              {/* EAR POD (RIGHT) with Glowing Ring */}
               <circle cx="232" cy="100" r="22" fill="url(#helmetCeramic3D)" stroke="#9C87C9" strokeWidth="1.5" />
               <circle cx="232" cy="100" r="16" fill="#1A0C33" />
               <circle cx="232" cy="100" r="12" stroke="url(#earPodGlow)" strokeWidth="2.5" fill="none" />
               <circle cx="232" cy="100" r="6" fill="#A855F7" className="animate-pulse" />
 
-              {/* MAIN CERAMIC HELMET SHELL */}
               <path
                 d="M42 96 C42 44 80 14 130 14 C180 14 218 44 218 96 C218 140 184 172 130 172 C76 172 42 140 42 96 Z"
                 fill="url(#helmetCeramic3D)"
@@ -295,7 +258,6 @@ export default function HeroRobotVisual() {
                 strokeWidth="2.5"
               />
 
-              {/* TOP HELMET CREST (AERODYNAMIC RIDGE) */}
               <path
                 d="M106 16 C118 13 142 13 154 16 L150 48 C140 46 120 46 110 48 Z"
                 fill="#805AD5"
@@ -307,7 +269,6 @@ export default function HeroRobotVisual() {
                 fill="url(#crestHighlight)"
               />
 
-              {/* OBSIDIAN VISOR RECESS HOUSING */}
               <path
                 d="M58 96 C58 60 88 42 130 42 C172 42 202 60 202 96 C202 132 172 152 130 152 C88 152 58 132 58 96 Z"
                 fill="#0A0314"
@@ -315,19 +276,16 @@ export default function HeroRobotVisual() {
                 strokeWidth="2"
               />
 
-              {/* DEEP OBSIDIAN VISOR GLASS */}
               <path
                 d="M62 96 C62 64 90 46 130 46 C170 46 198 64 198 96 C198 128 170 148 130 148 C90 148 62 128 62 96 Z"
                 fill="url(#visorObsidianGrad)"
               />
 
-              {/* VISOR CURVED GLASS GLARE REFLECTION */}
               <path
                 d="M66 90 C70 68 96 52 130 52 C158 52 182 62 192 78 C176 68 148 62 124 64 C94 66 74 78 66 90 Z"
                 fill="url(#visorGlassGlare)"
               />
 
-              {/* BOTTOM VISOR RIM ACCENT GLOW */}
               <path
                 d="M80 140 C100 146 160 146 180 140"
                 stroke="#A855F7"
@@ -337,9 +295,6 @@ export default function HeroRobotVisual() {
               />
             </svg>
 
-            {/* =========================================================
-                CYBERNETIC DYNAMIC DIGITAL EYES (INSIDE VISOR)
-            ========================================================= */}
             <motion.div
               style={{
                 x: smoothEyeX,
@@ -348,7 +303,6 @@ export default function HeroRobotVisual() {
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
             >
               <div className="flex items-center gap-7 sm:gap-8 mt-[-10px]">
-                {/* LEFT EYE */}
                 <div className="relative flex items-center justify-center">
                   <motion.div
                     animate={{
@@ -363,16 +317,13 @@ export default function HeroRobotVisual() {
                           : 'w-6 h-7 rounded-[12px] bg-gradient-to-b from-[#FFFFFF] via-[#DDD6FE] to-[#A78BFA] shadow-[0_0_18px_#c4b5fd,0_0_36px_#8b5cf6]'
                       }`}
                   >
-                    {/* Glowing Iris Core */}
                     <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-[#7C3AED] via-[#8B5CF6] to-[#C084FC] flex items-center justify-center">
                       <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
                     </div>
-                    {/* Pupil Light Glimmer */}
                     <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white" />
                   </motion.div>
                 </div>
 
-                {/* RIGHT EYE */}
                 <div className="relative flex items-center justify-center">
                   <motion.div
                     animate={{
@@ -387,11 +338,9 @@ export default function HeroRobotVisual() {
                           : 'w-6 h-7 rounded-[12px] bg-gradient-to-b from-[#FFFFFF] via-[#DDD6FE] to-[#A78BFA] shadow-[0_0_18px_#c4b5fd,0_0_36px_#8b5cf6]'
                       }`}
                   >
-                    {/* Glowing Iris Core */}
                     <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-[#7C3AED] via-[#8B5CF6] to-[#C084FC] flex items-center justify-center">
                       <div className="w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
                     </div>
-                    {/* Pupil Light Glimmer */}
                     <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white" />
                   </motion.div>
                 </div>
@@ -399,20 +348,13 @@ export default function HeroRobotVisual() {
             </motion.div>
           </motion.div>
 
-          {/* =========================================================
-              2. NECK ARTICULATION RING
-          ========================================================= */}
           <div className="relative -mt-3 z-20 flex flex-col items-center">
             <div className="w-[84px] h-[16px] rounded-full bg-[#1A0A33] border border-[#5B21B6] flex items-center justify-center">
               <div className="w-[60px] h-[4px] rounded-full bg-[#8B5CF6]/60 animate-pulse" />
             </div>
           </div>
 
-          {/* =========================================================
-              3. TORSO CERAMIC CHASSIS + ARMS SNUG TO BODY + REACTOR CORE
-          ========================================================= */}
           <div className="relative -mt-2 z-10 flex flex-col items-center">
-            {/* TORSO SVG CHASSIS WITH INTEGRATED NATURAL ARMS */}
             <svg
               width="210"
               height="150"
@@ -421,7 +363,6 @@ export default function HeroRobotVisual() {
               xmlns="http://www.w3.org/2000/svg"
               className="drop-shadow-[0_20px_35px_rgba(0,0,0,0.55)] w-[190px] xs:w-[220px] sm:w-[245px] h-auto"
             >
-              {/* Ceramic Torso Armor Shell */}
               <path
                 d="M40 10 C70 8 140 8 170 10 C182 30 190 70 180 110 C170 140 140 148 105 148 C70 148 40 140 30 110 C20 70 28 30 40 10 Z"
                 fill="url(#torsoCeramic3D)"
@@ -429,7 +370,6 @@ export default function HeroRobotVisual() {
                 strokeWidth="2"
               />
 
-              {/* Chest Plate Inset Panel */}
               <path
                 d="M62 26 C82 24 128 24 148 26 C156 46 158 80 148 105 C136 122 118 126 105 126 C92 126 74 122 62 105 C52 80 54 46 62 26 Z"
                 fill="#15082E"
@@ -437,35 +377,26 @@ export default function HeroRobotVisual() {
                 strokeWidth="1.5"
               />
 
-              {/* Carbon Texture Accent Lines */}
               <line x1="72" y1="36" x2="138" y2="36" stroke="#581C87" strokeWidth="1" strokeDasharray="3 3" />
               <line x1="78" y1="44" x2="132" y2="44" stroke="#581C87" strokeWidth="1" strokeDasharray="3 3" />
 
-              {/* Quantum Reactor Core Outer Ring */}
               <circle cx="105" cy="74" r="26" fill="#0D031F" stroke="#7C3AED" strokeWidth="2" />
               <circle cx="105" cy="74" r="22" stroke="#C084FC" strokeWidth="1" strokeDasharray="4 2" />
 
-              {/* Glowing Reactor Energy Sphere */}
               <circle cx="105" cy="74" r="17" fill="url(#reactorCoreGlow)" />
               <circle cx="105" cy="74" r="8" fill="#FFFFFF" className="animate-pulse" />
 
-              {/* Nyra Emblem Logo on Chest */}
               <path
                 d="M101 68 L105 60 L109 68 L117 72 L109 76 L105 84 L101 76 L93 72 Z"
                 fill="#FFFFFF"
                 opacity="0.9"
               />
 
-              {/* =========================================================
-                  LEFT ARM & HAND (SNUG TO TORSO BODY & STOMACH)
-              ========================================================= */}
               <g id="robotLeftArm">
-                {/* Left Shoulder Joint */}
                 <circle cx="36" cy="22" r="13" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
                 <circle cx="36" cy="22" r="5" fill="#3C2169" />
                 <circle cx="36" cy="22" r="2.5" fill="#8B5CF6" />
 
-                {/* Left Upper Arm Capsule */}
                 <path
                   d="M26 26 C18 38 18 54 26 66 C30 70 36 68 38 62 C42 50 44 36 38 26 Z"
                   fill="url(#torsoCeramic3D)"
@@ -473,11 +404,9 @@ export default function HeroRobotVisual() {
                   strokeWidth="1.2"
                 />
 
-                {/* Left Elbow Joint */}
                 <circle cx="26" cy="66" r="7.5" fill="#1F0D3D" stroke="#4C1D95" strokeWidth="1" />
                 <circle cx="26" cy="66" r="3" fill="#A855F7" />
 
-                {/* Left Forearm Curving Inward to Stomach */}
                 <path
                   d="M26 66 C26 78 34 92 50 102 C54 104 60 100 58 94 C48 84 38 74 34 64 Z"
                   fill="url(#torsoCeramic3D)"
@@ -485,26 +414,19 @@ export default function HeroRobotVisual() {
                   strokeWidth="1.2"
                 />
 
-                {/* Left Wrist Collar */}
                 <rect x="48" y="94" width="10" height="4.5" rx="2" transform="rotate(30 48 94)" fill="#3C2169" />
 
-                {/* Left Hand Fingers Resting Naturally on Body/Stomach */}
                 <rect x="52" y="98" width="4" height="11" rx="2" transform="rotate(20 52 98)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
                 <rect x="57" y="97" width="4" height="12" rx="2" transform="rotate(14 57 97)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
                 <rect x="62" y="95" width="3.8" height="10.5" rx="1.9" transform="rotate(8 62 95)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
                 <rect x="47" y="91" width="3.5" height="7.5" rx="1.7" transform="rotate(45 47 91)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
               </g>
 
-              {/* =========================================================
-                  RIGHT ARM & HAND (SNUG TO TORSO BODY & STOMACH)
-              ========================================================= */}
               <g id="robotRightArm">
-                {/* Right Shoulder Joint */}
                 <circle cx="174" cy="22" r="13" fill="url(#torsoCeramic3D)" stroke="#F3E8FF" strokeWidth="1.5" />
                 <circle cx="174" cy="22" r="5" fill="#3C2169" />
                 <circle cx="174" cy="22" r="2.5" fill="#8B5CF6" />
 
-                {/* Right Upper Arm Capsule */}
                 <path
                   d="M184 26 C192 38 192 54 184 66 C180 70 174 68 172 62 C168 50 166 36 172 26 Z"
                   fill="url(#torsoCeramic3D)"
@@ -512,11 +434,9 @@ export default function HeroRobotVisual() {
                   strokeWidth="1.2"
                 />
 
-                {/* Right Elbow Joint */}
                 <circle cx="184" cy="66" r="7.5" fill="#1F0D3D" stroke="#4C1D95" strokeWidth="1" />
                 <circle cx="184" cy="66" r="3" fill="#A855F7" />
 
-                {/* Right Forearm Curving Inward to Stomach */}
                 <path
                   d="M184 66 C184 78 176 92 160 102 C156 104 150 100 152 94 C162 84 172 74 176 64 Z"
                   fill="url(#torsoCeramic3D)"
@@ -524,10 +444,8 @@ export default function HeroRobotVisual() {
                   strokeWidth="1.2"
                 />
 
-                {/* Right Wrist Collar */}
                 <rect x="152" y="96" width="10" height="4.5" rx="2" transform="rotate(-30 152 96)" fill="#3C2169" />
 
-                {/* Right Hand Fingers Resting Naturally on Body/Stomach */}
                 <rect x="154" y="98" width="4" height="11" rx="2" transform="rotate(-20 154 98)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
                 <rect x="149" y="97" width="4" height="12" rx="2" transform="rotate(-14 149 97)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
                 <rect x="144" y="95" width="3.8" height="10.5" rx="1.9" transform="rotate(-8 144 95)" fill="#E9D5FF" stroke="#A78BFA" strokeWidth="0.8" />
@@ -535,7 +453,6 @@ export default function HeroRobotVisual() {
               </g>
             </svg>
 
-            {/* Glowing Core Pulse Overlay */}
             <motion.div
               animate={{
                 scale: isThinking ? [1, 1.35, 1] : [1, 1.15, 1],
@@ -546,14 +463,9 @@ export default function HeroRobotVisual() {
             />
           </div>
 
-          {/* =========================================================
-              4. ANTI-GRAVITY LEVITATION ENERGY BEAM
-          ========================================================= */}
           <div className="relative -mt-2 flex flex-col items-center">
-            {/* Vertical Soft Light Cone */}
             <div className="w-[70px] xs:w-[80px] sm:w-[110px] h-[28px] xs:h-[34px] sm:h-[46px] bg-gradient-to-b from-purple-400/40 via-violet-500/15 to-transparent blur-[8px] rounded-b-full" />
 
-            {/* Ground Reflection Ellipse */}
             <motion.div
               animate={{
                 scale: isHovered ? [1, 1.2, 1] : [0.9, 1.1, 0.9],
@@ -564,9 +476,6 @@ export default function HeroRobotVisual() {
             />
           </div>
 
-          {/* =========================================================
-              5. LIVE COMPANION STATUS INDICATOR PILL
-          ========================================================= */}
           <motion.div
             animate={{ opacity: [0.9, 1, 0.9] }}
             transition={{ duration: 3, repeat: Infinity }}
@@ -580,11 +489,7 @@ export default function HeroRobotVisual() {
         </motion.div>
       </motion.div>
 
-      {/* =========================================================
-          4 ANIMATED FLOATING TELEMETRY CARDS AROUND ROBOT
-      ========================================================= */}
 
-      {/* 1. TOP-LEFT: Inference Speed */}
       <motion.div
         animate={{
           y: [-6, 6, -6],
@@ -615,7 +520,6 @@ export default function HeroRobotVisual() {
         </div>
       </motion.div>
 
-      {/* 2. TOP-RIGHT: Reasoning & Intelligence */}
       <motion.div
         animate={{
           y: [6, -6, 6],
@@ -646,7 +550,6 @@ export default function HeroRobotVisual() {
         </div>
       </motion.div>
 
-      {/* 3. BOTTOM-LEFT: Live Web Search */}
       <motion.div
         animate={{
           y: [7, -7, 7],
@@ -675,7 +578,6 @@ export default function HeroRobotVisual() {
         </div>
       </motion.div>
 
-      {/* 4. BOTTOM-RIGHT: Multimodal Document & Privacy */}
       <motion.div
         animate={{
           y: [-7, 7, -7],

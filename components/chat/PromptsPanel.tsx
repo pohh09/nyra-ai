@@ -110,13 +110,11 @@ export default function PromptsPanel({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
-  // Manual Form State
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formTitle, setFormTitle] = useState('');
   const [formPrompt, setFormPrompt] = useState('');
   const [formCategory, setFormCategory] = useState<string>('General');
 
-  // AI Prompt Creator State
   const [aiGoal, setAiGoal] = useState('');
   const [aiSelectedCategory, setAiSelectedCategory] = useState<string>('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -128,7 +126,6 @@ export default function PromptsPanel({
   } | null>(null);
   const [aiEditMode, setAiEditMode] = useState(false);
 
-  // Improve Prompt State
   const [improveInput, setImproveInput] = useState('');
   const [improvementType, setImprovementType] = useState<
     'detailed' | 'short' | 'professional' | 'examples' | 'clarity'
@@ -144,12 +141,10 @@ export default function PromptsPanel({
   } | null>(null);
   const [improveEditMode, setImproveEditMode] = useState(false);
 
-  // Variables Filler Modal State
   const [variableModalPrompt, setVariableModalPrompt] = useState<string | null>(null);
   const [variableKeys, setVariableKeys] = useState<string[]>([]);
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
 
-  // Close card action menu & category dropdown on outside click
   const menuRef = useRef<HTMLDivElement>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -168,7 +163,6 @@ export default function PromptsPanel({
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [activeMenuId, isCategoryDropdownOpen]);
 
-  // Load custom prompts, favorites & pinned from storage
   useEffect(() => {
     const loaded = loadCustomPrompts(user?.id);
     setCustomPrompts(loaded || []);
@@ -209,7 +203,6 @@ export default function PromptsPanel({
     }
   }, [initialPromptToSave, user?.id]);
 
-  // Combined prompts sorted by Pinned > Favorites > Recent
   const sortedPrompts = useMemo(() => {
     return [...customPrompts].sort((a, b) => {
       const aPin = pinned.has(a.id);
@@ -226,7 +219,6 @@ export default function PromptsPanel({
     });
   }, [customPrompts, favorites, pinned]);
 
-  // Filtered prompts by category & search query
   const filteredPrompts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     const terms = q ? q.split(/\s+/).filter(Boolean) : [];
@@ -255,7 +247,6 @@ export default function PromptsPanel({
     });
   }, [sortedPrompts, selectedCategory, searchQuery, favorites, pinned]);
 
-  // Extract {{variables}} from prompt string
   const extractVariables = (text: string): string[] => {
     const matches = text.match(/\{\{([a-zA-Z0-9_\-\s]+)\}\}/g);
     if (!matches) return [];
@@ -290,7 +281,6 @@ export default function PromptsPanel({
     }
   };
 
-  // Trigger prompt usage (handles {{variable}} templates)
   const handleUsePrompt = (promptText: string) => {
     const vars = extractVariables(promptText);
     if (vars.length > 0) {
@@ -307,7 +297,6 @@ export default function PromptsPanel({
     addToast({ type: 'success', title: 'Prompt applied to composer' });
   };
 
-  // Submit filled variables
   const handleConfirmVariables = () => {
     if (!variableModalPrompt) return;
     let finalPrompt = variableModalPrompt;
@@ -406,7 +395,6 @@ export default function PromptsPanel({
     setEditingId(null);
   };
 
-  // AI Prompt Creator
   const handleGenerateAiPrompt = async () => {
     if (!aiGoal.trim()) {
       addToast({ type: 'error', title: 'Please describe what you want the prompt to do' });
@@ -468,7 +456,6 @@ export default function PromptsPanel({
     setAiGoal('');
   };
 
-  // AI Prompt Improver
   const handleImprovePrompt = async () => {
     if (!improveInput.trim()) {
       addToast({ type: 'error', title: 'Please enter a prompt to improve' });
@@ -536,7 +523,6 @@ export default function PromptsPanel({
     return CATEGORY_DETAILS[cat || 'General'] || CATEGORY_DETAILS.General;
   };
 
-  // Clean formatted rendering of structured prompt content
   const renderCleanStructuredPrompt = (rawText: string) => {
     if (!rawText) return null;
     const lines = rawText.split('\n');
@@ -639,12 +625,8 @@ export default function PromptsPanel({
 
   return (
     <div className="flex flex-col h-full overflow-hidden text-[#261827] dark:text-zinc-100 select-text">
-      {/* =========================================================
-          TOP CONTROLS: Search + Create & Category Filter & Tabs
-      ========================================================= */}
       {subView === 'list' ? (
         <div className="shrink-0 space-y-2 pb-2">
-          {/* 1. Search Bar + Create Button Row */}
           <div className="flex items-center gap-2">
             <div className="relative flex-1 min-w-0 group">
               <Search
@@ -691,7 +673,6 @@ export default function PromptsPanel({
             </button>
           </div>
 
-          {/* 2. Full-Width Category Dropdown Filter (Visible on Library Tab) */}
           {tabMode === 'library' && (
             <div className="relative" ref={categoryDropdownRef}>
               <button
@@ -781,7 +762,6 @@ export default function PromptsPanel({
             </div>
           )}
 
-          {/* 3. Clean Segmented Tab Switcher */}
           <div className="flex items-center border-b border-[#E8E4EF] dark:border-white/[0.08] pb-0.5 gap-2 text-xs overflow-x-auto scrollbar-none pt-0.5">
             <button
               onClick={() => setTabMode('library')}
@@ -854,14 +834,9 @@ export default function PromptsPanel({
         </div>
       )}
 
-      {/* =========================================================
-          SCROLLABLE ACTIVE TAB CONTENT AREA
-      ========================================================= */}
       <div className="flex-1 overflow-y-auto overscroll-y-contain custom-scrollbar pt-1 pr-0.5 space-y-3 pb-4">
-        {/* TAB 1: PROMPT LIBRARY */}
         {subView === 'list' && tabMode === 'library' && (
           <div className="space-y-2.5">
-            {/* My Prompts Section Header */}
             <div className="flex items-center justify-between pt-0.5 pb-1 text-xs text-[#6E6072] dark:text-zinc-400 font-semibold border-b border-[#E8E4EF] dark:border-white/[0.08]">
               <div className="flex items-center gap-1.5">
                 <span className="text-[#261827] dark:text-white font-bold text-xs">My Prompts</span>
@@ -878,7 +853,6 @@ export default function PromptsPanel({
               )}
             </div>
 
-            {/* Prompt Cards List / Empty State */}
             {customPrompts.length === 0 ? (
               <div className="py-8 sm:py-10 px-4 text-center rounded-2xl border border-dashed border-[#E8E4EF] dark:border-white/10 bg-[#FAF8FB]/60 dark:bg-white/[0.02] space-y-3 shadow-xs">
                 <div className="w-10 h-10 rounded-xl bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/25 flex items-center justify-center text-[#B31372] dark:text-pink-300 mx-auto shadow-xs">
@@ -954,7 +928,6 @@ export default function PromptsPanel({
                         : 'bg-white hover:bg-[#FAF8FB] dark:bg-[#130A1C] dark:hover:bg-[#180C24] border-[#E8E4EF] hover:border-[#B31372]/30 dark:border-white/[0.07] dark:hover:border-white/15 shadow-xs'
                     }`}
                   >
-                    {/* Top Row: Title + Pin/Star Icons */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-1.5 min-w-0 flex-1">
                         {isPin && (
@@ -981,12 +954,10 @@ export default function PromptsPanel({
                       </div>
                     </div>
 
-                    {/* Prompt Text Preview */}
                     <p className="text-[11.5px] text-[#6E6072] dark:text-zinc-300 group-hover:text-[#261827] dark:group-hover:text-white line-clamp-2 leading-relaxed font-normal bg-[#F7F3FA]/70 dark:bg-black/20 p-2 rounded-lg border border-[#E8E4EF]/60 dark:border-white/[0.03]">
                       {p.prompt}
                     </p>
 
-                    {/* Bottom Row: Category & Variables + Action Buttons */}
                     <div className="flex items-center justify-between pt-1 border-t border-[#E8E4EF]/70 dark:border-white/[0.06] text-[11px]">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-[#8A0E57] dark:text-pink-300 text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#F4DCE9] dark:bg-pink-500/15 border border-[#E8E4EF] dark:border-pink-400/20">
@@ -1003,7 +974,6 @@ export default function PromptsPanel({
                       </div>
 
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        {/* More Actions Dropdown Menu */}
                         <div className="relative" ref={isMenuOpen ? menuRef : undefined}>
                           <button
                             onClick={() => setActiveMenuId(isMenuOpen ? null : p.id)}
@@ -1048,7 +1018,6 @@ export default function PromptsPanel({
                           )}
                         </div>
 
-                        {/* Primary Use Button */}
                         <button
                           onClick={() => handleUsePrompt(p.prompt)}
                           className="h-7 px-2.5 rounded-lg bg-[#F7F3FA] hover:bg-[#B31372] hover:text-white dark:bg-white/[0.06] dark:hover:bg-pink-600 text-[#261827] dark:text-white text-xs font-semibold flex items-center gap-1 transition cursor-pointer active:scale-95 shadow-xs border border-[#E8E4EF] dark:border-white/[0.06]"
@@ -1066,10 +1035,8 @@ export default function PromptsPanel({
           </div>
         )}
 
-        {/* TAB 2: AI PROMPT CREATOR */}
         {subView === 'list' && tabMode === 'ai-creator' && (
           <div className="space-y-3">
-            {/* Header */}
             <div className="space-y-0.5">
               <h3 className="text-xs font-bold text-[#261827] dark:text-white flex items-center gap-1.5">
                 <Sparkles size={13} className="text-[#B31372] dark:text-pink-300" />
@@ -1080,7 +1047,6 @@ export default function PromptsPanel({
               </p>
             </div>
 
-            {/* Main Input */}
             <textarea
               rows={3}
               placeholder="e.g. Review my React components for bugs, performance and TypeScript typings..."
@@ -1090,7 +1056,6 @@ export default function PromptsPanel({
               autoFocus
             />
 
-            {/* Compact Category Chips */}
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-[#6E6072] dark:text-zinc-300">Category</label>
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -1124,7 +1089,6 @@ export default function PromptsPanel({
 
             {aiError && <p className="text-xs text-rose-500 dark:text-rose-400 px-0.5">{aiError}</p>}
 
-            {/* Generate Button */}
             <button
               onClick={handleGenerateAiPrompt}
               disabled={aiLoading || !aiGoal.trim()}
@@ -1143,10 +1107,8 @@ export default function PromptsPanel({
               )}
             </button>
 
-            {/* Generated Prompt Preview Card */}
             {aiGeneratedPrompt && (
               <div className="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#150A20] border border-[#E8E4EF] dark:border-pink-500/30 space-y-2.5 shadow-xs">
-                {/* Header */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#B31372] dark:text-pink-300 flex items-center gap-1">
                     <Sparkles size={12} />
@@ -1157,7 +1119,6 @@ export default function PromptsPanel({
                   </span>
                 </div>
 
-                {/* Title */}
                 <input
                   type="text"
                   value={aiGeneratedPrompt.name}
@@ -1167,7 +1128,6 @@ export default function PromptsPanel({
 
                 <div className="border-t border-[#E8E4EF] dark:border-white/10" />
 
-                {/* Structured Prompt Content View / Raw Toggle */}
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#6E6072] dark:text-zinc-400 font-medium">Prompt Content</span>
                   <button
@@ -1194,7 +1154,6 @@ export default function PromptsPanel({
 
                 <div className="border-t border-[#E8E4EF] dark:border-white/10" />
 
-                {/* Actions: Copy, Use in Chat, Save */}
                 <div className="flex items-center justify-between pt-0.5 gap-2 flex-wrap sm:flex-nowrap">
                   <button
                     onClick={() => handleCopyPrompt('ai-gen', aiGeneratedPrompt.prompt)}
@@ -1225,10 +1184,8 @@ export default function PromptsPanel({
           </div>
         )}
 
-        {/* TAB 3: IMPROVE PROMPT */}
         {subView === 'list' && tabMode === 'improve-prompt' && (
           <div className="space-y-3">
-            {/* Header */}
             <div className="space-y-0.5">
               <h3 className="text-xs font-bold text-[#261827] dark:text-white flex items-center gap-1.5">
                 <Wand2 size={13} className="text-amber-600 dark:text-amber-300" />
@@ -1239,7 +1196,6 @@ export default function PromptsPanel({
               </p>
             </div>
 
-            {/* Main Input */}
             <textarea
               rows={3}
               placeholder="e.g. Write a cover letter for a frontend developer role..."
@@ -1249,7 +1205,6 @@ export default function PromptsPanel({
               autoFocus
             />
 
-            {/* Quick Improvement Style Chips */}
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-[#6E6072] dark:text-amber-200">Improvement Style</label>
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -1281,7 +1236,6 @@ export default function PromptsPanel({
 
             {improveError && <p className="text-xs text-rose-500 dark:text-rose-400 px-0.5">{improveError}</p>}
 
-            {/* Improve Button */}
             <button
               onClick={handleImprovePrompt}
               disabled={improveLoading || !improveInput.trim()}
@@ -1300,10 +1254,8 @@ export default function PromptsPanel({
               )}
             </button>
 
-            {/* Improved Result Card */}
             {improvedResult && (
               <div className="mt-3 p-3.5 rounded-xl bg-white dark:bg-[#150A20] border border-amber-200 dark:border-amber-400/30 space-y-2.5 shadow-xs">
-                {/* Header */}
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1">
                     <Wand2 size={12} />
@@ -1314,7 +1266,6 @@ export default function PromptsPanel({
                   </span>
                 </div>
 
-                {/* Title */}
                 <input
                   type="text"
                   value={improvedResult.name}
@@ -1322,7 +1273,6 @@ export default function PromptsPanel({
                   className="w-full bg-transparent text-xs font-bold text-[#261827] dark:text-white border-b border-transparent hover:border-amber-200 focus:border-amber-500 outline-none pb-0.5"
                 />
 
-                {/* What was improved callout */}
                 {improvedResult.changesSummary && (
                   <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-400/20 text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed font-medium">
                     ✨ <strong>What was improved:</strong> {improvedResult.changesSummary}
@@ -1331,7 +1281,6 @@ export default function PromptsPanel({
 
                 <div className="border-t border-amber-100 dark:border-white/10" />
 
-                {/* Structured Prompt Content View / Raw Toggle */}
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#6E6072] dark:text-zinc-400 font-medium">Prompt Content</span>
                   <button
@@ -1358,7 +1307,6 @@ export default function PromptsPanel({
 
                 <div className="border-t border-[#E8E4EF] dark:border-white/10" />
 
-                {/* Actions */}
                 <div className="flex items-center justify-between pt-0.5 gap-2 flex-wrap sm:flex-nowrap">
                   <button
                     onClick={() => handleCopyPrompt('improved-gen', improvedResult.prompt)}
@@ -1389,7 +1337,6 @@ export default function PromptsPanel({
           </div>
         )}
 
-        {/* MANUAL CREATE / EDIT PROMPT FORM */}
         {subView === 'manual-create' && (
           <div className="space-y-3">
             <div>
@@ -1459,9 +1406,6 @@ export default function PromptsPanel({
         )}
       </div>
 
-      {/* =========================================================
-          PROMPT VARIABLES FILLER MODAL
-      ========================================================= */}
       {variableModalPrompt && (
         <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
           <div className="w-full sm:max-w-md rounded-t-[24px] sm:rounded-2xl bg-white dark:bg-[#150A20] border-t sm:border border-[#E8E4EF] dark:border-white/15 p-5 shadow-2xl space-y-3.5 text-[#261827] dark:text-white max-h-[85vh] flex flex-col">

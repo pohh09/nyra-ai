@@ -65,7 +65,6 @@ export default function DocumentsPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
-  // Question & Answer state
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState<string | null>(null);
   const [retrievedSources, setRetrievedSources] = useState<SearchResultChunk[]>([]);
@@ -99,7 +98,6 @@ export default function DocumentsPage() {
     return documents.filter((d) => d.name.toLowerCase().includes(q));
   }, [documents, searchDocQuery]);
 
-  // Clean raw answer string (stripping accidental repeated [Page X] markers or raw metadata)
   const cleanedAnswer = useMemo(() => {
     if (!answer) return '';
     return answer
@@ -108,7 +106,6 @@ export default function DocumentsPage() {
       .trim();
   }, [answer]);
 
-  // Split content for collapsible detailed explanation
   const { hasDetailSection, primaryContent, detailedContent } = useMemo(() => {
     if (!cleanedAnswer) return { hasDetailSection: false, primaryContent: '', detailedContent: '' };
 
@@ -134,7 +131,6 @@ export default function DocumentsPage() {
     return { hasDetailSection: false, primaryContent: cleanedAnswer, detailedContent: '' };
   }, [cleanedAnswer]);
 
-  // Handle File Upload & Reading
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
@@ -206,7 +202,6 @@ export default function DocumentsPage() {
     addToast({ type: 'info', title: `Removed "${name}"` });
   };
 
-  // Ask Question based on document
   const handleAskQuestion = async (queryText: string) => {
     const q = queryText.trim();
     if (!q) return;
@@ -224,7 +219,6 @@ export default function DocumentsPage() {
     try {
       const targetPages = extractTargetPageNumbers(q);
 
-      // Find relevant sections in document (Exact page retrieval for page queries, or hybrid semantic for general queries)
       const matchingPassages = searchSimilarChunks(q, {
         documentId: activeDoc ? activeDoc.id : undefined,
         document: activeDoc || undefined,
@@ -329,9 +323,7 @@ CRITICAL RULES:
 
   return (
     <div className="docs-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
-      {/* Full Screen Main Container */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
-        {/* Top Header */}
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
@@ -347,7 +339,6 @@ CRITICAL RULES:
           </span>
         </div>
 
-        {/* Page Title & Simple Guidance */}
         <div className="space-y-1 pt-1">
           <h1 className="docs-header-title text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-2.5">
             <span className="docs-icon-container flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-400/25 text-purple-600 dark:text-purple-400">
@@ -360,7 +351,6 @@ CRITICAL RULES:
           </p>
         </div>
 
-        {/* 3-Step Simple Flow Visual Bar */}
         <div className="docs-step-bar grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl bg-purple-50/60 dark:bg-white/[0.02] border border-purple-200/80 dark:border-purple-400/15 text-xs text-zinc-700 dark:text-zinc-300 transition-colors">
           <div className="flex items-center gap-2.5 px-2">
             <div className="docs-step-badge flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-purple-200/80 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 font-bold font-mono text-[11px]">
@@ -382,11 +372,8 @@ CRITICAL RULES:
           </div>
         </div>
 
-        {/* Main Workspace Layout (2 Columns on Desktop) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start">
-          {/* Left Column: Document Upload & Library (4 Cols) */}
           <div className="lg:col-span-4 flex flex-col gap-4">
-            {/* Upload Box */}
             <div
               onDragOver={(e) => {
                 e.preventDefault();
@@ -431,7 +418,6 @@ CRITICAL RULES:
               </div>
             </div>
 
-            {/* Document Library Section */}
             <div className="docs-card rounded-3xl bg-white dark:bg-[#130c26]/80 border border-purple-200 dark:border-purple-400/20 p-4 space-y-3 shadow-sm dark:shadow-xl transition-colors">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300/90 font-mono">
@@ -439,7 +425,6 @@ CRITICAL RULES:
                 </h3>
               </div>
 
-              {/* Documents List */}
               {documents.length === 0 ? (
                 <div className="py-8 text-center space-y-2">
                   <BookOpen size={24} className="text-zinc-400 dark:text-zinc-600 mx-auto" />
@@ -508,9 +493,7 @@ CRITICAL RULES:
             </div>
           </div>
 
-          {/* Right Column: Q&A Question & Answer Workspace (8 Cols) */}
           <div className="lg:col-span-8 flex flex-col gap-4">
-            {/* Mobile Document Switcher Dropdown (lg:hidden) */}
             {documents.length > 1 && (
               <div className="block lg:hidden w-full">
                 <ResponsiveDropdown<string>
@@ -530,7 +513,6 @@ CRITICAL RULES:
               </div>
             )}
 
-            {/* Active Document Header Card */}
             {activeDoc ? (
               <div className="docs-card p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#130c26]/90 border border-purple-200 dark:border-purple-400/25 shadow-sm dark:shadow-xl space-y-4 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-100 dark:border-purple-400/15 pb-3">
@@ -553,7 +535,6 @@ CRITICAL RULES:
                   </span>
                 </div>
 
-                {/* Example Quick Questions */}
                 <div className="space-y-2">
                   <p className="docs-item-meta text-[11px] font-medium text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
                     <Sparkles size={11} className="text-purple-600 dark:text-purple-500" />
@@ -573,7 +554,6 @@ CRITICAL RULES:
                   </div>
                 </div>
 
-                {/* Question Input Form */}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -616,7 +596,6 @@ CRITICAL RULES:
               </div>
             )}
 
-            {/* Answer Display Section */}
             <AnimatePresence>
               {(isAnswering || answer) && (
                 <motion.div
@@ -625,7 +604,6 @@ CRITICAL RULES:
                   exit={{ opacity: 0, y: 8 }}
                   className="docs-answer-card p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#140e28]/95 border border-purple-200 dark:border-purple-400/30 shadow-sm dark:shadow-2xl space-y-4 transition-colors"
                 >
-                  {/* Clean Answer Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-purple-100 dark:border-purple-400/15 pb-3.5">
                     <div>
                       <div className="flex items-center gap-2">
@@ -637,7 +615,6 @@ CRITICAL RULES:
                         </h3>
                       </div>
 
-                      {/* Clean source badge right under header */}
                       {retrievedSources.length > 0 && (
                         <div className="flex items-center gap-1.5 mt-2">
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium font-mono bg-purple-100 dark:bg-purple-500/15 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-400/30 shadow-sm">
@@ -665,7 +642,6 @@ CRITICAL RULES:
                     )}
                   </div>
 
-                  {/* Clean Structured Answer Content */}
                   <div className="docs-text-body space-y-3 pt-1">
                     {isAnswering && !answer && (
                       <div className="flex items-center gap-2.5 text-purple-600 dark:text-purple-300 py-6">
@@ -742,7 +718,6 @@ CRITICAL RULES:
                           {isExpanded || !hasDetailSection ? cleanedAnswer : primaryContent}
                         </ReactMarkdown>
 
-                        {/* Collapsible Toggle for Long Document Answers */}
                         {hasDetailSection && (
                           <div className="pt-2">
                             <button
@@ -758,7 +733,6 @@ CRITICAL RULES:
                     )}
                   </div>
 
-                  {/* Clean Grounded Source Reference Footer */}
                   {answer && retrievedSources.length > 0 && (
                     <div className="mt-4 pt-3.5 border-t border-purple-100 dark:border-purple-400/15 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-400">
                       <div className="flex items-center gap-2">

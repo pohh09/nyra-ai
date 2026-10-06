@@ -18,14 +18,10 @@ async function runInvestigation() {
       failed++;
     }
   }
-
-  // 1. Check Supabase Environment Consistency
   console.log('1. Checking Project Environment Configuration...');
   const envContent = fs.readFileSync('.env.local', 'utf-8');
   assert(envContent.includes(SUPABASE_URL), 'Supabase URL matches between client and server');
   assert(envContent.includes(ANON_KEY), 'Supabase publishable key matches between client and server');
-
-  // 2. Check Code Normalization in AuthContext and AuthCard (Login / Signup)
   console.log('\n2. Verifying Email Normalization & Safe Fallback...');
   const authContext = fs.readFileSync('lib/auth/AuthContext.tsx', 'utf-8');
   const authCard = fs.readFileSync('components/auth/AuthCard.tsx', 'utf-8');
@@ -33,8 +29,6 @@ async function runInvestigation() {
   assert(authContext.includes('email.trim().toLowerCase()'), 'AuthContext normalizes email to lowercase');
   assert(authCard.includes('loginEmail.trim().toLowerCase()'), 'AuthCard normalizes login email to lowercase');
   assert(authCard.includes('signupEmail.trim().toLowerCase()'), 'AuthCard normalizes signup email to lowercase');
-
-  // 3. Test Invalid Credentials Error Handling
   console.log('\n3. Testing Supabase Login Error Response...');
   const badLoginRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
@@ -50,8 +44,6 @@ async function runInvestigation() {
   const badLoginData = await badLoginRes.json();
   console.log('   Bad login response:', badLoginRes.status, badLoginData.msg || badLoginData.error_description);
   assert(badLoginRes.status === 400, 'Supabase correctly rejects non-existent/invalid credentials with 400');
-
-  // 4. Check that Local Fallback is Disabled when Supabase is Configured
   console.log('\n4. Verifying No Local PBKDF2 Fallback when Supabase is Configured...');
   assert(!authContext.includes('if (!localRes.success && configured)'), 'No local auth fallback triggered when Supabase configured');
 

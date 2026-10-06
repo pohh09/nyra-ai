@@ -45,23 +45,17 @@ export default function PricingPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-white transition-all duration-500">
-      {/* BACKGROUND GLOWS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* LIGHT */}
         <div className="absolute top-[-220px] left-[-180px] h-[650px] w-[500px] rounded-full bg-[#E52A83]/10 blur-[140px] dark:hidden" />
         <div className="absolute bottom-[-220px] right-[-180px] h-[650px] w-[500px] rounded-full bg-[#B31372]/10 blur-[140px] dark:hidden" />
 
-        {/* DARK */}
         <div className="absolute top-[-220px] left-[-180px] hidden dark:block h-[650px] w-[500px] rounded-full bg-[#E52A83]/15 blur-[160px]" />
         <div className="absolute bottom-[-220px] right-[-180px] hidden dark:block h-[650px] w-[500px] rounded-full bg-[#B31372]/15 blur-[160px]" />
       </div>
 
-      {/* CONTENT */}
       <div className="relative z-10">
-        {/* NAVBAR */}
         <header>
           <div className="mx-auto flex max-w-[1400px] items-center justify-between px-5 py-5 md:px-8">
-            {/* LEFT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
@@ -82,7 +76,6 @@ export default function PricingPage() {
               </Link>
             </div>
 
-            {/* RIGHT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
@@ -103,10 +96,8 @@ export default function PricingPage() {
           </div>
         </header>
 
-        {/* HERO */}
         <section className="px-5 pt-10 pb-16 md:px-8 md:pt-14 md:pb-20">
           <div className="mx-auto max-w-[1400px]">
-            {/* TOP */}
             <div className="text-center">
               <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 uppercase">
                 PRICING
@@ -124,7 +115,6 @@ export default function PricingPage() {
                 Flexible plans for AI conversations, productivity and collaboration.
               </p>
 
-              {/* BUTTONS */}
               <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/chat-ui"
@@ -141,7 +131,6 @@ export default function PricingPage() {
                 </Link>
               </div>
 
-              {/* TOGGLE */}
               <div className="mx-auto mt-10 flex w-fit items-center gap-2 rounded-full border border-[#E7B8CF] dark:border-pink-500/20 bg-white/80 dark:bg-white/[0.05] p-2 backdrop-blur-xl">
                 <button className="rounded-full bg-gradient-to-r from-[#E52A83] to-[#B31372] px-5 py-2 text-sm font-bold text-white shadow-sm">
                   Monthly
@@ -156,7 +145,6 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* TRUST */}
             <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
               {[
                 '10K+ Users',
@@ -173,7 +161,6 @@ export default function PricingPage() {
               ))}
             </div>
 
-            {/* PRICING GRID */}
             <div className="mx-auto mt-14 grid max-w-[1050px] grid-cols-1 gap-6 lg:grid-cols-3">
               {plans.map((plan) => (
                 <div
@@ -184,26 +171,21 @@ export default function PricingPage() {
                       : 'border border-[#E7B8CF] dark:border-pink-500/15 bg-white dark:bg-white/[0.04] shadow-[0_4px_24px_rgba(38,24,39,0.03)] backdrop-blur-3xl'
                   }`}
                 >
-                  {/* CONTENT */}
                   <div className="relative z-10 p-7">
-                    {/* BADGE */}
                     {plan.featured && (
                       <div className="mb-5 inline-flex rounded-full border border-[#E7B8CF] dark:border-pink-500/30 bg-[#F4DCE9] dark:bg-pink-500/15 px-4 py-1.5 text-[10px] font-bold tracking-[0.12em] text-[#B31372] dark:text-pink-300">
                         MOST POPULAR
                       </div>
                     )}
 
-                    {/* TITLE */}
                     <h2 className="text-[30px] font-semibold tracking-[-0.05em] text-[#261827] dark:text-white">
                       {plan.name}
                     </h2>
 
-                    {/* DESC */}
                     <p className="mt-3 text-[14px] leading-7 text-[#6E6072] dark:text-zinc-400">
                       {plan.desc}
                     </p>
 
-                    {/* PRICE */}
                     <div className="mt-8 flex items-end gap-2">
                       <span className="text-[58px] font-bold tracking-[-0.08em] leading-none text-[#261827] dark:text-white">
                         {plan.price}
@@ -213,10 +195,8 @@ export default function PricingPage() {
                       </span>
                     </div>
 
-                    {/* DIVIDER */}
                     <div className="mt-7 h-px bg-[#E7B8CF] dark:bg-pink-500/15" />
 
-                    {/* FEATURES */}
                     <div className="mt-7 space-y-4">
                       {plan.features.map((item) => (
                         <div key={item} className="flex items-center gap-3">
@@ -230,7 +210,6 @@ export default function PricingPage() {
                       ))}
                     </div>
 
-                    {/* BUTTON */}
                     <Link
                       href="/chat-ui"
                       className={`mt-9 flex h-[52px] w-full items-center justify-center rounded-2xl text-[14px] font-bold tracking-[-0.02em] transition-all duration-300 ${
@@ -242,7 +221,6 @@ export default function PricingPage() {
                       {plan.button}
                     </Link>
 
-                    {/* FOOTER */}
                     <p className="mt-4 text-center text-[11px] text-[#6E6072] dark:text-zinc-400">
                       Cancel anytime • Secure payments
                     </p>
@@ -251,7 +229,6 @@ export default function PricingPage() {
               ))}
             </div>
 
-            {/* FAQ */}
             <div className="mt-24">
               <div className="text-center">
                 <p className="text-sm font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 uppercase">
@@ -265,7 +242,6 @@ export default function PricingPage() {
                 </h2>
               </div>
 
-              {/* FAQ GRID */}
               <div className="mx-auto mt-14 grid max-w-4xl gap-5">
                 {[
                   {

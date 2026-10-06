@@ -94,10 +94,6 @@ export function validateImageFile(file: File, currentCount: number): { valid: bo
   return { valid: true };
 }
 
-/**
- * Sanitizes attachments before persisting to localStorage to avoid QuotaExceededError.
- * Keeps metadata (id, name, type, size, pages, status) and strips large raw binary blobs and file references.
- */
 export function sanitizeAttachmentForStorage(att: FileAttachment): FileAttachment {
   return {
     id: att.id,
@@ -109,7 +105,6 @@ export function sanitizeAttachmentForStorage(att: FileAttachment): FileAttachmen
     errorMessage: att.errorMessage,
     url: att.url,
     extractedText: att.extractedText,
-    dataUrl: att.dataUrl ? att.dataUrl.slice(0, 100) : undefined, // Truncate dataUrl in storage if any
-    // Do not serialize heavy File objects in localStorage
+    dataUrl: att.dataUrl ? att.dataUrl.slice(0, 100) : undefined,
   };
 }

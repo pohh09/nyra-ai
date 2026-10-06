@@ -108,7 +108,6 @@ export default function Sidebar({
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Close context menu on outside click or scroll
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -132,7 +131,6 @@ export default function Sidebar({
     };
   }, [menu, userMenuOpen]);
 
-  // Focus rename input on open
   useEffect(() => {
     if (editingChatId && inputRef.current) {
       inputRef.current.focus();
@@ -181,7 +179,6 @@ export default function Sidebar({
     setEditingChatId(null);
   };
 
-  // Group chats by date
   const getSection = (timestamp: number) => {
     const now = new Date();
     const target = new Date(timestamp);
@@ -195,11 +192,9 @@ export default function Sidebar({
     return 'Older';
   };
 
-  // Filter chats by search query AND active project
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
 
   const filteredChats = chats.filter((chat) => {
-    // Only display conversations that have at least one message
     if (!chat.messages || chat.messages.length === 0) return false;
 
     if (activeProjectId) {
@@ -236,15 +231,9 @@ export default function Sidebar({
 
   return (
     <>
-      {/* SEAMLESS TRANSPARENT CHATGPT-STYLE SIDEBAR */}
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent text-[#261827] dark:text-[#ede7f3] select-none">
-        {/* =========================================================
-            TOP HEADER: Brand / Toggle + New Chat Action
-        ========================================================= */}
         <div className="px-3 pt-3.5 pb-2">
-          {/* Top Actions Row */}
           <div className="flex items-center justify-between gap-1 mb-2.5">
-            {/* Nyra Brand Logo & Name */}
             <button
               onClick={handleNewChat}
               className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-[#F4DCE9] dark:hover:bg-white/[0.06] transition text-left cursor-pointer group"
@@ -258,7 +247,6 @@ export default function Sidebar({
               </span>
             </button>
 
-            {/* Top Right: Collapse Sidebar */}
             <button
               onClick={() => {
                 onCloseMobile?.();
@@ -272,7 +260,6 @@ export default function Sidebar({
             </button>
           </div>
 
-          {/* New Chat Button (ChatGPT Style) */}
           <button
             onClick={handleNewChat}
             className="w-full flex items-center justify-between px-3 py-2.5 sm:py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#F7F3FA] dark:bg-white/[0.05] dark:hover:bg-white/[0.1] border border-[#E8E4EF] dark:border-white/[0.08] text-xs font-medium text-[#261827] dark:text-white transition cursor-pointer shadow-xs group active:scale-[0.99]"
@@ -284,7 +271,6 @@ export default function Sidebar({
             <span className="text-[10px] text-[#9E93A2] dark:text-zinc-400 font-mono opacity-60 group-hover:opacity-100">⌘K</span>
           </button>
 
-          {/* Active Workspace / Project Indicator */}
           {activeProject && (
             <div className="mt-2 flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#F4DCE9] dark:bg-pink-500/10 border border-[#E8E4EF] dark:border-pink-400/20 text-xs text-[#B31372] dark:text-pink-200">
               <button
@@ -304,7 +290,6 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* Search Input (Subtle) */}
           <div className="mt-2 relative">
             <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500" />
             <input
@@ -324,7 +309,6 @@ export default function Sidebar({
             )}
           </div>
 
-          {/* Workspace Hierarchy */}
           <div className="mt-3 px-0.5 space-y-0.5">
             <p className="px-2 pb-1 text-[10.5px] font-semibold uppercase tracking-wider text-[#92909B] dark:text-zinc-500">
               Workspace
@@ -383,14 +367,10 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* =========================================================
-            CHAT CONVERSATIONS LIST
-        ========================================================= */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-1 space-y-3 scrollbar-thin">
           <p className="px-2 pt-1 pb-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-[#92909B] dark:text-zinc-500">
             Recent conversations
           </p>
-          {/* PINNED CHATS */}
           {pinnedChats.length > 0 && (
             <div>
               <p className="px-2 pb-1 text-[11px] font-medium text-[#92909B] dark:text-zinc-400">
@@ -402,7 +382,6 @@ export default function Sidebar({
             </div>
           )}
 
-          {/* TEMPORAL SECTIONS */}
           {orderedSections.map((section) => {
             const sectionChats = groupedChats[section];
             return (
@@ -424,11 +403,7 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* =========================================================
-            BOTTOM USER FOOTER: Profile & Settings (ChatGPT Style)
-        ========================================================= */}
         <div className="p-2 border-t border-[#E8E4EF] dark:border-white/[0.06]">
-          {/* PWA Install Button (Only visible if browser supports & not yet installed) */}
           <InstallButton variant="sidebar" className="mb-1" />
 
           <div className="relative">
@@ -450,13 +425,11 @@ export default function Sidebar({
               <MoreHorizontal size={14} className="text-[#9E93A2] shrink-0" />
             </button>
 
-            {/* User Popover Menu */}
             {userMenuOpen && (
               <div
                 ref={userMenuRef}
                 className="absolute bottom-12 left-0 z-50 w-full overflow-hidden rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-1.5 shadow-2xl backdrop-blur-2xl animate-[fadeIn_0.1s_ease-out] space-y-0.5"
               >
-                {/* Install Option inside user menu */}
                 <InstallButton variant="menu" onInstalled={() => setUserMenuOpen(false)} />
 
                 <button
@@ -515,7 +488,6 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* CHAT CONTEXT MENU (3-Dots on Row) */}
       {menu && menuChat && (
         <div
           ref={menuRef}
@@ -576,7 +548,6 @@ export default function Sidebar({
         </div>
       )}
 
-      {/* DELETE CONFIRMATION MODAL */}
       {deleteChat && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-[fadeIn_0.1s_ease-out]">
           <div className="w-full max-w-sm rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-5 shadow-2xl">
@@ -605,7 +576,6 @@ export default function Sidebar({
         </div>
       )}
 
-      {/* CLEAR ALL CHATS CONFIRMATION MODAL */}
       {confirmClearHistory && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-[fadeIn_0.1s_ease-out]">
           <div className="w-full max-w-sm rounded-2xl border border-rose-500/25 bg-[#FFFFFF] dark:bg-[#12051B] p-5 shadow-2xl">
@@ -636,7 +606,6 @@ export default function Sidebar({
     </>
   );
 
-  // Render clean chat row item
   function renderChatRow(chat: Chat) {
     const isActive = chat.id === currentChatId;
     const isEditing = editingChatId === chat.id;

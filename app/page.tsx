@@ -68,16 +68,13 @@ const fadeUpStagger: Variants = {
 export default function HomePage() {
   const router = useRouter();
 
-  // 3D Cinematic Intro State (controlled globally by AppStartupIntro on startup; locally only for replay)
   const [showIntro, setShowIntro] = useState<boolean>(false);
   const [isIntroComplete, setIsIntroComplete] = useState<boolean>(false);
   const [logoAssembled, setLogoAssembled] = useState<boolean>(false);
   const [isClientMounted, setIsClientMounted] = useState<boolean>(false);
 
-  // Navbar & Scroll State
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Hero Depth Planes Refs
   const heroLeftPlaneRef = useRef<HTMLDivElement>(null);
   const heroRightPlaneRef = useRef<HTMLDivElement>(null);
   const heroBadgeRef = useRef<HTMLDivElement>(null);
@@ -86,15 +83,12 @@ export default function HomePage() {
   const heroCapabilitiesRef = useRef<HTMLDivElement>(null);
   const heroCtasRef = useRef<HTMLDivElement>(null);
 
-  // FAQ Accordion & Category Filter State
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [faqCategory, setFaqCategory] = useState<string>('all');
 
-  // Session & Reduced Motion Initialization
   useEffect(() => {
     setIsClientMounted(true);
 
-    // Listen for global startup intro completion
     const handleGlobalIntroDone = () => {
       setIsIntroComplete(true);
       setShowIntro(false);
@@ -102,13 +96,11 @@ export default function HomePage() {
 
     window.addEventListener('nyra:intro-complete', handleGlobalIntroDone);
 
-    // Fallback in case navigated internally where intro already completed
     const fallbackTimer = setTimeout(() => {
       setIsIntroComplete(true);
       setShowIntro(false);
     }, 2600);
 
-    // Remove scrollbars on landing page
     if (typeof document !== 'undefined') {
       document.documentElement.classList.add('no-scrollbar');
       document.body.classList.add('no-scrollbar');
@@ -124,13 +116,11 @@ export default function HomePage() {
     };
   }, []);
 
-  // Handle 3D Cinematic Intro Completion
   const handleIntroComplete = React.useCallback(() => {
     setShowIntro(false);
     setIsIntroComplete(true);
   }, []);
 
-  // Replay Intro Handler (callable from footer)
   const handleReplayIntro = React.useCallback(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -139,7 +129,6 @@ export default function HomePage() {
     setShowIntro(true);
   }, []);
 
-  // Hero Content Arrival — Orchestrated 400ms after Nyra Logo Assembly
   useEffect(() => {
     if (!isIntroComplete || !logoAssembled) return;
 
@@ -220,7 +209,6 @@ export default function HomePage() {
     return () => ctx.revert();
   }, [isIntroComplete, logoAssembled]);
 
-  // Scroll Listener
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -229,7 +217,6 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // FAQ Data with Categories (Concise & Verified)
   const faqData = [
     {
       q: 'What is Nyra AI?',
@@ -291,11 +278,10 @@ export default function HomePage() {
         }
 
         body {
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
         }
 
-        /* Hide scrollbars for Chrome, Safari, and Opera */
         ::-webkit-scrollbar {
           display: none;
           width: 0px;
@@ -309,7 +295,6 @@ export default function HomePage() {
         }
       `}</style>
 
-      {/* 3D CINEMATIC INTRO OVERLAY */}
       {(!isClientMounted || showIntro) && (
         isClientMounted ? (
           <CinematicIntro3D onComplete={handleIntroComplete} />
@@ -318,13 +303,10 @@ export default function HomePage() {
         )
       )}
 
-      {/* MAIN CONTAINER */}
       <main
         className="relative w-full min-h-screen bg-[#050505] text-[#F5F5F7] overflow-x-hidden no-scrollbar selection:bg-[#E52A83]/30 selection:text-white transition-colors duration-300"
       >
-        {/* PREMIUM AMBIENT GRADIENT & ATMOSPHERIC BACKDROP */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden overflow-x-clip z-0 select-none">
-          {/* Subtle Architectural Texture Grid */}
           <div
             className="absolute inset-0 opacity-[0.018]"
             style={{
@@ -334,14 +316,12 @@ export default function HomePage() {
             }}
           />
 
-          {/* Atmospheric Glow Light Sources */}
           <div className="absolute -top-32 -left-32 w-[clamp(320px,45vw,650px)] h-[clamp(320px,45vw,650px)] rounded-full bg-[#B31372]/[0.06] blur-[160px]" />
           <div className="absolute top-[28%] -right-20 sm:-right-40 w-[clamp(360px,50vw,700px)] h-[clamp(360px,50vw,700px)] rounded-full bg-[#E52A83]/[0.05] blur-[170px]" />
           <div className="absolute top-[55%] -left-20 sm:-left-36 w-[clamp(300px,40vw,600px)] h-[clamp(300px,40vw,600px)] rounded-full bg-[#FF4FA3]/[0.03] blur-[160px]" />
           <div className="absolute top-[75%] right-0 w-[clamp(320px,45vw,650px)] h-[clamp(320px,45vw,650px)] rounded-full bg-[#B31372]/[0.05] blur-[150px]" />
         </div>
 
-        {/* CINEMATIC FLOWING LIGHT RIBBON HERO BACKDROP (Reference Aesthetic: Near-Black + Layered Magenta/Pink Ribbons + Hot Crest Highlight) */}
         <div className="pointer-events-none absolute inset-x-0 top-0 w-full max-w-full h-[clamp(750px,95vh,980px)] sm:h-[clamp(900px,100vh,1180px)] lg:h-[clamp(1100px,100vh,1360px)] overflow-hidden overflow-x-clip z-0 select-none">
           <svg
             className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
@@ -351,7 +331,6 @@ export default function HomePage() {
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              {/* Layer Blur Filters for Smooth Atmospheric Glow */}
               <filter id="ribbonAtmosphereBlur" x="-30%" y="-30%" width="160%" height="160%">
                 <feGaussianBlur stdDeviation="38" result="blur" />
               </filter>
@@ -359,7 +338,6 @@ export default function HomePage() {
                 <feGaussianBlur stdDeviation="10" result="blur" />
               </filter>
 
-              {/* Master Luminous Gradient: Deep Black -> Deep Purple (#16091F) -> Dark Violet (#24103A) -> Magenta (#B31372) -> Hot Pink (#E52A83) -> Pink Glow (#FF4FA3) -> Hot Red/Pink (#F43F5E) */}
               <linearGradient id="luminousRibbonGrad" x1="5%" y1="0%" x2="95%" y2="85%">
                 <stop offset="0%" stopColor="#050505" stopOpacity="0" />
                 <stop offset="12%" stopColor="#16091F" stopOpacity="0.75" />
@@ -371,7 +349,6 @@ export default function HomePage() {
                 <stop offset="100%" stopColor="#050505" stopOpacity="0" />
               </linearGradient>
 
-              {/* Deep Outer Shadow Curve Gradient */}
               <linearGradient id="deepPurpleShadowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#000000" stopOpacity="0.95" />
                 <stop offset="25%" stopColor="#16091F" stopOpacity="0.9" />
@@ -380,7 +357,6 @@ export default function HomePage() {
                 <stop offset="100%" stopColor="#050505" stopOpacity="1" />
               </linearGradient>
 
-              {/* Razor-Sharp Hot Red/Pink Crest Line */}
               <linearGradient id="crestHotPinkStroke" x1="10%" y1="0%" x2="90%" y2="100%">
                 <stop offset="0%" stopColor="#B31372" stopOpacity="0" />
                 <stop offset="25%" stopColor="#E52A83" stopOpacity="0.75" />
@@ -390,7 +366,6 @@ export default function HomePage() {
                 <stop offset="100%" stopColor="#F43F5E" stopOpacity="0" />
               </linearGradient>
 
-              {/* Secondary Sweeping Depth Ribbon */}
               <linearGradient id="secondaryRibbonGrad" x1="20%" y1="10%" x2="80%" y2="90%">
                 <stop offset="0%" stopColor="#B31372" stopOpacity="0.18" />
                 <stop offset="40%" stopColor="#E52A83" stopOpacity="0.22" />
@@ -398,7 +373,6 @@ export default function HomePage() {
                 <stop offset="100%" stopColor="#050505" stopOpacity="0" />
               </linearGradient>
 
-              {/* Hot-Spot Radial Spotlight behind center robot companion */}
               <radialGradient id="heroCenterHotSpot" cx="66%" cy="30%" r="48%">
                 <stop offset="0%" stopColor="#FF4FA3" stopOpacity="0.22" />
                 <stop offset="35%" stopColor="#B31372" stopOpacity="0.14" />
@@ -407,32 +381,26 @@ export default function HomePage() {
               </radialGradient>
             </defs>
 
-            {/* Base Deep Void */}
             <rect width="1440" height="1360" fill="#050505" />
 
-            {/* Ambient Hot-Spot Behind Primary Light Energy */}
             <circle cx="950" cy="400" r="500" fill="url(#heroCenterHotSpot)" />
 
-            {/* Layer 1: Ambient Background Depth Ribbon */}
             <path
               d="M0 40 C320 280 660 340 1020 140 C1220 25 1360 65 1440 110 L1440 680 C1300 660 1120 710 920 840 C620 1040 320 960 0 740 Z"
               fill="url(#deepPurpleShadowGrad)"
             />
 
-            {/* Layer 2: Secondary Soft Magenta Ambient Ribbon */}
             <path
               d="M-50 120 C340 380 720 420 1080 200 C1280 70 1390 110 1480 160 L1480 540 C1340 500 1160 550 960 680 C660 880 340 800 -50 560 Z"
               fill="url(#secondaryRibbonGrad)"
               filter="url(#ribbonAtmosphereBlur)"
             />
 
-            {/* Layer 3: Primary Flowing Luminous Magenta / Hot Pink Ribbon */}
             <path
               d="M-40 90 C340 350 720 400 1060 180 C1240 55 1370 95 1480 145 L1480 340 C1360 280 1180 320 980 460 C680 660 340 580 -40 320 Z"
               fill="url(#luminousRibbonGrad)"
             />
 
-            {/* Layer 4: Razor-Sharp Hot Red/Pink Crest Stroke (Luminous Edge of the Ribbon) */}
             <path
               d="M-40 90 C340 350 720 400 1060 180 C1240 55 1370 95 1480 145"
               stroke="url(#crestHotPinkStroke)"
@@ -449,7 +417,6 @@ export default function HomePage() {
               fill="none"
             />
 
-            {/* Micro-Particles / Stardust in the Deep Black Void */}
             <circle cx="180" cy="160" r="1.2" fill="#FFFFFF" opacity="0.65" />
             <circle cx="340" cy="110" r="1.5" fill="#FF4FA3" opacity="0.8" />
             <circle cx="520" cy="220" r="1" fill="#FFFFFF" opacity="0.5" />
@@ -464,22 +431,18 @@ export default function HomePage() {
           </svg>
         </div>
 
-        {/* STICKY PILL NAVBAR */}
         <NavbarReveal isScrolled={isScrolled} />
 
-        {/* HERO SECTION */}
         <section className="relative z-10 w-full min-h-[calc(100vh-60px)] flex flex-col justify-center py-12 sm:py-16 lg:py-24">
           <div
             className="w-[94%] sm:w-[90%] max-w-[1800px] mx-auto px-2 sm:px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center"
             style={{ perspective: '1600px', transformStyle: 'preserve-3d' }}
           >
-            {/* LEFT HERO COLUMN */}
             <div
               ref={heroLeftPlaneRef}
               className="lg:col-span-6 flex flex-col items-start text-left w-full space-y-6"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              {/* Eyebrow Badge */}
               <div
                 ref={heroBadgeRef}
                 className="inline-flex items-center gap-2.5 rounded-full border border-pink-500/25 bg-[#16091F]/60 px-3.5 sm:px-4 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl hover:border-pink-400/40 transition-colors"
@@ -490,7 +453,6 @@ export default function HomePage() {
                 <span>Unified Intelligence Workspace</span>
               </div>
 
-              {/* Product-Focused Headline */}
               <h1
                 ref={heroHeadingRef}
                 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-[#F5F5F7] leading-[1.12] xs:leading-[1.08] sm:leading-[1.05] break-words"
@@ -501,7 +463,6 @@ export default function HomePage() {
                 </span>
               </h1>
 
-              {/* Product Description */}
               <p
                 ref={heroDescRef}
                 className="text-sm xs:text-base sm:text-lg text-[#A7A7B0] leading-relaxed max-w-xl font-normal"
@@ -509,7 +470,6 @@ export default function HomePage() {
                 AI conversations, live web search, document analysis, and tasks unified in one focused studio.
               </p>
 
-              {/* CTAs */}
               <div
                 ref={heroCtasRef}
                 className="pt-2 flex flex-col xs:flex-row items-stretch xs:items-center gap-3 sm:gap-4 w-full sm:w-auto"
@@ -532,7 +492,6 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* Trust & Model Capability Chips */}
               <div
                 ref={heroCapabilitiesRef}
                 className="pt-2 flex flex-col gap-3 w-full"
@@ -567,7 +526,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT HERO COLUMN: 3D Animated Nyra Neural Logo & Floating Telemetry Cards */}
             <div
               ref={heroRightPlaneRef}
               className="lg:col-span-6 w-full"
@@ -578,28 +536,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 3D MOBILE SHOWCASE */}
         <MobileShowcaseSection />
 
-        {/* 3D DESKTOP WORKSPACE SHOWCASE & LIVE DEMO */}
         <DesktopWorkspaceSection />
 
-        {/* SECTION 2: EDITORIAL USE CASES SHOWCASE (Alternating Visual Rhythm) */}
         <UseCasesShowcaseSection />
 
-        {/* SECTION 3: HOW NYRA WORKS (Connected Workflow Timeline: ASK -> CONTEXT -> THINK -> ACT) */}
         <HowNyraWorksSection />
 
-        {/* MINIMAL VERIFIED TECH STACK STRIP */}
         <TechStackMinimal />
 
-        {/* REDESIGNED FAQ SECTION (Dark Obsidian & Deep Purple Accent Style) */}
         <section id="faq" className="scroll-mt-24 sm:scroll-mt-28 relative w-full bg-transparent py-16 sm:py-24 lg:py-28 overflow-hidden transition-colors">
-          {/* Subtle Obsidian/Violet Ambient Light */}
           <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#B31372]/[0.05] rounded-full blur-3xl" />
 
           <div className="w-[94%] sm:w-[90%] max-w-5xl mx-auto px-2 sm:px-4 space-y-10 sm:space-y-12 relative z-10">
-            {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -607,7 +557,6 @@ export default function HomePage() {
               transition={{ duration: 0.5 }}
               className="text-center max-w-2xl mx-auto flex flex-col items-center"
             >
-              {/* Eyebrow Badge */}
               <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/70 px-3.5 py-1 text-xs font-semibold text-pink-200 shadow-xs mb-3.5 backdrop-blur-md">
                 <div className="flex h-4 w-4 items-center justify-center rounded-full bg-pink-500/20 text-pink-300">
                   <Sparkles className="h-2.5 w-2.5" />
@@ -619,17 +568,14 @@ export default function HomePage() {
                 <span className="text-white font-medium">Clear Explanations</span>
               </div>
 
-              {/* Deep Violet Heading */}
               <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-white leading-tight">
                 Frequently Asked <span className="bg-gradient-to-r from-pink-400 via-rose-300 to-purple-300 bg-clip-text text-transparent">Questions</span>
               </h2>
 
-              {/* Muted Subtitle */}
               <p className="mt-3 text-sm sm:text-base text-[#A7A7B0] max-w-lg mx-auto leading-relaxed">
                 Common questions about models, documents, privacy, and search.
               </p>
 
-              {/* Category Filter Pills in Dark Obsidian */}
               <div className="pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                 {[
                   { id: 'all', label: 'All Questions' },
@@ -656,7 +602,6 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Accordion List in Dark Obsidian */}
             <div className="space-y-3">
               {faqData
                 .filter((item) => faqCategory === 'all' || item.category === faqCategory)
@@ -714,14 +659,11 @@ export default function HomePage() {
                 })}
             </div>
 
-            {/* Enhanced "Have More Questions?" Card */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#160822]/90 via-[#0E0417]/90 to-[#05020A]/95 border border-pink-500/25 p-5 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-              {/* Subtle ambient gradient orb */}
               <div className="absolute -top-16 -right-16 w-52 h-52 bg-[#B31372]/15 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-[#E52A83]/10 rounded-full blur-3xl pointer-events-none" />
 
               <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
-                {/* Left info & text */}
                 <div className="space-y-3 max-w-xl">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-950/50 border border-pink-500/30 text-pink-200 text-xs font-semibold shadow-xs">
                     <span className="relative flex h-2 w-2">
@@ -740,7 +682,6 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  {/* Quick suggested question chips */}
                   <div className="pt-1 flex flex-wrap items-center gap-2">
                     <span className="text-[11px] font-semibold text-pink-300">Try asking:</span>
                     {[
@@ -760,7 +701,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Right Action Box */}
                 <div className="flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end justify-center gap-3 shrink-0 lg:border-l lg:border-white/10 lg:pl-8">
                   <Link
                     href="/chat-ui"
@@ -788,14 +728,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* MINIMAL TECHNOLOGY STRIP */}
         <TechStackMinimal />
 
-        {/* ========================================================================= */}
-        {/* FULL-COVERAGE DEEP NEAR-BLACK CTA & FOOTER SECTION                        */}
-        {/* ========================================================================= */}
         <section className="relative w-full bg-[#050505] text-white pt-0 pb-0 overflow-hidden">
-          {/* SEAMLESS HERO-STYLE FLOWING WAVE TRANSITION */}
           <div className="relative w-full overflow-hidden leading-none select-none -mb-[1px]">
             <svg
               className="w-full h-24 sm:h-36 md:h-44 lg:h-52 xl:h-60 block align-middle"
@@ -819,16 +754,13 @@ export default function HomePage() {
                 </linearGradient>
               </defs>
 
-              {/* Seamless base gradient transition matching section above */}
               <rect width="1440" height="280" className="fill-[#050505] transition-colors duration-300" />
 
-              {/* Layer 1: Ethereal Soft Pink/Magenta Glow Sheen */}
               <path
                 d="M0,35 C380,185 740,215 1080,65 C1240,-5 1360,35 1440,85 L1440,320 L0,320 Z"
                 fill="url(#superchargeWaveGlow)"
               />
 
-              {/* Layer 2: Main Flowing Asymmetric Deep Purple Base Wave */}
               <path
                 d="M0,60 C380,210 740,240 1080,90 C1240,20 1360,60 1440,110 L1440,320 L0,320 Z"
                 fill="url(#superchargeWaveMain)"
@@ -836,18 +768,14 @@ export default function HomePage() {
             </svg>
           </div>
 
-          {/* Deep Space Background for CTA and Footer */}
           <div className="relative w-full bg-[#050505]">
-            {/* Ambient Internal Glows Strictly Within Dark Region */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden z-0 select-none">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[450px] bg-gradient-to-tr from-[#B31372]/15 via-[#E52A83]/10 to-[#16091F]/20 rounded-full blur-[140px]" />
               <div className="absolute bottom-1/4 left-1/3 w-[450px] h-[300px] bg-[#24103A]/[0.2] rounded-full blur-[110px]" />
             </div>
 
             <div className="relative z-10">
-              {/* FINAL CTA SECTION: SUPERCHARGE YOUR THINKING */}
               <div className="w-[90%] max-w-[1800px] mx-auto px-2 sm:px-4 pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 text-center">
-                {/* Eyebrow Pill Badge */}
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -861,7 +789,6 @@ export default function HomePage() {
                   <span className="text-[12px]">Get Started in Seconds</span>
                 </motion.div>
 
-                {/* Product Headline */}
                 <motion.h2
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -875,7 +802,6 @@ export default function HomePage() {
                   </span>
                 </motion.h2>
 
-                {/* Product Subtitle */}
                 <motion.p
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -886,7 +812,6 @@ export default function HomePage() {
                   Join engineers, researchers, and creators accelerating their workflows with conversational reasoning, private PDF document RAG, and continuous memory.
                 </motion.p>
 
-                {/* Action Buttons matching Hero CTA style (Strict Single-Line Layout) */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -912,7 +837,6 @@ export default function HomePage() {
                   </a>
                 </motion.div>
 
-                {/* Trust & Capability Value Chips */}
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -939,15 +863,11 @@ export default function HomePage() {
                 </motion.div>
               </div>
 
-            {/* POLISHED ARCHITECTURAL NYRA AI FOOTER */}
             <footer className="relative pt-12 sm:pt-16 pb-10 text-xs text-[#A7A7B0] overflow-hidden bg-transparent">
               <div className="w-[90%] max-w-[1800px] mx-auto px-4 sm:px-6 space-y-12">
-                {/* Clean Horizontal Divider before Footer */}
                 <div className="w-full h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
 
-                {/* 12-Column Responsive Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-                  {/* Brand & Mission Column (lg:col-span-4) */}
                   <div className="lg:col-span-4 space-y-4.5">
                     <Link href="/" className="inline-flex items-center gap-3.5 group">
                       <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl overflow-hidden shadow-lg shadow-pink-950/50 border border-pink-500/30 bg-[#0E0514] group-hover:scale-105 group-hover:border-pink-300/60 transition-all duration-300">
@@ -967,7 +887,6 @@ export default function HomePage() {
                       A unified AI workspace for thinking, building, and creating with streaming intelligence, private document RAG, and continuous memory.
                     </p>
 
-                    {/* Operational Status & Replay Intro */}
                     <div className="pt-1 flex flex-wrap items-center gap-2.5">
                       <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/25 text-[11.5px] font-mono text-emerald-300">
                         <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
@@ -983,7 +902,6 @@ export default function HomePage() {
                       </button>
                     </div>
 
-                    {/* Social Channels */}
                     <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs">
                       <a
                         href="https://github.com"
@@ -1018,9 +936,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Navigation Columns (lg:col-span-8) */}
                   <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-10">
-                    {/* Column 1: Workspace */}
                     <div className="space-y-3.5">
                       <span className="font-semibold text-white text-xs uppercase tracking-wider font-mono block text-pink-200/90">
                         Workspace
@@ -1061,7 +977,6 @@ export default function HomePage() {
                       </ul>
                     </div>
 
-                    {/* Column 2: Platform */}
                     <div className="space-y-3.5">
                       <span className="font-semibold text-white text-xs uppercase tracking-wider font-mono block text-pink-200/90">
                         Platform
@@ -1102,7 +1017,6 @@ export default function HomePage() {
                       </ul>
                     </div>
 
-                    {/* Column 3: Company & Trust */}
                     <div className="space-y-3.5">
                       <span className="font-semibold text-white text-xs uppercase tracking-wider font-mono block text-pink-200/90">
                         Company
@@ -1145,7 +1059,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Bottom Legal, Copyright & Version Bar */}
                 <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A7A7B0]">
                   <p>© {new Date().getFullYear()} Nyra AI Inc. All rights reserved.</p>
 

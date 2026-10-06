@@ -13,7 +13,6 @@ export async function streamOpenAI(options: StreamProviderOptions, onChunk: (tex
 
   const formattedMessages: any[] = [];
 
-  // o1 models do not support 'system' role; they use 'developer' or prepended context
   if (options.systemPrompt) {
     if (isReasoningModel) {
       formattedMessages.push({ role: 'developer', content: options.systemPrompt });
@@ -57,7 +56,6 @@ export async function streamOpenAI(options: StreamProviderOptions, onChunk: (tex
 
   if (isReasoningModel) {
     params.max_completion_tokens = options.maxTokens ?? 8192;
-    // Note: o1 models do not support custom temperature
   } else {
     params.temperature = options.temperature ?? 0.7;
     params.max_tokens = options.maxTokens ?? 4096;

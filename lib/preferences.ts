@@ -15,7 +15,6 @@ export function loadLocalPreferences(): UserPreferences {
   try {
     const raw = localStorage.getItem(PREFERENCES_KEY);
     if (!raw) {
-      // Migrate legacy separate keys if present
       const theme = (localStorage.getItem('theme') as any) || 'dark';
       const accentColor = localStorage.getItem('nyra_accent') || 'purple';
       const fontSize = (localStorage.getItem('nyra_font_size') as any) || 'normal';
@@ -47,7 +46,6 @@ export function saveLocalPreferences(prefs: Partial<UserPreferences>): UserPrefe
     const updated: UserPreferences = { ...current, ...prefs };
     localStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
 
-    // Also mirror to legacy keys for compatibility
     if (prefs.theme) {
       localStorage.setItem('theme', prefs.theme);
       document.documentElement.classList.remove('light', 'dark');

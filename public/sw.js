@@ -1,15 +1,4 @@
-/**
- * Nyra AI — Progressive Web App Service Worker
- * 
- * Strict Cache Isolation:
- * - NEVER caches /api/* (AI streams, prompt logic, memories, usage)
- * - NEVER caches authentication endpoints or Supabase/Clerk domains
- * - NEVER interferes with non-GET requests (POST, PUT, DELETE)
- * - Network-First for HTML navigation to ensure fresh dynamic state
- * - Stale-While-Revalidate for static Next.js bundles and brand assets
- */
-
-const CACHE_NAME = 'nyra-pwa-v2';
+const CACHE_NAME = 'nyra-pwa-v4';
 
 const STATIC_PRECACHE = [
   '/',
@@ -17,6 +6,7 @@ const STATIC_PRECACHE = [
   '/favicon.ico',
   '/favicon.png',
   '/logo.png',
+  '/herologo.png',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/icons/icon-maskable-192x192.png',
@@ -29,8 +19,6 @@ const STATIC_PRECACHE = [
   '/manifest.webmanifest',
   '/manifest.json',
 ];
-
-// Install: Pre-cache core shell & brand assets
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -41,8 +29,6 @@ self.addEventListener('install', (event) => {
     })
   );
 });
-
-// Activate: Take immediate control & purge old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -57,29 +43,19 @@ self.addEventListener('activate', (event) => {
     }).then(() => self.clients.claim())
   );
 });
-
-// Fetch: Smart routing with bulletproof auth & AI safeguards
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-
-  // 1. Only process GET requests
   if (req.method !== 'GET') {
     return;
   }
 
   const url = new URL(req.url);
-
-  // 2. Cross-origin requests (Supabase, Clerk, Google AI, Groq, Cloudinary, etc.): NEVER CACHE
   if (url.origin !== self.location.origin) {
     return;
   }
-
-  // 3. API endpoints: ALWAYS NETWORK ONLY. Never cache AI streaming or chat data.
   if (url.pathname.startsWith('/api/')) {
     return;
   }
-
-  // 4. Auth & account flows: ALWAYS NETWORK ONLY
   if (
     url.pathname.startsWith('/login') ||
     url.pathname.startsWith('/signup') ||
@@ -87,8 +63,6 @@ self.addEventListener('fetch', (event) => {
   ) {
     return;
   }
-
-  // 5. HTML Navigation: Network-First with cache fallback
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
@@ -114,8 +88,6 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
-  // 6. Static Next.js assets & brand media: Stale-While-Revalidate
   const isStaticAsset =
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.startsWith('/icons/') ||
@@ -139,6 +111,4 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
-  // Default: pass through to network
 });

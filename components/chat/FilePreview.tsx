@@ -40,7 +40,6 @@ export default function FilePreview({ attachments, onRemove, onRetry }: FilePrev
                   : 'border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF] dark:bg-[#130f24]/90 text-[#292633] dark:text-slate-200 hover:border-[#8B6FC9]/60'
               }`}
             >
-              {/* FILE ICON / SPINNER */}
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EEE8FA] dark:bg-purple-500/10 border border-[#E8E4EF] dark:border-purple-400/20 text-[#8B6FC9] dark:text-purple-400">
                 {isProcessing ? (
                   <Loader2 size={15} className="animate-spin text-[#8B6FC9] dark:text-purple-400" />
@@ -51,7 +50,6 @@ export default function FilePreview({ attachments, onRemove, onRetry }: FilePrev
                 )}
               </div>
 
-              {/* FILE INFO */}
               <div className="min-w-0 max-w-[150px] sm:max-w-[200px]">
                 <p className="truncate font-medium text-xs text-[#292633] dark:text-white" title={file.name}>
                   {file.name}
@@ -61,7 +59,6 @@ export default function FilePreview({ attachments, onRemove, onRetry }: FilePrev
                   {file.pages && file.size ? <span>•</span> : null}
                   {file.size ? <span>{formatFileSize(file.size)}</span> : null}
 
-                  {/* STATUS BADGE */}
                   {isProcessing && (
                     <span className="text-[#8B6FC9] dark:text-purple-300 font-semibold animate-pulse ml-1">Processing...</span>
                   )}
@@ -76,7 +73,6 @@ export default function FilePreview({ attachments, onRemove, onRetry }: FilePrev
                 </div>
               </div>
 
-              {/* ACTIONS: RETRY & REMOVE */}
               <div className="flex items-center gap-1 ml-1">
                 {isError && onRetry && (
                   <button

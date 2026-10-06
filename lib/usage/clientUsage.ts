@@ -44,7 +44,6 @@ export function getLocalUsageRecord(): StoredUsageRecord {
       };
     }
 
-    // New day: roll over and reset
     localStorage.setItem(LOCAL_USAGE_KEY, JSON.stringify(defaultRecord));
     return defaultRecord;
   } catch (e) {
@@ -76,7 +75,6 @@ export function buildClientUsageStats(
   const local = getLocalUsageRecord();
   const today = getTodayUtcString();
 
-  // If server stats are present and valid for today, take the maximum of server and local counts
   const serverAi = serverStats && serverStats.date === today ? serverStats.aiRequests?.used || 0 : 0;
   const serverWeb = serverStats && serverStats.date === today ? serverStats.webSearches?.used || 0 : 0;
   const serverImg = serverStats && serverStats.date === today ? serverStats.imageRequests?.used || 0 : 0;

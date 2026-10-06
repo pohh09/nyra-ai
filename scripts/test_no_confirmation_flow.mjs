@@ -18,7 +18,6 @@ async function runTests() {
     }
   }
 
-  // 1. Password rejection check
   console.log('1. Testing Invalid Password Rejection...');
   const badLoginRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
@@ -34,7 +33,6 @@ async function runTests() {
   const badLoginData = await badLoginRes.json();
   assert(badLoginRes.status === 400, 'Invalid password is rejected with HTTP 400', JSON.stringify(badLoginData));
 
-  // 2. Client Code Integrity: Check AuthContext & Signup page
   console.log('\n2. Verifying App Code Integrity...');
   const fs = await import('fs');
   const authContextContent = fs.readFileSync('lib/auth/AuthContext.tsx', 'utf-8');
@@ -46,7 +44,6 @@ async function runTests() {
   assert(signupPageContent.includes('/onboarding'), 'Signup redirects directly to /onboarding on success');
   assert(!loginPageContent.includes('email not confirmed'), 'Login page does not prompt for email confirmation link');
 
-  // 3. Database Schema check: Auto confirm trigger exists
   console.log('\n3. Verifying SQL Schema Configuration...');
   const schemaContent = fs.readFileSync('lib/supabase/schema.sql', 'utf-8');
   assert(schemaContent.includes('auto_confirm_new_user'), 'Schema includes auto_confirm_new_user trigger function');

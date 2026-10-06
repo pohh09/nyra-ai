@@ -26,7 +26,6 @@ export default function Hero3DModel() {
   const [isHovered, setIsHovered] = useState(false);
   const [pulseCount, setPulseCount] = useState(0);
 
-  // References for Three.js objects
   const sceneRef = useRef<any>(null);
   const rendererRef = useRef<any>(null);
   const coreMeshRef = useRef<any>(null);
@@ -36,7 +35,6 @@ export default function Hero3DModel() {
   const ring3Ref = useRef<any>(null);
   const particlesRef = useRef<any>(null);
 
-  // Mouse interaction state
   const mousePos = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
   const isDragging = useRef(false);
   const previousMousePosition = useRef({ x: 0, y: 0 });
@@ -47,15 +45,12 @@ export default function Hero3DModel() {
     const width = containerRef.current.clientWidth;
     const height = containerRef.current.clientHeight || 520;
 
-    // SCENE
     const scene = new T.Scene();
     sceneRef.current = scene;
 
-    // CAMERA
     const camera = new T.PerspectiveCamera(45, width / height, 0.1, 1000);
     camera.position.z = 6.5;
 
-    // RENDERER
     const renderer = new T.WebGLRenderer({
       canvas: canvasRef.current,
       alpha: true,
@@ -66,23 +61,21 @@ export default function Hero3DModel() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     rendererRef.current = renderer;
 
-    // LIGHTING (Calm, elegant, non-neon)
     const ambientLight = new T.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
-    const pointLight1 = new T.PointLight(0x8b6fc9, 2.8, 50); // Muted lavender
+    const pointLight1 = new T.PointLight(0x8b6fc9, 2.8, 50); 
     pointLight1.position.set(5, 5, 5);
     scene.add(pointLight1);
 
-    const pointLight2 = new T.PointLight(0x7e9ac7, 2.2, 50); // Dusty blue
+    const pointLight2 = new T.PointLight(0x7e9ac7, 2.2, 50); 
     pointLight2.position.set(-5, -5, 3);
     scene.add(pointLight2);
 
-    const pointLight3 = new T.PointLight(0xb4a1de, 1.8, 40); // Pale violet
+    const pointLight3 = new T.PointLight(0xb4a1de, 1.8, 40); 
     pointLight3.position.set(0, 4, -4);
     scene.add(pointLight3);
 
-    // 1. INNER SOLID CORE (Faceted Icosahedron - soft violet metallic)
     const coreGeo = new T.IcosahedronGeometry(1.3, 1);
     const coreMat = new T.MeshPhysicalMaterial({
       color: 0x4a3e68,
@@ -99,7 +92,6 @@ export default function Hero3DModel() {
     scene.add(coreMesh);
     coreMeshRef.current = coreMesh;
 
-    // 2. OUTER WIREFRAME CAGE (Pale violet subtle wireframe)
     const wireGeo = new T.IcosahedronGeometry(1.65, 2);
     const wireMat = new T.MeshBasicMaterial({
       color: 0xb4a1de,
@@ -111,7 +103,6 @@ export default function Hero3DModel() {
     scene.add(wireMesh);
     wireframeMeshRef.current = wireMesh;
 
-    // 3. GYROSCOPE ORBITAL RINGS (Muted lavender, dusty blue, pale violet)
     const createRing = (radius: number, tube: number, color: number, count = 8) => {
       const group = new T.Group();
       const ringGeo = new T.TorusGeometry(radius, tube, 16, 100);
@@ -125,7 +116,6 @@ export default function Hero3DModel() {
       const ring = new T.Mesh(ringGeo, ringMat);
       group.add(ring);
 
-      // Add orbital node satellites on ring
       for (let i = 0; i < count; i++) {
         const angle = (i / count) * Math.PI * 2;
         const nodeGeo = new T.SphereGeometry(tube * 2.8, 12, 12);
@@ -154,7 +144,6 @@ export default function Hero3DModel() {
     scene.add(ring3);
     ring3Ref.current = ring3;
 
-    // 4. PARTICLES SWARM (Soft lavender & dusty blue synapses)
     const particleCount = 200;
     const particleGeo = new T.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -193,7 +182,6 @@ export default function Hero3DModel() {
     scene.add(particleSystem);
     particlesRef.current = particleSystem;
 
-    // RESIZE HANDLER
     const handleResize = () => {
       if (!containerRef.current || !rendererRef.current) return;
       const w = containerRef.current.clientWidth;
@@ -205,7 +193,6 @@ export default function Hero3DModel() {
 
     window.addEventListener('resize', handleResize);
 
-    // MOUSE EVENTS
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
@@ -237,7 +224,6 @@ export default function Hero3DModel() {
     containerEl.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
 
-    // ANIMATION LOOP
     let animationFrameId: number;
     let clock = new T.Clock();
 
@@ -245,7 +231,6 @@ export default function Hero3DModel() {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth mouse lerp
       mousePos.current.x += (mousePos.current.targetX - mousePos.current.x) * 0.05;
       mousePos.current.y += (mousePos.current.targetY - mousePos.current.y) * 0.05;
 
@@ -254,7 +239,6 @@ export default function Hero3DModel() {
         scene.rotation.x = mousePos.current.y * 0.5 + Math.sin(elapsedTime * 0.3) * 0.08;
       }
 
-      // Core rotation & gentle breathing
       if (coreMeshRef.current) {
         coreMeshRef.current.rotation.x = elapsedTime * 0.22;
         coreMeshRef.current.rotation.y = elapsedTime * 0.3;
@@ -262,13 +246,11 @@ export default function Hero3DModel() {
         coreMeshRef.current.scale.set(pulse, pulse, pulse);
       }
 
-      // Wireframe rotation
       if (wireframeMeshRef.current) {
         wireframeMeshRef.current.rotation.x = -elapsedTime * 0.15;
         wireframeMeshRef.current.rotation.z = elapsedTime * 0.18;
       }
 
-      // Ring rotations
       if (ring1Ref.current) {
         ring1Ref.current.rotation.z += 0.006;
         ring1Ref.current.rotation.x = Math.sin(elapsedTime * 0.3) * 0.25 + Math.PI / 3;
@@ -282,7 +264,6 @@ export default function Hero3DModel() {
         ring3Ref.current.rotation.y += 0.004;
       }
 
-      // Particle system gentle swirl
       if (particlesRef.current) {
         particlesRef.current.rotation.y = -elapsedTime * 0.06;
         particlesRef.current.rotation.x = Math.sin(elapsedTime * 0.2) * 0.08;
@@ -303,7 +284,6 @@ export default function Hero3DModel() {
     };
   }, []);
 
-  // Handle Mode Change
   const handleModeSwitch = (mode: 'neural' | 'quantum' | 'synapse') => {
     setActiveMode(mode);
     setPulseCount((c) => c + 1);
@@ -342,15 +322,12 @@ export default function Hero3DModel() {
       onMouseLeave={() => setIsHovered(false)}
       className="relative w-full h-[440px] xs:h-[480px] sm:h-[530px] lg:h-[560px] rounded-2xl md:rounded-3xl border border-[#E8E4EF] dark:border-purple-400/25 bg-[#FFFFFF]/80 dark:bg-[#0b0819]/80 shadow-[0_8px_30px_rgba(41,38,51,0.04)] dark:shadow-2xl dark:shadow-black/80 backdrop-blur-xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing transition-all select-none"
     >
-      {/* Background radial glow - soft diffused lavender and dusty blue */}
       <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
         <div className="h-[280px] w-[280px] sm:h-[400px] sm:w-[400px] rounded-full bg-gradient-to-br from-[#8B6FC9]/10 via-[#7E9AC7]/10 to-[#EEE8FA]/20 blur-[80px] sm:blur-[90px]" />
       </div>
 
-      {/* 3D WebGL Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
 
-      {/* Top Left Floating Telemetry Badge */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -369,7 +346,6 @@ export default function Hero3DModel() {
         </div>
       </motion.div>
 
-      {/* Top Right Mode Toggle Pills */}
       <div className="absolute top-3 right-3 sm:top-6 sm:right-6 z-20 flex items-center gap-1 rounded-full border border-[#E8E4EF] dark:border-purple-400/20 bg-[#FFFFFF]/90 dark:bg-[#120c29]/90 p-1 shadow-[0_2px_8px_rgba(41,38,51,0.04)] backdrop-blur-md">
         {(['neural', 'quantum', 'synapse'] as const).map((mode) => (
           <button
@@ -386,7 +362,6 @@ export default function Hero3DModel() {
         ))}
       </div>
 
-      {/* Bottom Left Floating Badge: Context & RAG */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -402,7 +377,6 @@ export default function Hero3DModel() {
         </div>
       </motion.div>
 
-      {/* Bottom Right Interactive Pulse Button & Hint */}
       <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 z-20 flex items-center gap-1.5 sm:gap-2">
         <button
           onClick={triggerPulse}

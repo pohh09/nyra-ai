@@ -1,8 +1,3 @@
-/**
- * NYRA PERSONALITY SYSTEM
- * Curated, tasteful microcopy and personality phrases that make Nyra feel alive,
- * creative, warm, and human while maintaining a smart, modern aesthetic.
- */
 
 export const THINKING_PHRASES = [
   'Thinking...',

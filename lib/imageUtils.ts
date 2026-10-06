@@ -1,8 +1,3 @@
-/**
- * Image processing & compression utilities for multimodal AI chats.
- * Resizes large camera photos/screenshots to optimal dimensions and compresses
- * to efficient JPEG/WEBP data URLs to prevent token/payload limits and 413 errors.
- */
 
 export async function compressImageFile(
   file: File,
@@ -10,7 +5,6 @@ export async function compressImageFile(
   quality = 0.85
 ): Promise<string> {
   return new Promise((resolve) => {
-    // If SVG or tiny file, read directly
     if (file.type === 'image/svg+xml' || file.size < 100 * 1024) {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string || '');

@@ -1,7 +1,3 @@
-/**
- * Audio notification utility using Web Audio API
- * Generates a clean, pleasant notification chime for task reminders without external sound files.
- */
 
 let audioCtx: AudioContext | null = null;
 
@@ -30,11 +26,10 @@ export function playReminderChime(): void {
 
     const now = ctx.currentTime;
 
-    // Harmonic two-tone chime (E5 -> G#5 -> B5)
     const tones = [
-      { freq: 659.25, start: 0.0, duration: 0.25 }, // E5
-      { freq: 830.61, start: 0.12, duration: 0.35 }, // G#5
-      { freq: 987.77, start: 0.24, duration: 0.5 }, // B5
+      { freq: 659.25, start: 0.0, duration: 0.25 },
+      { freq: 830.61, start: 0.12, duration: 0.35 },
+      { freq: 987.77, start: 0.24, duration: 0.5 },
     ];
 
     tones.forEach(({ freq, start, duration }) => {
@@ -54,7 +49,5 @@ export function playReminderChime(): void {
       osc.start(now + start);
       osc.stop(now + start + duration);
     });
-  } catch {
-    // Graceful fallback if sound is blocked or unsupported
-  }
+  } catch {}
 }

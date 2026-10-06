@@ -4,7 +4,6 @@ import OpenAI from 'openai';
 
 interface PromptCreatorRequest {
   action?: 'create' | 'improve';
-  // Create mode fields
   goal?: string;
   description?: string;
   category?: string;
@@ -13,7 +12,6 @@ interface PromptCreatorRequest {
   constraints?: string;
   additionalRequirements?: string;
   contextExamples?: string;
-  // Improve mode fields
   prompt?: string;
   improvementType?: 'detailed' | 'short' | 'professional' | 'examples' | 'clarity' | 'custom';
   instructions?: string;
@@ -47,12 +45,10 @@ function extractJsonFromText(raw: string): any {
   if (!raw || typeof raw !== 'string') return null;
   const trimmed = raw.trim();
 
-  // 1. Direct parse
   try {
     return JSON.parse(trimmed);
   } catch {}
 
-  // 2. Markdown code block extraction
   const jsonBlockMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   if (jsonBlockMatch && jsonBlockMatch[1]) {
     try {
@@ -60,7 +56,6 @@ function extractJsonFromText(raw: string): any {
     } catch {}
   }
 
-  // 3. Outermost brace matching
   const firstBrace = trimmed.indexOf('{');
   const lastBrace = trimmed.lastIndexOf('}');
   if (firstBrace !== -1 && lastBrace > firstBrace) {
@@ -73,7 +68,6 @@ function extractJsonFromText(raw: string): any {
   return null;
 }
 
-// 1. Execute via Google Gemini
 async function tryGemini(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey =
     process.env.GEMINI_API_KEY ||
@@ -125,7 +119,6 @@ async function tryGemini(systemPrompt: string, userPrompt: string): Promise<stri
   throw lastErr || new Error('All Gemini models failed');
 }
 
-// 2. Execute via Groq
 async function tryGroq(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error('GROQ_API_KEY not configured');
@@ -164,7 +157,6 @@ async function tryGroq(systemPrompt: string, userPrompt: string): Promise<string
   throw lastErr || new Error('All Groq models failed');
 }
 
-// 3. Execute via OpenRouter
 async function tryOpenRouter(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured');
@@ -208,7 +200,6 @@ async function tryOpenRouter(systemPrompt: string, userPrompt: string): Promise<
   throw lastErr || new Error('All OpenRouter models failed');
 }
 
-// 4. Execute via OpenAI
 async function tryOpenAI(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OPENAI_API_KEY not configured');
@@ -230,11 +221,9 @@ async function tryOpenAI(systemPrompt: string, userPrompt: string): Promise<stri
   throw new Error('OpenAI returned empty response');
 }
 
-// Resilient Multi-Provider Fallback Dispatcher
 async function runWithMultiProviderFallback(systemPrompt: string, userPrompt: string): Promise<string> {
   const errors: { provider: string; error: string }[] = [];
 
-  // Provider Chain: Gemini -> Groq -> OpenRouter -> OpenAI
   const providers = [
     { name: 'Gemini', fn: tryGemini },
     { name: 'Groq', fn: tryGroq },
@@ -260,9 +249,6 @@ export async function POST(req: Request) {
     const body: PromptCreatorRequest = await req.json().catch(() => ({}));
     const action = body.action || 'create';
 
-    // =========================================================
-    // ACTION 1: IMPROVE EXISTING PROMPT
-    // =========================================================
     if (action === 'improve') {
       const rawPrompt = (body.prompt || '').trim();
       if (!rawPrompt) {
@@ -327,9 +313,6 @@ ${rawPrompt}
       });
     }
 
-    // =========================================================
-    // ACTION 2: CREATE NEW PROMPT FROM GOAL
-    // =========================================================
     const goal = (body.goal || body.description || '').trim();
     if (!goal) {
       return NextResponse.json(

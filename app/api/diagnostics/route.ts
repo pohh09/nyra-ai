@@ -92,7 +92,6 @@ export async function GET(req: Request) {
   const configuredCount = providers.filter((p) => p.configured).length;
   const anyConfigured = configuredCount > 0;
 
-  // Build clean ASCII diagnostic table
   const lines = [
     'Provider       Environment Variable       Configured',
     '-----------------------------------------------------',
@@ -112,7 +111,6 @@ export async function GET(req: Request) {
 
   const tableText = lines.join('\n');
 
-  // If text format requested via ?format=text or header
   const url = new URL(req.url);
   if (url.searchParams.get('format') === 'text') {
     return new Response(tableText, {

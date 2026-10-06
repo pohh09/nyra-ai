@@ -73,9 +73,7 @@ async function getAuthUserId(): Promise<string | null> {
       cachedUserId = session.user.id;
       return cachedUserId;
     }
-  } catch {
-    // Ignore auth lookup failure
-  }
+  } catch {}
   return null;
 }
 
@@ -152,7 +150,6 @@ export async function syncMemoriesWithCloud(userId: string): Promise<MemoryItem[
       return cloudMemories;
     }
 
-    // Cloud is empty for this user: migrate local starter memories
     const local = getMemories(userId);
     if (local.length > 0) {
       await migrateLocalMemoriesToCloud(userId, local);
@@ -186,7 +183,6 @@ export function createMemory(params: {
   const updated = [newMemory, ...current];
   saveMemories(updated, userId);
 
-  // Sync to Supabase in the background if authenticated
   const targetUid = userId || cachedUserId;
   if (targetUid) {
     saveCloudMemory(targetUid, newMemory).catch((e) => console.warn('Cloud memory save error:', e));
@@ -222,7 +218,6 @@ export function updateMemory(
   if (updatedMem) {
     saveMemories(updatedList, userId);
 
-    // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
     if (targetUid) {
       updateCloudMemory(targetUid, id, updates).catch((e) => console.warn('Cloud memory update error:', e));
@@ -242,7 +237,6 @@ export function deleteMemory(id: string, userId?: string): boolean {
   if (filtered.length !== current.length) {
     saveMemories(filtered, userId);
 
-    // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
     if (targetUid) {
       deleteCloudMemory(targetUid, id).catch((e) => console.warn('Cloud memory delete error:', e));

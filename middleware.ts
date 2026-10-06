@@ -34,13 +34,11 @@ export async function middleware(request: NextRequest) {
 
   let isAuthenticated = false;
 
-  // Check custom local auth session token cookie
   const localSessionCookie = request.cookies.get('nyra_session_token')?.value;
   if (localSessionCookie && localSessionCookie.startsWith('session_')) {
     isAuthenticated = true;
   }
 
-  // Check Supabase session if configured
   if (!isAuthenticated && supabaseUrl && supabaseAnonKey) {
     try {
       const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -66,9 +64,7 @@ export async function middleware(request: NextRequest) {
       if (user) {
         isAuthenticated = true;
       }
-    } catch {
-      // Ignore edge lookup error
-    }
+    } catch {}
   }
 
   const isGuest = request.cookies.get('nyra_is_guest')?.value === 'true';
@@ -76,20 +72,17 @@ export async function middleware(request: NextRequest) {
   const isChatRoute = pathname.startsWith('/chat-ui');
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
-  // If user is authenticated and trying to access login/signup, redirect to chat-ui
   if (isAuthenticated && isAuthRoute) {
     const redirectUrl = new URL('/chat-ui', request.url);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Authenticated-only routes strictly require authenticated status (guests blocked)
   if (!isAuthenticated && isAuthOnlyRoute) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Chat-UI route requires either an authenticated user or an active guest session
   if (!isAuthenticated && !isGuest && isChatRoute) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirect', pathname);

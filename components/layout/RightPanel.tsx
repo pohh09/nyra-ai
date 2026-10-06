@@ -23,7 +23,6 @@ export default function RightPanel({
   children,
   widthClass = 'w-full md:w-[440px] lg:w-[480px] xl:w-[520px]',
 }: RightPanelProps) {
-  // Listen for Escape key
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,7 +38,6 @@ export default function RightPanel({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Mobile Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -49,7 +47,6 @@ export default function RightPanel({
             className="md:hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm pointer-events-auto"
           />
 
-          {/* Full-screen Slide-Over Drawer on Mobile / Curved Floating Panel on Desktop (md+) */}
           <motion.aside
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -71,7 +68,6 @@ export default function RightPanel({
               backdrop-blur-xl
             `}
           >
-            {/* Clean Header */}
             <div className="relative z-10 flex items-start justify-between px-4 sm:px-5 pt-4 pb-3 border-b border-[#E8E4EF] dark:border-white/[0.08] bg-transparent shrink-0">
               <div className="min-w-0 pr-2">
                 <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
@@ -84,7 +80,6 @@ export default function RightPanel({
                 )}
               </div>
 
-              {/* Close Button */}
               <button
                 onClick={onClose}
                 className="flex h-8 w-8 sm:h-7 sm:w-7 mt-0.5 rounded-lg items-center justify-center text-[#6E6072] hover:text-[#261827] dark:text-zinc-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/[0.08] transition cursor-pointer active:scale-95 shrink-0"
@@ -95,7 +90,6 @@ export default function RightPanel({
               </button>
             </div>
 
-            {/* Panel Content Body */}
             <div className="relative z-10 flex-1 overflow-hidden flex flex-col p-3.5 sm:p-4 select-text">
               {children}
             </div>

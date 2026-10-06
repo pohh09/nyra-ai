@@ -11,7 +11,6 @@ export default function PwaRegister() {
           .then((registration) => {
             console.log('[PWA] Service Worker registered with scope:', registration.scope);
 
-            // Check for service worker updates periodically
             registration.onupdatefound = () => {
               const installingWorker = registration.installing;
               if (installingWorker) {

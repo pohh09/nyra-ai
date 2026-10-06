@@ -17,7 +17,6 @@ export function usePwaInstall() {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // 1. Check if running in standalone mode (already installed)
     const isStandalone =
       typeof window !== 'undefined' &&
       (window.matchMedia('(display-mode: standalone)').matches ||
@@ -30,9 +29,7 @@ export function usePwaInstall() {
       return;
     }
 
-    // 2. Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent automatic browser banner so we can offer our styled Nyra install action
       e.preventDefault();
       const promptEvent = e as BeforeInstallPromptEvent;
       setDeferredPrompt(promptEvent);
@@ -40,7 +37,6 @@ export function usePwaInstall() {
       console.log('[PWA] beforeinstallprompt captured, Nyra is installable');
     };
 
-    // 3. Listen for appinstalled event
     const handleAppInstalled = () => {
       console.log('[PWA] Nyra AI successfully installed as PWA');
       setIsInstalled(true);

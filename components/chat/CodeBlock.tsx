@@ -86,7 +86,6 @@ export default function CodeBlock({ language, value, onCodeAction }: Props) {
           : 'border-pink-500/20 bg-[#08020D]'
       }`}
     >
-      {/* CODE BLOCK HEADER */}
       <div
         className={`flex items-center justify-between px-3 sm:px-4 py-1.5 sm:py-2 border-b transition-colors chat-code-header ${
           isLight
@@ -160,7 +159,6 @@ export default function CodeBlock({ language, value, onCodeAction }: Props) {
         </div>
       </div>
 
-      {/* CODE CONTENT WITH DYNAMIC PRISM HIGHLIGHTING */}
       {!isCollapsed && (
         <div className="overflow-x-auto touch-pan-x">
           <SyntaxHighlighter
@@ -190,7 +188,6 @@ export default function CodeBlock({ language, value, onCodeAction }: Props) {
         </div>
       )}
 
-      {/* CONTEXTUAL QUICK ACTIONS TOOLBAR */}
       {onCodeAction && !isCollapsed && (
         <div
           className={`chat-code-actions-toolbar flex items-center gap-1.5 px-3 py-1.5 border-t transition-colors overflow-x-auto no-scrollbar touch-pan-x ${

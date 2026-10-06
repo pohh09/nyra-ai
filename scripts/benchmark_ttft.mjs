@@ -1,7 +1,5 @@
 import fs from 'fs';
-import Groq from 'groq-sdk';
-
-// Read .env.local manually
+import Groq from 'groq-sdk'; manually
 try {
   const envContent = fs.readFileSync('.env.local', 'utf8');
   for (const line of envContent.split('\n')) {
@@ -26,7 +24,6 @@ async function testGroqModels() {
 
   const groq = new Groq({ apiKey });
 
-  // List available models from Groq API
   try {
     const list = await groq.models.list();
     console.log('\n--- Real Active Groq Models on this API Key ---');

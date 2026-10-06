@@ -94,18 +94,15 @@ export default function CareerPage() {
 
   const [activeTab, setActiveTab] = useState<CareerTab>('audit');
 
-  // Input states
   const [resumeName, setResumeName] = useState('My Resume.pdf');
   const [resumeText, setResumeText] = useState('');
   const [targetJobTitle, setTargetJobTitle] = useState('Senior Full Stack Engineer');
   const [jobDescription, setJobDescription] = useState('');
 
-  // Generation / Loading states
   const [isExtracting, setIsExtracting] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Result states
   const [auditResult, setAuditResult] = useState<string | null>(null);
   const [jobMatchResult, setJobMatchResult] = useState<string | null>(null);
   const [coverLetterResult, setCoverLetterResult] = useState<string | null>(null);
@@ -225,7 +222,6 @@ export default function CareerPage() {
         const cleanErr = streamed.replace(/\n*✦ Error:\s*/g, '').trim();
         setErrorMessage(cleanErr);
       } else {
-        // Persist session to local storage
         const newSession: CareerSession = {
           id: `career_${Date.now()}`,
           resumeName,
@@ -386,10 +382,8 @@ Generate:
 
   return (
     <div className="career-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
-      {/* Workspace Container matching Tasks & Documents */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         
-        {/* Top Header Navigation */}
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
@@ -419,7 +413,6 @@ Generate:
           </div>
         </div>
 
-        {/* Title & Description */}
         <div className="space-y-1 pt-1">
           <p className="text-[11px] uppercase tracking-wider text-purple-400 font-medium font-mono">
             Career Intelligence
@@ -433,9 +426,7 @@ Generate:
           </p>
         </div>
 
-        {/* Studio Inputs: Resume & Target Role */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
-          {/* Candidate Resume Card */}
           <div className="career-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -485,7 +476,6 @@ Generate:
             </div>
           </div>
 
-          {/* Target Job Description Card */}
           <div className="career-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 shadow-xl space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
@@ -519,16 +509,11 @@ Generate:
           </div>
         </div>
 
-        {/* =========================================================
-            MOBILE RESPONSIVE SECTION (Active strictly on mobile < 640px)
-        ========================================================= */}
         <div className="block sm:hidden space-y-0">
-          {/* 1. Mobile Section Header */}
           <h2 className="career-card-title text-[17px] font-semibold text-white tracking-tight mb-3.5">
             Resume Analysis
           </h2>
 
-          {/* 2. Analysis Mode Selector (Mobile Dropdown) */}
           <div className="mb-3.5">
             <ResponsiveDropdown<CareerTab>
               label="Analysis Mode"
@@ -543,7 +528,6 @@ Generate:
             />
           </div>
 
-          {/* 3. Run Analysis Button (Primary Action) */}
           <button
             onClick={handleRunCurrentAnalysis}
             disabled={isAnalyzing}
@@ -553,16 +537,13 @@ Generate:
             <span>{isAnalyzing ? 'Analyzing...' : 'Run Analysis'}</span>
           </button>
 
-          {/* 4. Section Divider & Analysis Results Header */}
           <div className="border-t border-purple-400/15 career-border-subtle pt-5 mb-3">
             <h3 className="career-card-title text-[15px] font-semibold text-white tracking-tight">
               Analysis Results
             </h3>
           </div>
 
-          {/* 5. Mobile Results Card */}
           <div className="career-card p-4 rounded-2xl bg-[#130c26]/90 border border-purple-400/25 shadow-lg space-y-3.5">
-            {/* Card Header: ✓ {currentTabName} */}
             <div className="career-border-subtle flex items-center justify-between pb-3 border-b border-purple-400/15">
               <div className="flex items-center gap-2 min-w-0">
                 <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
@@ -582,7 +563,6 @@ Generate:
               )}
             </div>
 
-            {/* Analysis Content & State Displays */}
             <div>
               {isAnalyzing && (
                 <div className="career-loading-banner p-3 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center gap-2.5 text-xs text-purple-200">
@@ -630,7 +610,6 @@ Generate:
                   </ReactMarkdown>
                 </div>
               ) : !isAnalyzing ? (
-                /* Empty State (Requirement 5 & 6) */
                 <div className="career-empty-box py-5 px-2 text-center flex flex-col items-center justify-center">
                   <div className="career-empty-icon w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center text-purple-300 mb-2.5">
                     <FileText size={18} />
@@ -661,9 +640,6 @@ Generate:
           </div>
         </div>
 
-        {/* =========================================================
-            DESKTOP VIEW: Feature Tabs & Action Button (100% Unchanged)
-        ========================================================= */}
         <div className="hidden sm:flex flex-row items-center justify-between gap-3 pt-1">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin w-auto">
             {[
@@ -700,9 +676,6 @@ Generate:
           </button>
         </div>
 
-        {/* =========================================================
-            DESKTOP VIEW: Results Card (100% Unchanged)
-        ========================================================= */}
         <div className="hidden sm:block career-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#130c26]/90 border border-purple-400/25 shadow-xl space-y-4">
           <div className="career-border-subtle flex items-center justify-between pb-3 border-b border-purple-400/15">
             <div className="flex items-center gap-2">
@@ -725,7 +698,6 @@ Generate:
             )}
           </div>
 
-          {/* Analysis Content & State Displays */}
           <div className="min-h-[200px]">
             {isAnalyzing && (
               <div className="career-loading-banner mb-4 p-3 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center gap-2.5 text-xs text-purple-200">

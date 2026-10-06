@@ -121,14 +121,9 @@ export function executeWorkspaceTool(
   }
 }
 
-/**
- * Intelligent Tool Extraction from Natural Language
- * Detects intentional tool requests like "create a task...", "remember that..."
- */
 export function analyzeIntentForToolCalls(userMessage: string): ToolCallRecord | null {
   const text = userMessage.trim().toLowerCase();
 
-  // 1. Task Creation Intent
   if (
     text.startsWith('create task') ||
     text.startsWith('add task') ||
@@ -141,18 +136,15 @@ export function analyzeIntentForToolCalls(userMessage: string): ToolCallRecord |
       .replace(/^(please\s+)?(can you\s+)?(create|add)(\s+a)?\s+task(\s+to)?\s+/i, '')
       .trim();
 
-    // Priority detection
     let priority: TaskPriority = 'medium';
     if (text.includes('high priority') || text.includes('urgent')) priority = 'high';
     if (text.includes('low priority')) priority = 'low';
 
-    // Due date detection
     let dueDate: string | undefined = undefined;
     if (text.includes('tomorrow')) dueDate = 'Tomorrow';
     if (text.includes('today')) dueDate = 'Today';
     if (text.includes('this week')) dueDate = 'This Week';
 
-    // Clean title
     title = title
       .replace(/\s+(with\s+)?high priority/i, '')
       .replace(/\s+(with\s+)?low priority/i, '')
@@ -178,7 +170,6 @@ export function analyzeIntentForToolCalls(userMessage: string): ToolCallRecord |
     }
   }
 
-  // 2. Memory Storage Intent
   if (
     text.startsWith('remember that') ||
     text.startsWith('remember:') ||

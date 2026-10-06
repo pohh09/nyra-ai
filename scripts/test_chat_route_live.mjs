@@ -1,4 +1,3 @@
-// Test all models and features against http://localhost:3000/api/chat
 const TEST_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
 async function sendChatRequest(body) {
@@ -50,7 +49,6 @@ async function runEndToEndChatTests() {
     }
   }
 
-  // Test Web Search integration
   process.stdout.write('\nTesting /api/chat with [WEB SEARCH ENABLED]... ');
   try {
     const start = Date.now();
@@ -65,7 +63,6 @@ async function runEndToEndChatTests() {
     console.log(`[FAIL]: ${e.message}`);
   }
 
-  // Test Image Vision integration
   process.stdout.write('\nTesting /api/chat with [IMAGE ATTACHMENT]... ');
   try {
     const start = Date.now();
@@ -85,7 +82,6 @@ async function runEndToEndChatTests() {
     console.log(`[FAIL]: ${e.message}`);
   }
 
-  // Test PDF Document integration
   process.stdout.write('\nTesting /api/chat with [ATTACHED PDF DOCUMENT]... ');
   try {
     const start = Date.now();
@@ -100,17 +96,14 @@ async function runEndToEndChatTests() {
     console.log(`[FAIL]: ${e.message}`);
   }
 
-  // Test Model Switching in Multi-turn
   process.stdout.write('\nTesting [MULTI-TURN MODEL SWITCHING] (Fast -> Advanced -> Reasoning)... ');
   try {
     const start = Date.now();
-    // Turn 1 with Fast
     const turn1 = await sendChatRequest({
       modelId: 'fast',
       messages: [{ role: 'user', content: 'Remember the secret code: NYRA-9988' }],
     });
 
-    // Turn 2 with Advanced
     const turn2 = await sendChatRequest({
       modelId: 'advanced',
       messages: [
@@ -120,7 +113,6 @@ async function runEndToEndChatTests() {
       ],
     });
 
-    // Turn 3 with Reasoning
     const turn3 = await sendChatRequest({
       modelId: 'reasoning',
       messages: [

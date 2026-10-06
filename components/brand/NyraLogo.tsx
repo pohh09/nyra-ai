@@ -35,12 +35,10 @@ export default function NyraLogo({
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       <div
-        className={`relative flex items-center justify-center rounded-xl overflow-hidden border border-pink-500/25 bg-[#120726] shadow-md shadow-purple-950/40 shrink-0 group-hover:border-pink-500/50 transition-all ${
-          animated ? 'hover:scale-105' : ''
-        }`}
+        className={`relative flex items-center justify-center rounded-xl overflow-hidden border border-pink-500/25 bg-[#120726] shadow-md shadow-purple-950/40 shrink-0 group-hover:border-pink-500/50 transition-all ${animated ? 'hover:scale-105' : ''
+          }`}
         style={{ width: `${dim}px`, height: `${dim}px` }}
       >
-        {/* Geometric Nyra Vector Icon */}
         <NyraIcon
           size={iconDim}
           variant={variant}
@@ -48,7 +46,6 @@ export default function NyraLogo({
           className="transition-transform duration-200"
         />
 
-        {/* Ambient subtle glow ring on hover */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-pink-500/10 via-purple-500/10 to-transparent pointer-events-none" />
       </div>
 

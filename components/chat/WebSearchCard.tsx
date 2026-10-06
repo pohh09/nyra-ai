@@ -68,7 +68,6 @@ export default function WebSearchCard({ sources, isSearching }: WebSearchCardPro
                 <span className="w-4 h-4 rounded-full bg-[#EEE8FA] dark:bg-[#241945] border border-[#8B6FC9]/30 dark:border-purple-400/30 flex items-center justify-center text-[9px] font-mono text-[#8B6FC9] dark:text-purple-200 font-bold shrink-0">
                   {index + 1}
                 </span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={faviconUrl}
                   alt={domain}

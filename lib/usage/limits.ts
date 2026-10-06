@@ -22,7 +22,7 @@ export const USAGE_LIMITS: {
     imageRequests: 3,
     pdfRequests: 3,
   },
-  warningThreshold: 0.8, // 80%
+  warningThreshold: 0.8,
 };
 
 export type FeatureType = 'aiRequests' | 'webSearches' | 'imageRequests' | 'pdfRequests';

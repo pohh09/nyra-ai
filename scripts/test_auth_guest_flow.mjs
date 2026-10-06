@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 
-// Mock browser LocalStorage
 class MockLocalStorage {
   constructor() {
     this.store = {};
@@ -28,7 +27,6 @@ global.window = {
   removeEventListener: () => {},
 };
 
-// Simple test runner
 let passCount = 0;
 let failCount = 0;
 
@@ -46,7 +44,6 @@ console.log('\n======================================================');
 console.log('NYRA — AUTH FLOW & GUEST MODE AUDIT TEST SUITE');
 console.log('======================================================\n');
 
-// Import Guest Service functions
 import {
   isGuestSession,
   startGuestSession,
@@ -58,7 +55,6 @@ import {
   GUEST_MESSAGE_LIMIT,
 } from '../lib/auth/guestService.js';
 
-// TEST 1: Initial Clean State
 console.log('TEST 1: Initial unauthenticated non-guest state');
 mockStorage.clear();
 assert(!isGuestSession(), 'isGuestSession() is false when storage is empty');
@@ -66,14 +62,12 @@ assert(getGuestMessageCount() === 0, 'getGuestMessageCount() is 0');
 assert(!isGuestLimitReached(), 'isGuestLimitReached() is false initially');
 assert(getRemainingGuestMessages() === 5, 'Remaining messages equals 5');
 
-// TEST 2: Start Guest Session
 console.log('\nTEST 2: Start Guest Session');
 startGuestSession();
 assert(isGuestSession(), 'isGuestSession() is true after startGuestSession()');
 assert(mockStorage.getItem('nyra_is_guest') === 'true', 'localStorage nyra_is_guest is set to "true"');
 assert(getGuestMessageCount() === 0, 'guest message count initialized to 0');
 
-// TEST 3: 5-Message Limit Enforcement
 console.log('\nTEST 3: 5-Message Limit Lifecycle');
 for (let i = 1; i <= 5; i++) {
   const newCount = incrementGuestMessageCount();
@@ -87,26 +81,20 @@ for (let i = 1; i <= 5; i++) {
   }
 }
 
-// TEST 4: 6th Attempted Message Block
 console.log('\nTEST 4: 6th Attempted Message Blocking');
 assert(isGuestLimitReached() === true, '6th message attempt blocked by isGuestLimitReached()');
 assert(getRemainingGuestMessages() === 0, 'Remaining messages is 0');
 
-// TEST 5: Browser Refresh Bypass Prevention
 console.log('\nTEST 5: Browser Refresh Simulation');
-// Simulating new page load with existing localStorage
 const reloadedCount = parseInt(mockStorage.getItem('nyra_guest_message_count') || '0', 10);
 assert(reloadedCount === 5, 'localStorage preserves count of 5 across reloads');
 assert(isGuestLimitReached() === true, 'Refresh does NOT bypass the 5-message limit');
 
-// TEST 6: User Login / Session Transition & Data Isolation
 console.log('\nTEST 6: Real User Login & Isolation');
-// Real user logs in
 clearGuestSession();
 assert(!isGuestSession(), 'Guest session cleared upon user login');
 assert(mockStorage.getItem('nyra_is_guest') === null, 'nyra_is_guest removed from storage');
 
-// TEST 7: Logout & Navigation Flow
 console.log('\nTEST 7: Logout Session Removal');
 mockStorage.setItem('nyra_session', JSON.stringify({ userId: 'auth-user-123' }));
 mockStorage.removeItem('nyra_session');

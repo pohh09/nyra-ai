@@ -41,7 +41,6 @@ export function getSupabaseBrowserClient(): SupabaseClient {
   const key = dynamicSupabaseAnonKey || envSupabaseAnonKey;
 
   if (!isSupabaseConfigured()) {
-    // Safe proxy client that avoids throwing websocket/network errors when unconfigured
     const dummyHandler: ProxyHandler<any> = {
       get(_target, prop) {
         if (prop === 'auth') {

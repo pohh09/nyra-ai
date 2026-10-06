@@ -49,7 +49,6 @@ import { WebSource, FileAttachment, ToolCallRecord } from '@/lib/types';
 import { getRelativeTime, getFullTimestamp } from '@/lib/formatTimestamp';
 
 
-
 type Props = {
   id?: string;
   role: 'user' | 'assistant';
@@ -242,14 +241,11 @@ export default function MessageBubble({
     }
   };
 
-  // Clean content of inline __SOURCES__ and protect standalone short numerical answers (e.g. "4.", "50.")
-  // from being wrongly parsed by CommonMark as empty ordered lists (<ol start="4"><li></li></ol>)
   const rawCleanContent = content.includes('__SOURCES__') ? content.split('__SOURCES__')[0].trim() : content;
   const displayContent = /^\s*\d+\.\s*$/.test(rawCleanContent)
     ? rawCleanContent.replace(/^(\s*\d+)\./, '$1\\.')
     : rawCleanContent;
 
-  // Check if response is an error message
   const isErrorMessage =
     status === 'error' ||
     content.startsWith('✦ Error') ||
@@ -257,7 +253,6 @@ export default function MessageBubble({
     content.includes('hit a snag') ||
     content.toLowerCase().includes('document or request is too large');
 
-  // Extract inline sources if present
   let parsedSources: WebSource[] = sources || [];
 
   if (content.includes('__SOURCES__')) {
@@ -268,7 +263,6 @@ export default function MessageBubble({
   }
 
 
-  // Context-Aware Action Detection
   const isCode = content.includes('```') || /function |const |import |class |def |export |async |interface |<[A-Z]\w+/i.test(content);
   const isDocument = Boolean(pdfName || (attachments && attachments.some((a) => a.type === 'pdf')) || /attached document|\[document|\.pdf|resume|cv|candidate profile/i.test(content));
   const isResearch = Boolean((parsedSources && parsedSources.length > 0) || /\[\d+\]/i.test(content) || /search results|sources:|citations|tavily/i.test(content));
@@ -327,7 +321,6 @@ export default function MessageBubble({
     onSmartAction(actionPrompt);
   };
 
-  // Aggregate images
   const allImages: string[] = [];
   if (image) allImages.push(image);
   if (images && Array.isArray(images)) {
@@ -345,11 +338,7 @@ export default function MessageBubble({
         className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} py-2 md:py-2.5`}
       >
         {isUser ? (
-          /* =========================================================
-             USER MESSAGE ROW (ChatGPT Style: Standalone attachments + Text Bubble)
-          ========================================================= */
           <div className={`flex flex-col items-end ${editing ? 'w-full max-w-full sm:max-w-xl md:max-w-2xl' : 'max-w-[85%] sm:max-w-[75%]'} group`}>
-            {/* STANDALONE IMAGE ATTACHMENTS (No enclosing bubble) */}
             {allImages.length > 0 && (
               <div className={`flex flex-wrap justify-end gap-2.5 ${content && content.trim().length > 0 ? 'mb-2' : ''}`}>
                 {allImages.map((img, i) => (
@@ -376,7 +365,6 @@ export default function MessageBubble({
               </div>
             )}
 
-            {/* STANDALONE PDF & DOCUMENT ATTACHMENTS (No enclosing bubble) */}
             {attachments && attachments.length > 0 ? (
               <div className={`flex flex-col items-end gap-2 ${content && content.trim().length > 0 ? 'mb-2' : ''}`}>
                 {attachments
@@ -410,7 +398,6 @@ export default function MessageBubble({
               </div>
             ) : null}
 
-            {/* USER TEXT SPEECH BUBBLE / CHATGPT STYLE INLINE EDITOR */}
             {editing ? (
               <div className="w-full chat-edit-box rounded-2xl sm:rounded-[22px] p-3.5 sm:p-4 transition-all">
                 <textarea
@@ -450,7 +437,6 @@ export default function MessageBubble({
               </div>
             ) : null}
 
-            {/* USER HOVER ACTIONS (ChatGPT style subtle toolbar) */}
             {!editing && (
               <div className="mt-1.5 flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 px-0.5">
                 <span
@@ -487,20 +473,14 @@ export default function MessageBubble({
             )}
           </div>
         ) : (
-          /* =========================================================
-             ASSISTANT MESSAGE ROW (ChatGPT Structure + Nyra Theme)
-          ========================================================= */
           <div className="w-full flex items-start gap-2.5 sm:gap-3.5 group">
-            {/* AVATAR COLUMN (Fixed on Left) */}
             <div className="shrink-0 pt-0.5 select-none">
               <div className="h-6 w-6 sm:h-7.5 sm:w-7.5 rounded-full bg-gradient-to-br from-[#E52A83] via-[#B31372] to-[#800F52] flex items-center justify-center text-[10px] sm:text-[11px] font-bold text-white shadow-sm transition-transform duration-200 hover:scale-105 cursor-default">
                 ✦
               </div>
             </div>
 
-            {/* ASSISTANT CONTENT COLUMN (Remaining Width Flow) */}
             <div className="flex-1 min-w-0 flex flex-col chat-assistant-container">
-              {/* ASSISTANT HEADER */}
               <div className="mb-1 flex items-center gap-2">
                 <span className="text-[12px] sm:text-xs font-semibold text-[#261827] dark:text-white tracking-tight flex items-center gap-1.5">
                   <span>Nyra</span>
@@ -516,9 +496,7 @@ export default function MessageBubble({
                 </span>
               </div>
 
-              {/* MAIN AI RESPONSE BODY */}
               <div className="w-full text-[14.5px] sm:text-[15.5px] leading-[1.68] sm:leading-[1.75] text-[#261827] dark:text-[#f1eff7] chat-assistant-body">
-                {/* PDF Context Info if any */}
                 {pdfName && (
                   <div className="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#E8E4EF] dark:border-pink-500/30 bg-[#F7F3FA] dark:bg-[#16091F] px-3 py-1.5 text-[#6E6072] dark:text-pink-200 text-xs shadow-sm max-w-full truncate">
                     <span>📄</span>
@@ -527,10 +505,8 @@ export default function MessageBubble({
                   </div>
                 )}
 
-                {/* WEB SOURCES CITATIONS */}
                 {parsedSources.length > 0 && <WebSearchCard sources={parsedSources} />}
 
-                {/* ERROR STATE */}
                 {status === 'error' && (
                   <div className="my-2 p-3 sm:p-3.5 rounded-xl border border-[#C77B7B]/30 bg-[#F9ECEC] dark:bg-rose-950/40 text-xs text-[#A85A5A] dark:text-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                     <div className="flex items-start gap-2.5">
@@ -552,7 +528,6 @@ export default function MessageBubble({
                   </div>
                 )}
 
-                {/* AI TOOL CALL BADGES */}
                 {toolCalls && toolCalls.length > 0 && (
                   <div className="mb-2.5 sm:mb-3 flex flex-wrap gap-1.5 sm:gap-2">
                     {toolCalls.map((tc) => (
@@ -568,7 +543,6 @@ export default function MessageBubble({
                   </div>
                 )}
 
-                {/* MARKDOWN STREAMING TEXT */}
                 {displayContent ? (
                   <StreamingText streaming={loading && isLast}>
                     <ReactMarkdown
@@ -668,17 +642,14 @@ export default function MessageBubble({
                   <ThinkingIndicator thinkingText={thinkingText || 'Thinking...'} />
                 ) : null}
 
-                {/* SUGGESTED FOLLOW UP PILLS (Only for non-error completed response) */}
                 {!isErrorMessage && !isUser && isLast && !loading && !streaming && !hideFollowUps && suggestedFollowUps && suggestedFollowUps.length > 0 && (
                   <div className="animate-[fadeIn_0.3s_ease-out]">
                     <SuggestedFollowUps followUps={suggestedFollowUps} onSelect={onSelectFollowUp} />
                   </div>
                 )}
 
-                {/* ASSISTANT ACTION TOOLBAR (Redesigned Modern ChatGPT Style Icon Row) */}
                 {!editing && displayContent && !isErrorMessage && (
                   <div className="mt-3 flex items-center gap-1 sm:gap-1.5 text-[#686477] dark:text-slate-400 opacity-90 group-hover:opacity-100 transition-opacity duration-150 animate-[fadeIn_0.25s_ease-out] -ml-1 select-none flex-wrap">
-                    {/* Copy Button */}
                     <button
                       title={copied ? "Copied to clipboard" : "Copy response"}
                       aria-label="Copy response"
@@ -696,7 +667,6 @@ export default function MessageBubble({
                       )}
                     </button>
 
-                    {/* Like Button */}
                     <button
                       title="Good response"
                       aria-label="Good response"
@@ -710,7 +680,6 @@ export default function MessageBubble({
                       <ThumbsUp size={14} strokeWidth={1.75} className={liked ? 'fill-current' : ''} />
                     </button>
 
-                    {/* Dislike Button */}
                     <button
                       title="Poor response"
                       aria-label="Poor response"
@@ -724,7 +693,6 @@ export default function MessageBubble({
                       <ThumbsDown size={14} strokeWidth={1.75} className={disliked ? 'fill-current' : ''} />
                     </button>
 
-                    {/* Read Aloud / Stop Speaking Button */}
                     {!loading && !streaming && (
                       isSpeaking ? (
                         <button
@@ -752,7 +720,6 @@ export default function MessageBubble({
                       ) : null
                     )}
 
-                    {/* Regenerate Button */}
                     {onRegenerate && (
                       <button
                         aria-label="Regenerate response"
@@ -764,7 +731,6 @@ export default function MessageBubble({
                       </button>
                     )}
 
-                    {/* More Options Menu (ChatGPT Style '...' Popover) */}
                     <div className="relative" ref={moreMenuRef}>
                       <button
                         title="More actions"
@@ -781,7 +747,6 @@ export default function MessageBubble({
 
                       {showMoreMenu && (
                         <div className="absolute bottom-9 left-0 w-56 rounded-2xl border border-[#E8E4EF] dark:border-purple-400/30 bg-[#FFFFFF]/98 dark:bg-[#130f24]/98 shadow-xl p-1.5 z-50 animate-[fadeIn_0.1s_ease-out] backdrop-blur-xl">
-                          {/* Branch */}
                           {id && onBranch && (
                             <button
                               onClick={() => {
@@ -795,7 +760,6 @@ export default function MessageBubble({
                             </button>
                           )}
 
-                          {/* Bookmark */}
                           {onToggleBookmark && id && (
                             <button
                               onClick={() => {
@@ -809,7 +773,6 @@ export default function MessageBubble({
                             </button>
                           )}
 
-                          {/* Continue Generating */}
                           {onContinue && !loading && !streaming && (
                             <button
                               onClick={() => {
@@ -823,7 +786,6 @@ export default function MessageBubble({
                             </button>
                           )}
 
-                          {/* Smart Actions Sub-items */}
                           {onSmartAction && (
                             <>
                               <div className="h-[1px] bg-[#E8E4EF] dark:bg-white/[0.08] my-1" />
@@ -859,7 +821,6 @@ export default function MessageBubble({
         )}
       </motion.div>
 
-      {/* FULLSCREEN LIGHTBOX FOR ATTACHED IMAGES */}
       <AnimatePresence>
         {lightboxImg && (
           <motion.div

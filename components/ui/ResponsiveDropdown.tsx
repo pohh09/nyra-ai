@@ -39,7 +39,6 @@ export default function ResponsiveDropdown<T extends string = string>({
 
   const selectedOption = options.find((opt) => opt.id === value);
 
-  // Close on outside click
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -56,7 +55,6 @@ export default function ResponsiveDropdown<T extends string = string>({
     };
   }, [isOpen]);
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -91,7 +89,6 @@ export default function ResponsiveDropdown<T extends string = string>({
         </label>
       )}
 
-      {/* Main Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -123,7 +120,6 @@ export default function ResponsiveDropdown<T extends string = string>({
         />
       </button>
 
-      {/* Dropdown Menu Popover */}
       {isOpen && (
         <div
           role="listbox"

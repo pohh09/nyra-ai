@@ -20,7 +20,6 @@ export async function streamAnthropic(options: StreamProviderOptions, onChunk: (
 
         const contentParts: any[] = [];
         for (const img of imageList) {
-          // Format base64 image part for Anthropic
           if (img.startsWith('data:')) {
             const match = img.match(/^data:([^;]+);base64,(.+)$/);
             if (match) {
@@ -88,9 +87,7 @@ export async function streamAnthropic(options: StreamProviderOptions, onChunk: (
         if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
           onChunk(parsed.delta.text);
         }
-      } catch {
-        // Ignore JSON parse errors in partial stream line
-      }
+      } catch {}
     }
   };
 
@@ -107,7 +104,6 @@ export async function streamAnthropic(options: StreamProviderOptions, onChunk: (
     }
   }
 
-  // Drain any remaining buffered text
   buffer += decoder.decode();
   if (buffer.trim()) {
     processLine(buffer);

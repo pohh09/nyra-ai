@@ -59,7 +59,6 @@ export async function POST(req: Request) {
       return new Response('No messages provided.', { status: 400 });
     }
 
-    // Normalize incoming attachments through unified contract
     const normalizedAttachments: ChatAttachment[] = normalizeAttachments(rawAttachments);
 
     const hasImages =
@@ -68,11 +67,9 @@ export async function POST(req: Request) {
 
     console.log("Gemini configured:", Boolean(process.env.GEMINI_API_KEY));
 
-    // Resolve model configuration with vision capability awareness
     const modelConfig = resolveActiveModelConfig(selectedModelId, hasImages);
     const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user');
 
-    // Pre-flight capability validation: check image analysis support
     if (hasImages && !modelConfig.supportsVision) {
       return new Response(
         `No active vision-capable AI provider is configured in your environment. Please ensure GEMINI_API_KEY or OPENAI_API_KEY is configured.`,
@@ -80,7 +77,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Authenticate user session for server-side usage checks
     const supabase = await createSupabaseServerClient();
     let userId: string | null = null;
     let userEmail: string | null = null;
@@ -121,7 +117,6 @@ export async function POST(req: Request) {
       workspaceFiles.length > 0
     );
 
-    // Fast-path parallelized usage checking
     const usageChecks: Promise<{ allowed: boolean; limit?: number; feature: string }>[] = [
       checkAndIncrementUsage(supabase, userId, 'aiRequests', 1).then((r) => ({ ...r, feature: 'AI request' })),
     ];
@@ -130,7 +125,6 @@ export async function POST(req: Request) {
         checkAndIncrementUsage(supabase, userId, 'webSearches', 1).then((r) => ({ ...r, feature: 'Web Search' }))
       );
     }
-    // Image analysis quota: enforced for normal users, bypassed server-side for admin (pooja@gmail.com)
     if (hasImages && !isAdmin) {
       usageChecks.push(
         checkAndIncrementUsage(supabase, userId, 'imageRequests', 1).then((r) => ({ ...r, feature: 'image analysis' }))
@@ -152,7 +146,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // 🌐 Web Search using Tavily if enabled
     let webContext = '';
     let webSources: { title: string; url: string; domain?: string; snippet?: string }[] = [];
 
@@ -195,7 +188,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Prepare system messages
     const systemPrompts: string[] = [
       'You are Nyra AI, an intelligent, high-capability AI workspace assistant designed for fast reasoning, deep coding, and creative problem solving. Deliver direct, immediate, and high-quality responses. For direct factual questions or math calculations (e.g. 2+2, conversions, dates, single facts), output the direct, accurate answer immediately without unnecessary preamble, conversational filler, or unrequested numbered list formatting.',
     ];
@@ -318,7 +310,6 @@ ${userMemories.trim()}
         prefLines.push(`- Stated Goals: ${userOnboardingPreferences.goals.join(', ')}`);
       }
 
-      // Handle technical depth / experience level
       const expLevel = (userOnboardingPreferences.experienceLevel || '').toLowerCase();
       if (expLevel.includes('beginner')) {
         prefLines.push(`- Technical Level: Beginner`);
@@ -334,7 +325,6 @@ ${userMemories.trim()}
         directives.push(`- Tone & Depth: Provide practical, balanced, and clear explanations with clean real-world code examples.`);
       }
 
-      // Handle work style directives
       const rawStyles: string[] = Array.isArray(userOnboardingPreferences.workStyle)
         ? userOnboardingPreferences.workStyle
         : Array.isArray(userOnboardingPreferences.preferredResponseStyle)
@@ -377,12 +367,10 @@ You MUST actively embody these user personalization preferences in your response
       }
     }
 
-    // Extract PDF text and document names using unified multimodal extractor
     const docContext = extractDocumentContext(normalizedAttachments, pdfText, pdfDocuments);
     let combinedPdfText = docContext.pdfText;
     const docNames: string[] = [...docContext.docNames];
 
-    // Also include workspace documents if present
     if (workspaceFiles.length > 0 && !combinedPdfText) {
       const workspaceParts = workspaceFiles
         .filter((f) => f.text || f.extractedText)
@@ -395,7 +383,6 @@ You MUST actively embody these user personalization preferences in your response
       }
     }
 
-    // For follow-up questions: if no new document was attached on this request, retrieve previously uploaded document context EXACTLY ONCE
     if (!combinedPdfText && Array.isArray(messages)) {
       for (const m of messages) {
         if (m.pdfName && !docNames.includes(m.pdfName)) {
@@ -426,12 +413,9 @@ You MUST actively embody these user personalization preferences in your response
     const rawUserPrompt = lastUserMessage?.content || '';
     const cleanUserPrompt = rawUserPrompt.replace(/\[ATTACHED DOCUMENT CONTEXT:[^\]]*\][\s\S]*?\[USER REQUEST\]\s*/gi, '').trim() || 'Please analyze and summarize the attached document.';
 
-    // Sanitize & trim conversation history so older messages do not grow indefinitely or contain duplicate document blocks
     const rawHistory = messages.slice(0, lastUserIdx >= 0 ? lastUserIdx : 0);
     const sanitizedHistory = sanitizeAndTrimConversationHistory(rawHistory, 4000);
 
-    // Calculate dynamic available PDF budget based on:
-    // Model limit - System prompt - Sanitized history - User message - Output token reserve
     const pdfBudget = calculatePdfContextBudget({
       provider: modelConfig.provider,
       systemPrompt: systemPrompts.join('\n\n'),
@@ -441,8 +425,6 @@ You MUST actively embody these user personalization preferences in your response
 
     const docLabel = docNames.length > 0 ? docNames.join(', ') : 'Attached Document';
 
-    // For large documents exceeding budget, perform intelligent RAG chunk retrieval
-    // preserving exact page targets and semantic relevance rather than naive head/tail truncation
     let fittedPdfText = '';
     if (combinedPdfText) {
       if (combinedPdfText.length <= pdfBudget.maxPdfChars) {
@@ -475,7 +457,6 @@ You MUST actively embody these user personalization preferences in your response
         ? 'Please carefully analyze and describe what you see in the attached image(s).'
         : 'Please analyze and summarize the attached document.');
 
-    // Construct clean user turn containing the single document context block
     const activeUserTurn = {
       ...lastUserMessage,
       role: 'user',
@@ -520,7 +501,6 @@ Synthesize a comprehensive, up-to-date answer citing sources with bracketed numb
 `);
     }
 
-    // 🔍 Server-side Context Diagnostics
     let pdfOccurrenceCount = 0;
     if (fittedPdfText) {
       for (const m of formattedMessages) {

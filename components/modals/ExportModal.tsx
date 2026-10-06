@@ -101,7 +101,6 @@ export default function ExportModal({ isOpen, onClose, chat, messages, chatTitle
       link.click();
       URL.revokeObjectURL(url);
     } else if (format === 'pdf') {
-      // Create high-fidelity print window styled for PDF conversion
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(`
@@ -250,7 +249,6 @@ export default function ExportModal({ isOpen, onClose, chat, messages, chatTitle
           </div>
 
           <div className="space-y-4 sm:space-y-5">
-            {/* Format Selection Cards */}
             <div>
               <label className="text-xs font-semibold text-[#292633] dark:text-slate-300 block mb-2">Export Format</label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
@@ -279,7 +277,6 @@ export default function ExportModal({ isOpen, onClose, chat, messages, chatTitle
               </div>
             </div>
 
-            {/* Options */}
             <div className="space-y-3 pt-2">
               <label className="text-xs font-semibold text-[#292633] dark:text-slate-300 block">Filename</label>
               <input
@@ -314,7 +311,6 @@ export default function ExportModal({ isOpen, onClose, chat, messages, chatTitle
               </div>
             </div>
 
-            {/* Export Action */}
             <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#E8E4EF] dark:border-purple-400/15">
               <button
                 onClick={onClose}

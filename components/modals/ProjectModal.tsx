@@ -47,7 +47,6 @@ export default function ProjectModal({
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Form State
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -107,7 +106,6 @@ export default function ProjectModal({
             addToast({ type: 'error', title: `Failed to read ${file.name}: ${err.message}` });
           }
         } else {
-          // Plain text / markdown file
           const text = await file.text();
           newAttachments.push({
             id: `wfile_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
@@ -176,7 +174,6 @@ export default function ProjectModal({
           exit={{ opacity: 0, scale: 0.96, y: 12 }}
           className="w-full max-w-2xl max-h-[88dvh] rounded-3xl border border-[#E8E4EF] dark:border-purple-400/25 bg-[#FFFFFF] dark:bg-[#130f24] p-4 sm:p-5 md:p-6 shadow-2xl flex flex-col overflow-hidden relative"
         >
-          {/* Header */}
           <div className="flex items-center justify-between border-b border-[#E8E4EF] dark:border-purple-400/15 pb-3 sm:pb-4 mb-3 sm:mb-4 shrink-0">
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
               <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-xl bg-[#EEE8FA] dark:bg-purple-500/15 border border-[#E8E4EF] dark:border-purple-400/30 flex items-center justify-center text-[#8B6FC9] dark:text-purple-400 shadow-sm shrink-0">
@@ -213,7 +210,6 @@ export default function ProjectModal({
             </div>
           </div>
 
-          {/* Form View */}
           {isCreating ? (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -243,7 +239,6 @@ export default function ProjectModal({
                 />
               </div>
 
-              {/* Workspace Documents & Files */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-xs font-semibold text-[#8B6FC9] dark:text-purple-300 flex items-center gap-1.5">
@@ -324,7 +319,6 @@ export default function ProjectModal({
                 )}
               </div>
 
-              {/* Custom Workspace Instructions */}
               <div>
                 <label className="block text-xs font-semibold text-[#8B6FC9] dark:text-purple-300 mb-1.5 flex items-center gap-1.5">
                   <Sparkles size={13} className="text-[#8B6FC9] dark:text-purple-400" />
@@ -374,9 +368,7 @@ export default function ProjectModal({
               </div>
             </motion.div>
           ) : (
-            /* Project List View */
             <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 scrollbar-thin">
-              {/* Default Global Workspace Option */}
               <div
                 onClick={() => {
                   onSelectProject(null);
@@ -409,7 +401,6 @@ export default function ProjectModal({
                 {activeProjectId === null && <Check size={16} className="text-[#8B6FC9] dark:text-purple-400 shrink-0" />}
               </div>
 
-              {/* User Workspaces List */}
               {projects.map((project) => {
                 const isActive = project.id === activeProjectId;
                 const fileCount = project.files?.length || 0;

@@ -49,7 +49,6 @@ export default function DashboardPage() {
   const [showQuickAddMemory, setShowQuickAddMemory] = useState(false);
 
   useEffect(() => {
-    // Load workspace data
     setTasks(getTasks());
     setMemories(getMemories());
 
@@ -79,7 +78,6 @@ export default function DashboardPage() {
       console.error('Failed to load recent chats', e);
     }
 
-    // Listen for custom workspace updates
     const handleTasksUpdate = (e: any) => setTasks(e.detail || getTasks());
     const handleMemoriesUpdate = (e: any) => setMemories(e.detail || getMemories());
 
@@ -129,12 +127,10 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-white flex flex-col selection:bg-[#F4DCE9] selection:text-[#B31372] dark:selection:text-pink-200 transition-colors duration-200">
-      {/* Ambient Top Glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-[500px] w-[1000px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.08),transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,rgba(229,42,131,0.18),transparent_75%)]" />
       </div>
 
-      {/* Top Navigation Bar */}
       <header className="relative z-20 border-b border-[#E7B8CF] dark:border-pink-500/15 bg-white/80 dark:bg-[#16091F]/80 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
@@ -159,9 +155,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
-        {/* Hero Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 sm:p-8 rounded-[24px] bg-white dark:bg-[linear-gradient(180deg,#1c1335_0%,#130c26_35%,#0a0715_100%)] border border-[#E8E4EF] dark:border-purple-400/25 shadow-[0_4px_24px_rgba(41,38,51,0.04)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative overflow-hidden">
           <div className="relative z-10 space-y-1.5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEE8FA] dark:bg-purple-500/15 border border-[#E8E4EF] dark:border-purple-400/30 text-[#8B6FC9] dark:text-purple-300 text-xs font-semibold mb-1">
@@ -187,7 +181,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Workspace Metrics Cards */}
         <div className="grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {[
             { label: 'Active Tasks', value: pendingTasks.length, icon: <CheckSquare size={16} />, color: 'from-[#8B6FC9] to-[#7E9AC7]', href: '/tasks' },
@@ -215,7 +208,6 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Studio Launchers Grid */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold text-[#8B6FC9] dark:text-purple-200 tracking-wider uppercase font-mono">
@@ -299,9 +291,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Bottom Split: Recent Tasks & Active Memories */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* TASK MANAGER WIDGET */}
           <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-[#120c26]/90 border border-[#E8E4EF] dark:border-purple-400/20 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -314,7 +304,6 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* Quick Add Form */}
             <form onSubmit={handleAddQuickTask} className="flex gap-2">
               <input
                 type="text"
@@ -332,7 +321,6 @@ export default function DashboardPage() {
               </button>
             </form>
 
-            {/* Task List Preview */}
             <div className="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
               {tasks.length === 0 ? (
                 <p className="text-xs text-[#92909B] dark:text-slate-400 text-center py-4">No tasks found. Create one above!</p>
@@ -383,7 +371,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* AI MEMORIES WIDGET */}
           <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-[#120c26]/90 border border-[#E8E4EF] dark:border-purple-400/20 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -396,7 +383,6 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* Quick Add Form Toggle */}
             {showQuickAddMemory ? (
               <form onSubmit={handleAddQuickMemory} className="space-y-2">
                 <textarea
@@ -432,7 +418,6 @@ export default function DashboardPage() {
               </button>
             )}
 
-            {/* Memory Snippets Preview */}
             <div className="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
               {memories.length === 0 ? (
                 <p className="text-xs text-[#92909B] dark:text-slate-400 text-center py-4">No memories stored yet.</p>

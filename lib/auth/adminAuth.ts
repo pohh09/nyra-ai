@@ -15,10 +15,6 @@ export interface AdminAuthResult {
 
 export const DESIGNATED_ADMIN_EMAIL = 'pooja@gmail.com';
 
-/**
- * Get configured admin emails. Always includes the designated Nyra administrator pooja@gmail.com,
- * along with any additional admin emails from environment variables.
- */
 export function getAdminEmails(): string[] {
   const envEmails = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '')
     .split(',')
@@ -31,12 +27,6 @@ export function getAdminEmails(): string[] {
   return envEmails;
 }
 
-/**
- * Server-side strict validation for administrator authorization.
- * Checks:
- * 1. Authenticated session exists in Supabase (validated cryptographically via getUser).
- * 2. Authenticated user's email is in ADMIN_EMAILS (including pooja@gmail.com) OR profile role is 'admin'.
- */
 export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthResult> {
   const cookieStore = await cookies();
   const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').trim();
@@ -59,7 +49,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
 
   let authenticatedUser: { id: string; email?: string } | null = null;
 
-  // 1. Try bearer token authorization if header is present
   const authHeader = request?.headers.get('authorization') || request?.headers.get('Authorization');
   const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
 
@@ -83,7 +72,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
     }
   }
 
-  // 2. Fall back to cookie session lookup if bearer token was not provided or invalid
   if (!authenticatedUser) {
     try {
       const { data: { user: cookieUser }, error: cookieErr } = await supabase.auth.getUser();
@@ -95,7 +83,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
     }
   }
 
-  // If not authenticated via Supabase session or token, deny access (401 Unauthorized)
   if (!authenticatedUser || !authenticatedUser.id) {
     return {
       isAuthorized: false,
@@ -108,7 +95,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
   const callerEmail = (authenticatedUser.email || '').toLowerCase().trim();
   const adminEmails = getAdminEmails();
 
-  // 1. Check if authenticated email matches pooja@gmail.com or configured ADMIN_EMAILS
   if (callerEmail && adminEmails.includes(callerEmail)) {
     return {
       isAuthorized: true,
@@ -121,7 +107,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
     };
   }
 
-  // 2. Query public.profiles table for database-backed role === 'admin'
   try {
     const { data: profile, error: profError } = await supabase
       .from('profiles')
@@ -144,7 +129,6 @@ export async function verifyAdminUser(request?: NextRequest): Promise<AdminAuthR
     console.warn('Admin profile role check exception:', err);
   }
 
-  // Access Forbidden for normal non-admin users (403 Forbidden)
   return {
     isAuthorized: false,
     user: {

@@ -103,9 +103,7 @@ export default function FeaturesPage() {
         darkMode ? 'bg-[#050505] text-white' : 'bg-[#FAF8FB] text-[#261827]'
       }`}
     >
-      {/* BACKGROUND */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* GRID */}
         <div
           className={`absolute inset-0 ${darkMode ? 'opacity-[0.03]' : 'opacity-[0.05]'}`}
           style={{
@@ -115,7 +113,6 @@ export default function FeaturesPage() {
           }}
         />
 
-        {/* LIGHT MODE GLOW */}
         {!darkMode && (
           <>
             <div className="absolute top-[-220px] left-[-220px] h-[720px] w-[520px] rounded-full bg-[#E52A83]/10 blur-[160px]" />
@@ -123,7 +120,6 @@ export default function FeaturesPage() {
           </>
         )}
 
-        {/* DARK MODE GLOW */}
         {darkMode && (
           <>
             <div className="absolute top-[-180px] left-[-180px] h-[700px] w-[500px] rounded-full bg-[#E52A83]/15 blur-[180px]" />
@@ -132,12 +128,9 @@ export default function FeaturesPage() {
         )}
       </div>
 
-      {/* CONTENT */}
       <div className="relative z-10">
-        {/* NAVBAR */}
         <header>
           <div className="mx-auto flex max-w-[1450px] items-center justify-between px-5 py-5 md:px-8">
-            {/* LEFT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
@@ -162,7 +155,6 @@ export default function FeaturesPage() {
               </Link>
             </div>
 
-            {/* RIGHT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
@@ -194,10 +186,8 @@ export default function FeaturesPage() {
           </div>
         </header>
 
-        {/* HERO */}
         <section className="px-5 pt-10 pb-20 md:px-8 md:pt-16 md:pb-28">
           <div className="mx-auto max-w-[1450px]">
-            {/* HERO TOP */}
             <div className="max-w-4xl">
               <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
                 FEATURES
@@ -217,7 +207,6 @@ export default function FeaturesPage() {
                 Nyra combines AI chat, intelligent workflows, image understanding and automation into one beautifully crafted workspace.
               </p>
 
-              {/* CTA */}
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/chat-ui"
@@ -239,7 +228,6 @@ export default function FeaturesPage() {
               </div>
             </div>
 
-            {/* FEATURES GRID */}
             <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
               {features.map((feature) => {
                 const Icon = feature.icon;
@@ -253,17 +241,14 @@ export default function FeaturesPage() {
                         : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
                     }`}
                   >
-                    {/* ICON */}
                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 shadow-sm">
                       <Icon size={22} />
                     </div>
 
-                    {/* TITLE */}
                     <h2 className="text-[28px] font-semibold tracking-[-0.04em] text-[#261827] dark:text-white">
                       {feature.title}
                     </h2>
 
-                    {/* DESC */}
                     <p className={`mt-5 text-[16px] leading-8 ${
                       darkMode ? 'text-slate-300' : 'text-[#6E6072]'
                     }`}>
@@ -274,7 +259,6 @@ export default function FeaturesPage() {
               })}
             </div>
 
-            {/* STATS */}
             <div className="mt-24 grid grid-cols-1 gap-5 md:grid-cols-3">
               {stats.map((stat) => {
                 const Icon = stat.icon;
@@ -286,17 +270,14 @@ export default function FeaturesPage() {
                       darkMode ? 'border-pink-500/20 bg-[#16091F]/40' : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
                     }`}
                   >
-                    {/* ICON */}
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F4DCE9] dark:bg-pink-500/20 text-[#B31372] dark:text-pink-300 shadow-sm">
                       <Icon size={18} />
                     </div>
 
-                    {/* VALUE */}
                     <h2 className="text-[44px] md:text-[54px] font-bold tracking-[-0.06em] text-[#261827] dark:text-white">
                       {stat.value}
                     </h2>
 
-                    {/* LABEL */}
                     <p className={`mt-2 text-[14px] ${darkMode ? 'text-slate-400' : 'text-[#6E6072]'}`}>
                       {stat.label}
                     </p>
@@ -305,16 +286,13 @@ export default function FeaturesPage() {
               })}
             </div>
 
-            {/* BIG CTA */}
             <div
               className={`relative mt-24 overflow-hidden rounded-[42px] border p-8 md:p-14 backdrop-blur-3xl ${
                 darkMode ? 'border-pink-500/25 bg-gradient-to-b from-[#16091F]/80 to-[#08020D]/90 shadow-2xl shadow-pink-500/10' : 'border-[#E7B8CF] bg-white shadow-[0_4px_24px_rgba(38,24,39,0.03)]'
               }`}
             >
-              {/* GLOW */}
               <div className="absolute right-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full bg-[#E52A83]/15 blur-[120px]" />
 
-              {/* CONTENT */}
               <div className="relative z-10 max-w-4xl">
                 <p className="mb-5 text-xs font-bold tracking-[0.2em] text-[#B31372] dark:text-pink-400 md:text-sm uppercase">
                   START BUILDING TODAY
@@ -332,7 +310,6 @@ export default function FeaturesPage() {
                   Join creators, startups and modern teams using Nyra to build smarter workflows and better AI experiences.
                 </p>
 
-                {/* CTA */}
                 <div className="mt-10 flex flex-wrap gap-4">
                   <Link
                     href="/chat-ui"

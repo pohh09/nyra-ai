@@ -19,11 +19,9 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
   const { scrollYProgress } = useScroll();
   const scrollY = useTransform(scrollYProgress, [0, 1], [0, 900]);
 
-  // Head tilt (spring physics, never snaps)
   const rotateX = useSpring(mouseY, { stiffness: 120, damping: 18 });
   const rotateY = useSpring(mouseX, { stiffness: 120, damping: 18 });
 
-  // Eye tracking — derived transforms, not stale .get() reads
   const eyeX = useSpring(useTransform(mouseX, (v) => v * 0.35), {
     stiffness: 220,
     damping: 14,
@@ -51,7 +49,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
     return () => window.removeEventListener('mousemove', move);
   }, [mouseX, mouseY]);
 
-  // Random natural blinking, 4–7s intervals, 120–180ms duration
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
@@ -84,7 +81,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* ========= BACK GLOW ========= */}
       <motion.div
         animate={{
           scale: hovered ? [1.08, 1.16, 1.08] : [1, 1.12, 1],
@@ -104,7 +100,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
         "
       />
 
-      {/* ========= ORB ========= */}
       <motion.div
         animate={{
           scale: hovered ? [1.02, 1.06, 1.02] : [1, 1.02, 1],
@@ -120,7 +115,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
           shadow-[0_50px_120px_rgba(120,87,255,.35)]
         "
       >
-        {/* Main Gradient */}
         <div
           className="absolute inset-0 rounded-full"
           style={{
@@ -137,33 +131,26 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
           }}
         />
 
-        {/* Soft Rim */}
         <div className="absolute inset-2 rounded-full border border-white/40" />
 
-        {/* Large Reflection */}
         <motion.div
           animate={{ x: [-6, 8, -6], y: [-3, 6, -3] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute left-12 top-10 h-44 w-28 rounded-full bg-white/50 blur-2xl"
         />
 
-        {/* Reflection 2 */}
         <motion.div
           animate={{ x: [0, 8, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute right-16 top-16 h-16 w-16 rounded-full bg-white/30 blur-xl"
         />
 
-        {/* Reflection 3 */}
         <div className="absolute left-24 bottom-20 h-8 w-20 rounded-full bg-white/10 blur-xl" />
 
-        {/* Glass Layer */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/15 via-transparent to-black/5" />
 
-        {/* Inner Light */}
         <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/10 to-transparent" />
 
-        {/* Noise */}
         <div
           className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
           style={{
@@ -172,7 +159,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
           }}
         />
 
-        {/* Moving Glass Shine */}
         <motion.div
           animate={{
             rotate: [0, 8, -5, 0],
@@ -183,20 +169,17 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
           className="absolute left-10 top-0 h-[260px] w-[90px] rounded-full bg-white/20 blur-3xl rotate-12"
         />
 
-        {/* Inner Glow */}
         <motion.div
           animate={{ scale: [1, 1.04, 1], opacity: [0.18, 0.32, 0.18] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute inset-10 rounded-full bg-gradient-to-br from-sky-300/40 via-cyan-200/10 to-transparent blur-2xl"
         />
 
-        {/* ================= FACE ================= */}
         <motion.div
           className="absolute inset-0"
           animate={{ scale: [1, 1.015, 1] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         >
-          {/* LEFT EYE */}
           <motion.div
             className="absolute left-[29%] top-[41%]"
             style={{ x: eyeX, y: eyeY, scaleY: blink ? 0.08 : 1 }}
@@ -211,7 +194,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
             </svg>
           </motion.div>
 
-          {/* RIGHT EYE */}
           <motion.div
             className="absolute right-[29%] top-[41%]"
             style={{ x: eyeX, y: eyeY, scaleY: blink ? 0.08 : 1 }}
@@ -226,7 +208,6 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
             </svg>
           </motion.div>
 
-          {/* SMILE */}
           <motion.div
             className="absolute left-1/2 top-[58%] -translate-x-1/2"
             style={{ x: smileX }}
@@ -247,14 +228,12 @@ export default function NyraOrb({ size }: { size?: number } = {}) {
             </svg>
           </motion.div>
 
-          {/* LEFT CHEEK */}
           <motion.div
             animate={{ opacity: hovered ? [0.28, 0.45, 0.28] : [0.18, 0.32, 0.18] }}
             transition={{ duration: 3, repeat: Infinity }}
             className="absolute left-[24%] top-[56%] h-8 w-8 rounded-full bg-pink-300 blur-xl"
           />
 
-          {/* RIGHT CHEEK */}
           <motion.div
             animate={{ opacity: hovered ? [0.28, 0.45, 0.28] : [0.18, 0.32, 0.18] }}
             transition={{ duration: 3, repeat: Infinity }}

@@ -1,6 +1,3 @@
-/**
- * Formats a message timestamp into a clean relative time (e.g. "Just now", "5m ago", "Yesterday at 4:30 PM")
- */
 export function getRelativeTime(timestamp?: number | string | Date): string {
   if (!timestamp) return '';
 
@@ -55,9 +52,6 @@ export function getRelativeTime(timestamp?: number | string | Date): string {
   });
 }
 
-/**
- * Returns full precise local timestamp for hover tooltips
- */
 export function getFullTimestamp(timestamp?: number | string | Date): string {
   if (!timestamp) return '';
   const date = new Date(timestamp);

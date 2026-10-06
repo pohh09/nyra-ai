@@ -74,7 +74,6 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
-    // Fallback if used outside provider
     return {
       addToast: (t: Omit<ToastMessage, 'id'>) => console.log('Toast:', t),
       removeToast: () => {},

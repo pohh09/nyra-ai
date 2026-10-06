@@ -1,6 +1,3 @@
-/**
- * Comprehensive Auth & Database Architecture Runtime Audit Script
- */
 
 import {
   localSignUp,
@@ -40,7 +37,6 @@ import {
   setResearchActiveUser,
 } from '../lib/services/researchService';
 
-// Mock browser localStorage and document.cookie for Node runtime testing
 const storageMap: Record<string, string> = {};
 (global as any).localStorage = {
   getItem: (k: string) => storageMap[k] || null,
@@ -75,7 +71,6 @@ async function runAudit() {
 
   const results: { test: string; status: 'PASS' | 'FAIL'; detail: string }[] = [];
 
-  // TEST 1: User A Sign Up & PBKDF2 Password Hashing
   try {
     const userARes = await localSignUp('alice@example.com', 'SuperSecret123!', 'Alice Smith');
     if (!userARes.success || !userARes.user) {
@@ -98,14 +93,12 @@ async function runAudit() {
       throw new Error('Hash or session cookie verification failed');
     }
 
-    // TEST 2: User A Data Creation & Scoped Persistence
     const userAId = userARes.user.id;
     setMemoryActiveUser(userAId);
     setTaskActiveUser(userAId);
     setCareerActiveUser(userAId);
     setResearchActiveUser(userAId);
 
-    // Save User A chat
     saveChats([
       {
         id: 'chat_alice_1',
@@ -116,7 +109,6 @@ async function runAudit() {
       },
     ], userAId);
 
-    // Save User A prompt
     saveCustomPrompts([
       {
         id: 'prompt_alice_1',
@@ -128,21 +120,18 @@ async function runAudit() {
       },
     ], userAId);
 
-    // Save User A task
     createTask({
       title: "Alice's Sensitive Deployment Task",
       priority: 'high',
       status: 'in_progress',
     }, userAId);
 
-    // Save User A memory
     createMemory({
       content: 'Alice works at Acme Corp as Lead Architect',
       category: 'career',
       confidence: 1.0,
     }, userAId);
 
-    // Verify User A data retrieval
     const aliceChats = loadChats(userAId);
     const alicePrompts = loadCustomPrompts(userAId);
     const aliceTasks = getTasks(userAId);
@@ -163,7 +152,6 @@ async function runAudit() {
       throw new Error('User A data retrieval mismatch');
     }
 
-    // TEST 3: User A Sign Out & Session Teardown
     localSignOut();
     const sessionAfterLogout = getLocalSession();
     const cookieAfterLogout = currentCookie;
@@ -178,7 +166,6 @@ async function runAudit() {
       throw new Error('Session or cookie persisted after logout');
     }
 
-    // TEST 4: User B Sign Up (Bob)
     const userBRes = await localSignUp('bob@example.com', 'BobPassword456!', 'Bob Jones');
     if (!userBRes.success || !userBRes.user) {
       throw new Error('User B signup failed: ' + userBRes.error);
@@ -189,7 +176,6 @@ async function runAudit() {
     setCareerActiveUser(userBId);
     setResearchActiveUser(userBId);
 
-    // TEST 5: User B Isolation Verification (Must NOT see User A's data)
     const bobChats = loadChats(userBId);
     const bobPrompts = loadCustomPrompts(userBId);
     const bobTasks = getTasks(userBId);
@@ -210,7 +196,6 @@ async function runAudit() {
       throw new Error('DATA LEAKAGE DETECTED: Bob was able to see Alice records!');
     }
 
-    // TEST 6: Duplicate Email Prevention
     const duplicateRes = await localSignUp('alice@example.com', 'DifferentPassword789!');
     if (!duplicateRes.success && duplicateRes.error?.includes('already exists')) {
       results.push({
@@ -222,7 +207,6 @@ async function runAudit() {
       throw new Error('Duplicate email registration was incorrectly allowed');
     }
 
-    // TEST 7: Invalid Password Sign In Rejection
     const invalidLoginRes = await localSignIn('alice@example.com', 'WrongPassword!');
     if (!invalidLoginRes.success && invalidLoginRes.error?.includes('Incorrect password')) {
       results.push({
@@ -234,11 +218,9 @@ async function runAudit() {
       throw new Error('Invalid password was not properly rejected');
     }
 
-    // TEST 8: Valid Sign In for Alice
     const validLoginAlice = await localSignIn('alice@example.com', 'SuperSecret123!');
     const aliceRestoredSession = getLocalSession();
     if (validLoginAlice.success && aliceRestoredSession?.user.email === 'alice@example.com') {
-      // Confirm Alice still has her original isolated data intact
       const restoredAliceChats = loadChats(aliceRestoredSession.user.id);
       if (restoredAliceChats.length === 1 && restoredAliceChats[0].id === 'chat_alice_1') {
         results.push({

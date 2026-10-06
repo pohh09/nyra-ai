@@ -87,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isCloudConfigured, setIsCloudConfigured] = useState(isSupabaseConfigured());
   const configured = isCloudConfigured || isSupabaseConfigured();
 
-  // Dynamically initialize Supabase if environment variables are provided at server runtime
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       fetch('/api/auth/config')
@@ -149,7 +148,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           return;
         } else {
-          // Profile row does not exist yet (e.g. trigger delay or new user), ensure profile exists
           const defaultName = fallbackDisplayName || userEmail.split('@')[0];
           const defaultRole = userEmail.toLowerCase() === 'pooja@gmail.com' ? 'admin' : 'user';
           const { data: newProfile, error: insertError } = await supabase
@@ -188,7 +186,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Default profile for local auth or fallback
     let localOnboarding: any = {};
     if (typeof window !== 'undefined') {
       try {
@@ -244,7 +241,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
-      // Check local session ONLY if Supabase returned no session or is unconfigured
       const localSess = getLocalSession();
       if (localSess && localSess.user) {
         setSession(localSess);
@@ -300,7 +296,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             authUser.user_metadata?.display_name
           );
         } else {
-          // If Supabase signed out, clear auth state
           const localSess = !configured ? getLocalSession() : null;
           if (!localSess) {
             setUser(null);
@@ -386,7 +381,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // In hosted production environments, NEVER silently fall back to local localStorage accounts
     const isHostedEnv = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
     if (isHostedEnv) {
       return {
@@ -395,7 +389,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    // Local authentication fallback ONLY when Supabase is not configured in local development
     const localRes = await localSignIn(cleanEmail, password);
     if (localRes.success && localRes.user) {
       const authUser: AuthUser = {
@@ -457,7 +450,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (data.user) {
-          // Supabase returns identities: [] if user already exists
           if (data.user.identities && data.user.identities.length === 0) {
             return {
               success: false,
@@ -467,7 +459,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           let authSession = data.session;
 
-          // If session was not immediately returned by signUp, attempt instant signIn
           if (!authSession) {
             const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
               email: cleanEmail,
@@ -519,7 +510,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // In hosted production environments, NEVER silently fall back to local localStorage accounts
     const isHostedEnv = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
     if (isHostedEnv) {
       return {
@@ -528,7 +518,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    // Local Account Creation fallback ONLY when Supabase is not configured in local development
     const localRes = await localSignUp(cleanEmail, password, cleanDisplayName);
     if (localRes.success && localRes.user) {
       const authUser: AuthUser = {
@@ -639,7 +628,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     experienceLevel: string;
     customInstructions?: string;
   }): Promise<{ success: boolean; error?: string }> => {
-    // Persist to local storage for instant access across components & guests
     try {
       localStorage.setItem('nyra_onboarding_prefs', JSON.stringify({
         interests: prefs.interests,
@@ -653,7 +641,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn('Failed to save to localStorage:', e);
     }
 
-    // Update local profile state immediately
     setProfile((prev) =>
       prev
         ? {
@@ -682,7 +669,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (user) {
-      // Persist to local accounts storage
       updateLocalAccountOnboarding(user.id, {
         interests: prefs.interests,
         goals: prefs.goals,
@@ -692,7 +678,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         onboardingCompleted: true,
       });
 
-      // Persist to Supabase if configured
       if (configured) {
         try {
           const { error } = await supabase

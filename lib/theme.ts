@@ -26,7 +26,6 @@ export function initTheme() {
   const savedTheme = (localStorage.getItem('theme') as ThemeMode) || 'dark';
   applyTheme(savedTheme);
 
-  // Listen for system theme changes if user selected 'system'
   const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
   const handler = () => {
     const currentMode = localStorage.getItem('theme') as ThemeMode;

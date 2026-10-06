@@ -21,7 +21,6 @@ async function testCompleteLifecycle() {
   const testPassword = 'Password123!Secure';
   const testDisplayName = 'Nyra Tester';
 
-  // Step 1: Sign Up
   console.log('1. Testing Sign Up (Creating fresh user)...');
   const signupRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
     method: 'POST',
@@ -46,7 +45,6 @@ async function testCompleteLifecycle() {
   const initialAccessToken = signupData.access_token;
   console.log(`   Created User ID: ${userId}, Email: ${testEmail}`);
 
-  // Step 2: Test User Profile Creation via REST
   console.log('\n2. Verifying User Profile Retrieval with Auth Token...');
   const userRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
     headers: {
@@ -58,7 +56,6 @@ async function testCompleteLifecycle() {
   assert(userRes.status === 200, 'Authenticated user endpoint returns HTTP 200');
   assert(userData.id === userId, 'Retrieved user matches created user ID');
 
-  // Step 3: Sign Out (Simulated by clearing token, then signing in)
   console.log('\n3. Testing Sign In with same Email + Password...');
   const loginRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
@@ -78,7 +75,6 @@ async function testCompleteLifecycle() {
   assert(loginData.user?.id === userId, 'Sign In authenticates correct user ID');
   assert(!!loginData.user?.email_confirmed_at, 'Sign In user remains confirmed');
 
-  // Step 4: Test Session Refresh (Refresh Token)
   console.log('\n4. Testing Session Refresh using refresh_token...');
   const refreshRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
     method: 'POST',
@@ -94,7 +90,6 @@ async function testCompleteLifecycle() {
   assert(refreshRes.status === 200, 'Session refresh returns HTTP 200');
   assert(!!refreshData.access_token, 'Session refresh issues valid refreshed access_token');
 
-  // Step 5: Test Duplicate Email Handling
   console.log('\n5. Testing Duplicate Account Registration...');
   const dupRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
     method: 'POST',
@@ -114,7 +109,6 @@ async function testCompleteLifecycle() {
     (dupData.user?.identities && dupData.user.identities.length === 0);
   assert(isDuplicateSafelyHandled, 'Duplicate signup detected safely without exposing secrets');
 
-  // Step 6: Test Invalid Password Rejection
   console.log('\n6. Testing Invalid Password Rejection...');
   const badLoginRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',

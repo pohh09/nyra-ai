@@ -92,7 +92,6 @@ export default function PromptCards({
           "
         >
 
-          {/* GLOW */}
           <div
             className="
               absolute inset-0
@@ -109,7 +108,6 @@ export default function PromptCards({
 
           <div className="relative z-10">
 
-            {/* ICON */}
             <div
               className="
                 w-10 h-10
@@ -127,7 +125,6 @@ export default function PromptCards({
               {prompt.icon}
             </div>
 
-            {/* TITLE */}
             <h3
               className="
                 font-semibold
@@ -138,7 +135,6 @@ export default function PromptCards({
               {prompt.title}
             </h3>
 
-            {/* TEXT */}
             <p
               className="
                 text-sm

@@ -20,7 +20,6 @@ export function parseImageData(img: string): { mimeType: string; data: string } 
     }
   }
 
-  // Fallback for pure base64
   const clean = trimmed.replace(/\s+/g, '');
   if (/^[A-Za-z0-9+/=]+$/.test(clean.slice(0, 100))) {
     return { mimeType: 'image/jpeg', data: clean };
@@ -93,7 +92,6 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
     }
   }
 
-  // Candidate Gemini models to try in order of capability & speed
   const candidateModels = [
     options.modelConfig.modelIdentifier,
     'gemini-3.8-flash',
@@ -140,7 +138,6 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
 
         console.warn(`[GEMINI FALLBACK] Model ${modelName} failed (${response.status}):`, errMsg);
 
-        // If model not found or rate limited, try next candidate model
         if (response.status === 404 || response.status === 429 || response.status === 503) {
           lastError = new Error(errMsg);
           continue;
@@ -166,9 +163,7 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
               chunkCount++;
               onChunk(textChunk);
             }
-          } catch {
-            // Ignore JSON parse errors in partial stream line
-          }
+          } catch {}
         }
       };
 
@@ -185,7 +180,6 @@ export async function streamGemini(options: StreamProviderOptions, onChunk: (tex
         }
       }
 
-      // Drain any remaining buffered text
       buffer += decoder.decode();
       if (buffer.trim()) {
         processLine(buffer);

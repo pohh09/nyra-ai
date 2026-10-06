@@ -121,19 +121,14 @@ const TECH_BADGES = [
 export default function AboutPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white selection:bg-pink-500/30 selection:text-white">
-      {/* Ambient Lighting Orbs */}
       <div className="pointer-events-none absolute top-[-100px] left-1/4 h-[600px] w-[600px] rounded-full bg-[#E52A83]/[0.06] blur-[160px]" />
       <div className="pointer-events-none absolute top-1/3 right-10 h-[500px] w-[500px] rounded-full bg-[#B31372]/[0.05] blur-[150px]" />
       <div className="pointer-events-none absolute bottom-20 left-10 h-[600px] w-[600px] rounded-full bg-[#FF4FA3]/[0.04] blur-[180px]" />
 
       <div className="relative z-10">
         
-        {/* ========================================================================= */}
-        {/* HEADER / NAVIGATION                                                       */}
-        {/* ========================================================================= */}
         <header className="sticky top-0 z-50 backdrop-blur-2xl border-b border-white/[0.06] bg-[#0A0512]/80">
           <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-8 py-3.5 sm:py-4">
-            {/* Left Brand Identity */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
@@ -158,7 +153,6 @@ export default function AboutPage() {
               </Link>
             </div>
 
-            {/* Right Action Links */}
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
@@ -178,12 +172,8 @@ export default function AboutPage() {
           </div>
         </header>
 
-        {/* ========================================================================= */}
-        {/* HERO SECTION                                                             */}
-        {/* ========================================================================= */}
         <section className="px-4 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 max-w-[1400px] mx-auto">
           <div className="max-w-4xl space-y-6">
-            {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/80 px-4 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl">
               <Sparkles className="h-3.5 w-3.5 text-pink-400" />
               <span className="font-mono text-[11px] font-bold tracking-wider uppercase text-pink-300">
@@ -191,7 +181,6 @@ export default function AboutPage() {
               </span>
             </div>
 
-            {/* Main Headline */}
             <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[70px] font-extrabold tracking-tight text-[#F5F5F7] leading-[1.08]">
               One AI workspace for{' '}
               <span className="bg-gradient-to-r from-white via-pink-100 to-pink-300 bg-clip-text text-transparent">
@@ -199,17 +188,12 @@ export default function AboutPage() {
               </span>
             </h1>
 
-            {/* Supporting Copy */}
             <p className="text-base sm:text-lg md:text-xl text-[#A7A7B0] leading-relaxed max-w-3xl">
               Nyra brings AI conversations, web research, documents, prompts, tasks, memory, and career tools into one focused workspace — so you can move from an idea to execution without constantly switching between tools.
             </p>
           </div>
 
-          {/* ========================================================================= */}
-          {/* THE FRAGMENTATION PROBLEM VS NYRA                                         */}
-          {/* ========================================================================= */}
           <div className="mt-16 sm:mt-20 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            {/* The Old Way */}
             <div className="rounded-3xl border border-white/[0.08] bg-[#0A0512]/60 p-6 sm:p-8 space-y-4">
               <span className="font-mono text-xs font-bold text-rose-400/90 uppercase tracking-wider block">
                 The Fragmentation Problem
@@ -222,7 +206,6 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* The Nyra Solution */}
             <div className="rounded-3xl border border-pink-500/30 bg-gradient-to-br from-[#160822]/90 to-[#0A0314]/90 p-6 sm:p-8 space-y-4 shadow-xl shadow-pink-950/20">
               <span className="font-mono text-xs font-bold text-pink-300 uppercase tracking-wider block">
                 The Nyra Solution
@@ -236,9 +219,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* 4 ARCHITECTURAL PILLARS                                                  */}
-          {/* ========================================================================= */}
           <div className="mt-20 sm:mt-28 space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
@@ -281,9 +261,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* 7 INTEGRATED CAPABILITIES                                                 */}
-          {/* ========================================================================= */}
           <div className="mt-20 sm:mt-28 space-y-10">
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
@@ -334,9 +311,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* VERIFIED TECHNOLOGY STACK                                                */}
-          {/* ========================================================================= */}
           <div className="mt-20 sm:mt-28 rounded-3xl border border-white/[0.08] bg-[#0A0512]/60 p-6 sm:p-10 space-y-8">
             <div className="text-center max-w-2xl mx-auto space-y-1.5">
               <span className="font-mono text-xs font-bold text-pink-400 uppercase tracking-wider block">
@@ -363,9 +337,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* FINAL CALL TO ACTION                                                     */}
-          {/* ========================================================================= */}
           <div className="mt-20 sm:mt-28 text-center rounded-3xl border border-pink-500/25 bg-gradient-to-br from-[#180922]/90 via-[#0E0417]/90 to-[#05020A]/95 p-8 sm:p-14 space-y-6">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
               Ready to experience a focused AI workspace?
@@ -392,7 +363,6 @@ export default function AboutPage() {
 
         </section>
 
-        {/* FOOTER */}
         <footer className="border-t border-white/[0.06] py-8 text-center text-xs text-[#8E8E98] font-mono">
           &copy; 2026 Nyra AI Inc. All rights reserved. &bull;{' '}
           <Link href="/" className="hover:text-pink-300 transition-colors">

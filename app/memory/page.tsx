@@ -97,7 +97,6 @@ export default function MemoryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Modal / Form state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<MemoryItem | null>(null);
   const [formTitle, setFormTitle] = useState('');
@@ -105,7 +104,6 @@ export default function MemoryPage() {
   const [formCategory, setFormCategory] = useState<MemoryCategory>('career');
   const [formReason, setFormReason] = useState('');
 
-  // Delete confirmation
   const [deletingMemoryId, setDeletingMemoryId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -240,10 +238,8 @@ export default function MemoryPage() {
 
   return (
     <div className="memory-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
-      {/* Centered Workspace Container Matching Tasks & Documents */}
       <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col gap-5 pb-16">
         
-        {/* Top Navigation & Status Bar */}
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
@@ -267,7 +263,6 @@ export default function MemoryPage() {
           </div>
         </div>
 
-        {/* Title & Description */}
         <div className="space-y-1 pt-1">
           <p className="text-[11px] uppercase tracking-wider text-purple-600 dark:text-purple-400 font-medium font-mono">
             Personalized Help
@@ -281,7 +276,6 @@ export default function MemoryPage() {
           </p>
         </div>
 
-        {/* Master Control Card */}
         <div className="memory-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[#130c26]/90 border border-[#E8E4EF] dark:border-purple-400/25 p-4 sm:p-5 shadow-sm dark:shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -326,10 +320,8 @@ export default function MemoryPage() {
           </div>
         </div>
 
-        {/* Search, Filter & Add Toolbar */}
         <div className="space-y-3 pt-1">
           <div className="flex flex-col sm:flex-row gap-2.5 items-center justify-between">
-            {/* Search Input */}
             <div className="relative w-full sm:w-80">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400/60" />
               <input
@@ -349,7 +341,6 @@ export default function MemoryPage() {
               )}
             </div>
 
-            {/* Add Memory Button */}
             <button
               onClick={() => handleOpenCreate()}
               className="memory-btn-primary w-full sm:w-auto px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer active:scale-95 shrink-0"
@@ -359,7 +350,6 @@ export default function MemoryPage() {
             </button>
           </div>
 
-          {/* Mobile Category Dropdown (sm:hidden) */}
           <div className="block sm:hidden w-full">
             <ResponsiveDropdown<string>
               options={[
@@ -376,7 +366,6 @@ export default function MemoryPage() {
             />
           </div>
 
-          {/* Desktop Category Filter Chips (hidden sm:flex) */}
           <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
             <button
               onClick={() => setSelectedCategory('all')}
@@ -411,7 +400,6 @@ export default function MemoryPage() {
           </div>
         </div>
 
-        {/* Memory Cards Grid */}
         <div className="space-y-3">
           {filteredMemories.length === 0 ? (
             <div className="memory-card p-10 text-center rounded-3xl bg-[#120c26]/60 border border-purple-400/15 backdrop-blur-md space-y-3">
@@ -461,7 +449,6 @@ export default function MemoryPage() {
                       : 'bg-[#100b21]/60 border-purple-400/10 opacity-60'
                   }`}
                 >
-                  {/* Card Header: Topic & Actions */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -475,13 +462,11 @@ export default function MemoryPage() {
                         </span>
                       </div>
 
-                      {/* Memory Content */}
                       <p className="memory-card-content text-sm sm:text-[15px] font-semibold text-white leading-snug pt-0.5">
                         {mem.content}
                       </p>
                     </div>
 
-                    {/* Quick Controls */}
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => handleToggleSingle(mem.id)}
@@ -514,7 +499,6 @@ export default function MemoryPage() {
                     </div>
                   </div>
 
-                  {/* Card Footer: Why Saved Context */}
                   <div className="memory-border-subtle pt-2 border-t border-purple-400/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-zinc-400 memory-text-subtle">
                     <div className="flex items-center gap-1.5">
                       <span className="text-purple-400 font-medium">Why NYRA remembers this:</span>
@@ -536,7 +520,6 @@ export default function MemoryPage() {
         </div>
       </div>
 
-      {/* CREATE / EDIT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -572,7 +555,6 @@ export default function MemoryPage() {
               </div>
 
               <form onSubmit={handleSave} className="space-y-4 text-xs">
-                {/* Topic / Header */}
                 <div>
                   <label className="memory-modal-label block text-xs font-semibold text-purple-200 mb-1">
                     Topic / Header <span className="memory-text-subtle font-normal">(e.g. Career, Goal, Preferences)</span>
@@ -586,7 +568,6 @@ export default function MemoryPage() {
                   />
                 </div>
 
-                {/* Memory Content */}
                 <div>
                   <label className="memory-modal-label block text-xs font-semibold text-purple-200 mb-1">
                     What should NYRA remember? *
@@ -601,7 +582,6 @@ export default function MemoryPage() {
                   />
                 </div>
 
-                {/* Category Selection */}
                 <div>
                   <label className="memory-modal-label block text-xs font-semibold text-purple-200 mb-1">
                     Category
@@ -634,7 +614,6 @@ export default function MemoryPage() {
                   </div>
                 </div>
 
-                {/* Why Saved */}
                 <div>
                   <label className="memory-modal-label block text-xs font-semibold text-purple-200 mb-1">
                     Why was this saved? <span className="memory-text-subtle font-normal">(Optional context)</span>
@@ -648,7 +627,6 @@ export default function MemoryPage() {
                   />
                 </div>
 
-                {/* Modal Buttons */}
                 <div className="memory-border-subtle flex items-center justify-end gap-2 pt-3 border-t border-purple-400/15">
                   <button
                     type="button"
@@ -670,7 +648,6 @@ export default function MemoryPage() {
         )}
       </AnimatePresence>
 
-      {/* DELETE DIALOG */}
       <AnimatePresence>
         {deletingMemoryId && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

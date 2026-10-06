@@ -6,11 +6,6 @@ import { streamAnthropic } from './providers/anthropic';
 import { streamGemini } from './providers/gemini';
 import { streamOpenRouter } from './providers/openrouter';
 
-/**
- * Filter out <think>...</think> reasoning blocks on the fly during streaming.
- * Handles split tags across chunks (<think> and </think>), and ensures no text
- * is swallowed if chunks are split or if the model finishes inside a reasoning block.
- */
 function createThinkingFilter(onCleanText: (text: string) => void) {
   let insideThink = false;
   let buffer = '';
@@ -26,7 +21,6 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
         if (!insideThink) {
           const thinkIndex = buffer.indexOf('<think>');
           if (thinkIndex === -1) {
-            // Check for partial '<think>' at the end of buffer (e.g. '<', '<t', '<th', ...)
             let partialMatchLen = 0;
             for (let i = '<think>'.length - 1; i >= 1; i--) {
               if (buffer.endsWith('<think>'.slice(0, i))) {
@@ -41,7 +35,7 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
                 onCleanText(toEmit);
               }
               buffer = buffer.slice(-partialMatchLen);
-              break; // Wait for next chunk
+              break; 
             } else {
               emittedChars += buffer.length;
               onCleanText(buffer);
@@ -61,7 +55,6 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
         } else {
           const endThinkIndex = buffer.indexOf('</think>');
           if (endThinkIndex === -1) {
-            // Check for partial '</think>' at the end of buffer (e.g. '<', '</', '</t', ...)
             let partialMatchLen = 0;
             for (let i = '</think>'.length - 1; i >= 1; i--) {
               if (buffer.endsWith('</think>'.slice(0, i))) {
@@ -72,7 +65,7 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
             if (partialMatchLen > 0) {
               thinkBuffer += buffer.slice(0, -partialMatchLen);
               buffer = buffer.slice(-partialMatchLen);
-              break; // Wait for next chunk to complete '</think>'
+              break; 
             } else {
               thinkBuffer += buffer;
               buffer = '';
@@ -96,8 +89,6 @@ function createThinkingFilter(onCleanText: (text: string) => void) {
         }
         buffer = '';
       }
-      // Safety guard: only emit fallback text if stream ended without emitting anything
-      // and ensure any internal thinking tags or internal thoughts are stripped
       if (emittedChars === 0 && thinkBuffer.trim().length > 0) {
         const cleaned = thinkBuffer
           .replace(/<think>[\s\S]*?<\/think>/gi, '')
@@ -134,24 +125,18 @@ export interface PdfBudgetCalculationParams {
   reservedOutputTokens?: number;
 }
 
-/**
- * Strips any legacy embedded document context blocks or raw base64 data URLs
- * from historical messages and trims older turns if total history exceeds the max allowance.
- */
 export function sanitizeAndTrimConversationHistory(
   rawMessages: Array<{ role?: string; content?: string; [key: string]: any }>,
   maxHistoryTokens = 4000
 ): ChatMessage[] {
   if (!Array.isArray(rawMessages) || rawMessages.length === 0) return [];
 
-  // Step 1: Sanitize content of all messages
   const cleaned: ChatMessage[] = rawMessages
     .map((m) => {
       let content = m.content || '';
       if (content.includes('[ATTACHED DOCUMENT CONTEXT')) {
         content = content.replace(/\[ATTACHED DOCUMENT CONTEXT:[^\]]*\][\s\S]*?\[USER REQUEST\]\s*/gi, '');
       }
-      // Remove any accidental raw base64 data URLs from content string
       if (content.includes('data:image/')) {
         content = content.replace(/data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]+/g, '[Attached Image]');
       }
@@ -165,12 +150,10 @@ export function sanitizeAndTrimConversationHistory(
     })
     .filter((m) => m.content.length > 0);
 
-  // Step 2: Trim older messages from the beginning if total tokens exceed maxHistoryTokens
   let totalChars = cleaned.reduce((acc, m) => acc + m.content.length, 0);
   let totalTokens = Math.ceil(totalChars / 3.8);
 
   const trimmed = [...cleaned];
-  // Preserve at least the last 2 messages (recent exchange) while dropping oldest messages if overflowing
   while (trimmed.length > 2 && totalTokens > maxHistoryTokens) {
     const dropped = trimmed.shift();
     if (dropped) {
@@ -182,11 +165,6 @@ export function sanitizeAndTrimConversationHistory(
   return trimmed;
 }
 
-/**
- * Intelligently budgets PDF document text context against model & provider limits
- * (Available PDF tokens = Model context limit - System prompt - History - User prompt - Output tokens reserve).
- * Base64 image payloads are NOT counted as text tokens.
- */
 export function calculatePdfContextBudget(params: PdfBudgetCalculationParams): {
   maxPdfChars: number;
   maxOutputTokens: number;
@@ -194,7 +172,6 @@ export function calculatePdfContextBudget(params: PdfBudgetCalculationParams): {
 } {
   const { provider, systemPrompt, historyMessages, userPrompt, reservedOutputTokens } = params;
 
-  // Calculate text character count excluding image base64
   let baseChars = (systemPrompt?.length || 0) + (userPrompt?.length || 0);
   for (const m of historyMessages) {
     let clean = m.content || '';
@@ -209,7 +186,7 @@ export function calculatePdfContextBudget(params: PdfBudgetCalculationParams): {
   if (provider === 'gemini') {
     const maxOutputTokens = reservedOutputTokens || 8192;
     return {
-      maxPdfChars: 300000, // Gemini has 1M+ token context window
+      maxPdfChars: 300000,
       maxOutputTokens,
       availablePdfTokens: 80000,
     };
@@ -227,7 +204,6 @@ export function calculatePdfContextBudget(params: PdfBudgetCalculationParams): {
   }
 
   if (provider === 'groq') {
-    // Groq token budgeting: reserve full 4,096 output tokens for comprehensive responses
     const totalSafeLimit = 7800;
     const maxOutputTokens = Math.min(4096, reservedOutputTokens || 3072);
     const availablePdfTokens = Math.max(1000, totalSafeLimit - baseTokens - maxOutputTokens - 100);
@@ -256,14 +232,12 @@ export function calculateDynamicTokenBudget(params: DynamicBudgetParams): {
 
   let totalChars = systemPrompt.length;
   for (const m of messages) {
-    // Only count text content; ignore any raw base64 data URLs
     const content = m.content || '';
     if (!content.startsWith('data:image')) {
       totalChars += content.length;
     }
   }
 
-  // ~3.8 characters per token average for English text, Markdown, & code
   const estimatedInputTokens = Math.ceil(totalChars / 3.8);
 
   if (provider === 'gemini') {
@@ -283,8 +257,6 @@ export function calculateDynamicTokenBudget(params: DynamicBudgetParams): {
   }
 
   if (provider === 'groq') {
-    // Groq models support up to 8,192 max output tokens.
-    // Ensure full multi-paragraph and complete code block generation without early cutoffs.
     const maxSafeTotal = 7800;
     const safeOutputBudget = Math.max(3072, maxSafeTotal - estimatedInputTokens - 100);
     const maxOutputTokens = Math.min(8192, maxTokensOverride || safeOutputBudget);
@@ -316,10 +288,8 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
     (m) => m.image || (Array.isArray(m.images) && m.images.length > 0)
   );
 
-  // Safely resolve to an active, configured model with automatic fallback
   const modelConfig = resolveActiveModelConfig(params.modelId, hasImages);
 
-  // Safety guard: if absolutely no providers are configured in the environment
   if (!isProviderConfigured(modelConfig.provider)) {
     return new Response(
       `No active AI providers are configured. Please check your GROQ_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY in your environment settings (visit /api/diagnostics for configuration status).`,
@@ -327,7 +297,6 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
     );
   }
 
-  // Calculate dynamic token budget to guarantee complete responses without hitting TPM limits
   const budget = calculateDynamicTokenBudget({
     provider: modelConfig.provider,
     modelId: modelConfig.modelIdentifier,
@@ -380,7 +349,6 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
           filter.push(chunk);
         };
 
-        // Resilient provider runner with automatic fallback for vision, text & rate limits
         const providerOrder: AIProvider[] = [modelConfig.provider];
         if (isProviderConfigured('groq') && !providerOrder.includes('groq')) providerOrder.push('groq');
         if (isProviderConfigured('gemini') && !providerOrder.includes('gemini')) providerOrder.push('gemini');
@@ -429,7 +397,6 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
           } catch (err: any) {
             lastStreamErr = err;
             console.warn(`[RESOLVER STREAM FALLBACK] Provider ${currentProv} failed:`, err?.message);
-            // If already streaming chunks to the user, we cannot switch mid-stream
             if (totalChunksEnqueued > 0) {
               throw err;
             }
@@ -442,7 +409,6 @@ export async function resolveAIStream(params: ResolveStreamParams): Promise<Resp
 
         filter.flush();
 
-        // Append live web search sources if present
         if (params.webSources && params.webSources.length > 0) {
           controller.enqueue(
             encoder.encode('\n\n__SOURCES__\n' + JSON.stringify(params.webSources))

@@ -1,7 +1,3 @@
-/**
- * Unified Multimodal Attachment Contract
- * Single source of truth for attachments across UI, API, Stream Resolver, and AI Providers.
- */
 
 export interface ChatAttachment {
   id: string;
@@ -9,9 +5,7 @@ export interface ChatAttachment {
   name: string;
   mimeType?: string;
   size?: number;
-  // For images (data URL, base64, or public URL)
   imageData?: string;
-  // For PDFs & documents
   extractedText?: string;
   pageCount?: number;
 }
@@ -22,9 +16,6 @@ export interface ExtractedDocumentContext {
   totalPages: number;
 }
 
-/**
- * Normalizes an array of raw attachment inputs into standard ChatAttachment objects.
- */
 export function normalizeAttachments(rawList: any[]): ChatAttachment[] {
   if (!Array.isArray(rawList)) return [];
 
@@ -56,9 +47,6 @@ export function normalizeAttachments(rawList: any[]): ChatAttachment[] {
     .filter(Boolean) as ChatAttachment[];
 }
 
-/**
- * Extracts and concatenates all PDF/document text from attachments and legacy fields.
- */
 export function extractDocumentContext(
   attachments?: ChatAttachment[],
   legacyPdfText?: string,
@@ -107,9 +95,6 @@ export function extractDocumentContext(
   };
 }
 
-/**
- * Extracts all image URLs/data from attachments and legacy fields.
- */
 export function extractImageContext(
   attachments?: ChatAttachment[],
   legacyImage?: string,

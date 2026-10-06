@@ -2,7 +2,6 @@ console.log('\n================================================================'
 console.log('             NYRA USAGE AND LIMITS VERIFICATION TEST            ');
 console.log('================================================================\n');
 
-// 1. Calculate Reset Time
 const now = new Date();
 const utcNow = now.getTime();
 const tomorrowUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0)).getTime();
@@ -13,7 +12,6 @@ const resetFormatted = `${hours}h ${minutes.toString().padStart(2, '0')}m`;
 
 console.log(`✓ Daily Reset Calculation: ${resetFormatted} until 00:00 UTC (Hours: ${hours}, Minutes: ${minutes})`);
 
-// 2. Limits Verification
 const USAGE_LIMITS = {
   free: { aiRequests: 20, webSearches: 10, imageRequests: 5, pdfRequests: 5 },
   guest: { aiRequests: 8, webSearches: 4, imageRequests: 3, pdfRequests: 3 },
@@ -32,7 +30,6 @@ console.log(`  Web Searches:    0 / ${USAGE_LIMITS.free.webSearches}`);
 console.log(`  Vision Images:   0 / ${USAGE_LIMITS.free.imageRequests}`);
 console.log(`  PDF Analyses:    0 / ${USAGE_LIMITS.free.pdfRequests}`);
 
-// 3. Test API endpoint
 console.log('\nTesting /api/usage Endpoint against http://localhost:3000/api/usage:');
 try {
   const res = await fetch('http://localhost:3000/api/usage');

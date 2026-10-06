@@ -402,7 +402,6 @@ export default function HowNyraWorksSection() {
   const currentScenario = SCENARIOS[selectedScenarioIdx];
   const currentStepData = currentScenario.steps[activeStep];
 
-  // Auto-play timer
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -468,20 +467,14 @@ export default function HowNyraWorksSection() {
       id="how-it-works"
       className="scroll-mt-24 sm:scroll-mt-28 relative w-full bg-transparent py-20 sm:py-28 lg:py-36 overflow-hidden transition-colors"
     >
-      {/* Anchor alias */}
       <span id="architecture" className="scroll-mt-28 absolute top-0" />
 
-      {/* Atmospheric Ambient Spotlights */}
       <div className="pointer-events-none absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-to-b from-[#E52A83]/[0.07] via-[#B31372]/[0.04] to-transparent rounded-full blur-[140px]" />
       <div className="pointer-events-none absolute bottom-10 right-10 w-[450px] h-[350px] bg-cyan-500/[0.03] rounded-full blur-[120px]" />
 
       <div className="w-[94%] sm:w-[90%] max-w-[1700px] mx-auto px-2 sm:px-4 space-y-12 sm:space-y-16 relative z-10">
         
-        {/* ========================================================================= */}
-        {/* SECTION HEADER                                                            */}
-        {/* ========================================================================= */}
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-4">
-          {/* Eyebrow Badge */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -499,7 +492,6 @@ export default function HowNyraWorksSection() {
             <span className="text-[11px] text-[#A7A7B0]">4-Stage Deterministic Loop</span>
           </motion.div>
 
-          {/* Heading */}
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -513,7 +505,6 @@ export default function HowNyraWorksSection() {
             </span>
           </motion.h2>
 
-          {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -524,7 +515,6 @@ export default function HowNyraWorksSection() {
             Watch raw user intent transform through multi-source grounding, cognitive reasoning, and verified execution in milliseconds.
           </motion.p>
 
-          {/* Scenario Selector Pills */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -556,12 +546,8 @@ export default function HowNyraWorksSection() {
           </motion.div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* TIMELINE PROGRESS & PLAY/PAUSE CONTROLS                                  */}
-        {/* ========================================================================= */}
         <div className="flex flex-col space-y-6">
           
-          {/* Controls Bar */}
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <button
@@ -599,14 +585,9 @@ export default function HowNyraWorksSection() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* CONNECTED 4-NODE INTERACTIVE TIMELINE RIBBON                              */}
-          {/* ========================================================================= */}
           <div className="relative">
             
-            {/* Desktop Connecting Beam */}
             <div className="hidden lg:block absolute top-[52px] left-[6%] right-[6%] h-[2px] bg-white/[0.08] z-0">
-              {/* Dynamic Illuminating Progress Line */}
               <motion.div
                 className="h-full bg-gradient-to-r from-pink-500 via-[#E52A83] to-cyan-400"
                 animate={{
@@ -614,7 +595,6 @@ export default function HowNyraWorksSection() {
                 }}
                 transition={{ duration: 0.6, ease: 'easeInOut' }}
               />
-              {/* Glowing Pulse Packet traveling to active node */}
               <motion.div
                 className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-[0_0_15px_#E52A83]"
                 animate={{
@@ -624,7 +604,6 @@ export default function HowNyraWorksSection() {
               />
             </div>
 
-            {/* 4 Connected Milestone Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative z-10">
               {STEP_METADATA.map((step, idx) => {
                 const StepIcon = step.icon;
@@ -647,10 +626,8 @@ export default function HowNyraWorksSection() {
                         : 'border-white/[0.06] bg-[#0A0512]/60 hover:border-white/20 hover:bg-[#0F0718]'
                     }`}
                   >
-                    {/* Top Row: Number Node & Step Icon */}
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        {/* Number Badge */}
                         <div
                           className={`h-11 w-11 rounded-xl flex items-center justify-center font-mono text-sm font-bold transition-all ${
                             isActive
@@ -663,7 +640,6 @@ export default function HowNyraWorksSection() {
                           {step.number}
                         </div>
 
-                        {/* Status Icon */}
                         <div
                           className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-all ${
                             isActive
@@ -675,7 +651,6 @@ export default function HowNyraWorksSection() {
                         </div>
                       </div>
 
-                      {/* Step Labels */}
                       <div className="space-y-1">
                         <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-pink-400 block">
                           {step.tag}
@@ -687,13 +662,11 @@ export default function HowNyraWorksSection() {
                         </h3>
                       </div>
 
-                      {/* Brief Summary */}
                       <p className="mt-2.5 text-xs text-[#A7A7B0] leading-relaxed line-clamp-2">
                         {stepData.summary}
                       </p>
                     </div>
 
-                    {/* Bottom Status / Phase Pill */}
                     <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono">
                       <span className={`${isActive ? 'text-pink-300 font-semibold' : 'text-[#8E8E98]'}`}>
                         {stepData.badge}
@@ -708,7 +681,6 @@ export default function HowNyraWorksSection() {
                       )}
                     </div>
 
-                    {/* Active Bottom Glow Indicator */}
                     {isActive && (
                       <motion.div
                         layoutId="active-step-glow"
@@ -721,20 +693,15 @@ export default function HowNyraWorksSection() {
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* THE ENGINE ROOM: LIVE STAGE EXECUTION VISUALIZER                         */}
-          {/* ========================================================================= */}
           <motion.div
             layout
             className="rounded-3xl border border-white/[0.1] bg-[#0C0517]/90 p-5 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl relative overflow-hidden"
           >
-            {/* Ambient Background Gradient Glow */}
             <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 bg-[#E52A83]/10 rounded-full blur-[90px]" />
             <div className="pointer-events-none absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-500/[0.06] rounded-full blur-[90px]" />
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              {/* Left Column: Context & Deep Dive (5 cols) */}
               <div className="lg:col-span-5 space-y-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2 font-mono text-xs">
@@ -757,7 +724,6 @@ export default function HowNyraWorksSection() {
                   </p>
                 </div>
 
-                {/* Metrics Highlight Pill */}
                 <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-pink-500/10 text-pink-400">
                     <Zap className="h-4 w-4" />
@@ -770,7 +736,6 @@ export default function HowNyraWorksSection() {
                   </div>
                 </div>
 
-                {/* Architecture Highlights */}
                 <div className="space-y-2.5 pt-1">
                   <div className="text-xs font-mono uppercase tracking-wider text-[#8E8E98]">Key Capabilities at this stage:</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -793,7 +758,6 @@ export default function HowNyraWorksSection() {
                   </div>
                 </div>
 
-                {/* Step navigation shortcut */}
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     onClick={() => {
@@ -817,11 +781,9 @@ export default function HowNyraWorksSection() {
                 </div>
               </div>
 
-              {/* Right Column: Interactive Live Visualizer Window (7 cols) */}
               <div className="lg:col-span-7">
                 <div className="rounded-2xl border border-white/[0.12] bg-[#07030C]/90 shadow-2xl overflow-hidden flex flex-col">
                   
-                  {/* Window Bar */}
                   <div className="flex items-center justify-between px-4 py-3 bg-white/[0.03] border-b border-white/[0.08]">
                     <div className="flex items-center gap-2">
                       <div className="h-2.5 w-2.5 rounded-full bg-rose-500/70" />
@@ -839,7 +801,6 @@ export default function HowNyraWorksSection() {
                     </div>
                   </div>
 
-                  {/* Window Content Display */}
                   <div className="p-5 sm:p-6 min-h-[260px] flex flex-col justify-between">
                     <AnimatePresence mode="wait">
                       <motion.div
@@ -854,7 +815,6 @@ export default function HowNyraWorksSection() {
                       </motion.div>
                     </AnimatePresence>
 
-                    {/* Interactive Sub-actions in Execution Window */}
                     <div className="mt-6 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs">
                       <div className="flex items-center gap-2 text-[#8E8E98]">
                         <Layers className="h-3.5 w-3.5 text-pink-400" />

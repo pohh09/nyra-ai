@@ -69,7 +69,6 @@ export async function streamGroq(options: StreamProviderOptions, onChunk: (text:
         temperature: options.temperature ?? 0.7,
       };
 
-      // Set reasoning_effort to low for standard/balanced/fast/advanced models to prevent 3.5s reasoning stalls
       if (candidateModel.startsWith('openai/gpt-oss')) {
         completionParams.reasoning_effort = options.modelConfig.id === 'reasoning' ? 'medium' : 'low';
       }
@@ -107,7 +106,6 @@ export async function streamGroq(options: StreamProviderOptions, onChunk: (text:
       const errMsg = err?.message?.toLowerCase() || '';
       console.warn(`[GROQ FALLBACK] Model ${candidateModel} failed:`, err?.message);
 
-      // If rate limited or model not found, try the next available candidate model
       if (
         errMsg.includes('rate limit') ||
         errMsg.includes('429') ||

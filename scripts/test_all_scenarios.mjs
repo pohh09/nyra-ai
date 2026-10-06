@@ -1,7 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-
-// Load .env.local
 const envPath = path.join(process.cwd(), '.env.local');
 const envContent = fs.readFileSync(envPath, 'utf8');
 const env = {};
@@ -103,28 +101,24 @@ async function testScenario(name, model, messages, extraBody = {}) {
 async function run() {
   console.log('Testing Latency across request scenarios with optimized models:\n');
 
-  // Scenario A: Simple Text
   await testScenario(
     'A. Simple Text ("Hello Nyra")',
     'qwen/qwen3.8-27b',
     [{ role: 'user', content: 'Hello Nyra' }]
   );
 
-  // Scenario B: Normal Question
   await testScenario(
     'B. Normal Question ("What is photosynthesis?")',
     'qwen/qwen3.8-27b',
     [{ role: 'user', content: 'What is photosynthesis in 2 sentences?' }]
   );
 
-  // Scenario C: Longer Question
   await testScenario(
     'C. Longer Question ("Transformer encoders vs decoders")',
     'qwen/qwen3.8-27b',
     [{ role: 'user', content: 'Explain the core difference between Transformer encoders and decoders.' }]
   );
 
-  // Scenario D: GPT-OSS-20B (Fast Mode)
   await testScenario(
     'D. Fast Mode (openai/gpt-oss-20b with low reasoning)',
     'openai/gpt-oss-20b',
@@ -132,7 +126,6 @@ async function run() {
     { reasoning_effort: 'low' }
   );
 
-  // Scenario E: Advanced Mode (openai/gpt-oss-120b with low reasoning)
   await testScenario(
     'E. Advanced Mode (openai/gpt-oss-120b with low reasoning)',
     'openai/gpt-oss-120b',
@@ -140,7 +133,6 @@ async function run() {
     { reasoning_effort: 'low' }
   );
 
-  // Scenario F: Web Search Context (Simulated augmented prompt)
   const webSearchPrompt = `Context from web search:
 [1] Title: Latest Mars Rover Discovery
 Snippet: NASA's Perseverance rover recently discovered unique mineral deposits in Jezero Crater indicating prolonged water presence.

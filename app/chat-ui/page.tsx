@@ -106,14 +106,12 @@ export default function ChatPage() {
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const [appLoading, setAppLoading] = useState(true);
 
-  // Route protection: redirect unauthenticated / logged-out users to /login
   useEffect(() => {
     if (!authLoading && !user && !isGuest) {
       router.replace('/login');
     }
   }, [user, isGuest, authLoading, router]);
 
-  // Settings & Customization state
   const [selectedModelId, setSelectedModelId] = useState<string>(DEFAULT_MODEL_ID);
   const [accentColor, setAccentColor] = useState('purple');
   const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
@@ -121,7 +119,6 @@ export default function ChatPage() {
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
   const [greetingData, setGreetingData] = useState<GreetingData>(() => getDynamicGreeting());
 
-  // Modals state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialTab, setSettingsInitialTab] = useState<SettingsTab>('appearance');
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
@@ -132,16 +129,13 @@ export default function ChatPage() {
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
-  // Projects state
   const [projects, setProjects] = useState<WorkspaceProject[]>([]);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
 
-  // In-Chat Search state
   const [isInChatSearchOpen, setIsInChatSearchOpen] = useState(false);
   const [inChatSearchQuery, setInChatSearchQuery] = useState('');
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
 
-  // Attachment & Web Search state
   const [pdfText, setPdfText] = useState('');
   const [pdfName, setPdfName] = useState('');
   const [pdfPages, setPdfPages] = useState(0);
@@ -163,7 +157,6 @@ export default function ChatPage() {
   const composerTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { addToast } = useToast();
 
-  // Speech Recognition & Speech Synthesis hooks
   const {
     isListening,
     startListening,
@@ -213,13 +206,11 @@ export default function ChatPage() {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    // When distance to bottom > 100px, user has manually scrolled up
     const isUp = distanceFromBottom > 100;
     isUserScrolledUpRef.current = isUp;
     setShowScrollButton(isUp && messages.length > 0 && scrollHeight > clientHeight + 80);
   }, [messages.length]);
 
-  // High-performance, hardware-accelerated RAF glider during streaming
   const followStreamingScroll = useCallback(() => {
     if (!scrollRef.current || isUserScrolledUpRef.current) return;
     if (rafScrollIdRef.current) return;
@@ -238,7 +229,6 @@ export default function ChatPage() {
     });
   }, []);
 
-  // Auto smooth-scroll to bottom during response generation / streaming if user hasn't scrolled up
   useEffect(() => {
     if (!isUserScrolledUpRef.current && messages.length > 0) {
       followStreamingScroll();
@@ -251,14 +241,12 @@ export default function ChatPage() {
     };
   }, [messages, isLoading, thinking, followStreamingScroll]);
 
-  // Load state from LocalStorage on mount
   useEffect(() => {
     const timer = setTimeout(() => setAppLoading(false), 200);
 
     const savedModel = localStorage.getItem('nyra_selected_model');
     if (savedModel) setSelectedModelId(savedModel);
 
-    // Verify configured providers and migrate unconfigured models automatically
     fetch('/api/models')
       .then((res) => res.json())
       .then((data) => {
@@ -304,7 +292,6 @@ export default function ChatPage() {
       setActiveProjectId(null);
     }
 
-    // Check for initial prompt passed from Tasks roadmap or quick links
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const queryPrompt = urlParams.get('q');
@@ -324,7 +311,6 @@ export default function ChatPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Lock body scroll when mobile sidebar drawer is open
   useEffect(() => {
     if (sidebarOpen) {
       document.body.style.overflow = 'hidden';
@@ -336,7 +322,6 @@ export default function ChatPage() {
     };
   }, [sidebarOpen]);
 
-  // Global Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -370,7 +355,6 @@ export default function ChatPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSettingsOpen, isPromptLibraryOpen, isExportOpen, isInChatSearchOpen, isLoading]);
 
-  // Network Status Listeners
   useEffect(() => {
     const handleOffline = () => {
       addToast({
@@ -394,7 +378,6 @@ export default function ChatPage() {
     };
   }, [addToast]);
 
-  // Click outside listener for dropdowns
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (navMoreRef.current && !navMoreRef.current.contains(e.target as Node)) {
@@ -411,7 +394,6 @@ export default function ChatPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Save model selection
   const handleSelectModel = (modelId: string) => {
     const model = AI_MODELS.find((m) => m.id === modelId);
     if (selectedImages.length > 0 && model && !model.supportsVision) {
@@ -427,7 +409,6 @@ export default function ChatPage() {
     addToast({ type: 'info', title: `Model: ${model?.name || modelId}` });
   };
 
-  // Context-aware prompt suggestions for uploaded image/PDF
   const getAttachmentSuggestions = useCallback(() => {
     const hasImages = selectedImages.length > 0;
     const hasPdfs = attachedPdfs.length > 0;
@@ -461,7 +442,6 @@ export default function ChatPage() {
     return [];
   }, [selectedImages.length, attachedPdfs.length]);
 
-  // Save bookmarks
   const handleToggleBookmark = (msgId: string) => {
     let updated: string[];
     if (bookmarkedIds.includes(msgId)) {
@@ -475,7 +455,6 @@ export default function ChatPage() {
     localStorage.setItem('nyra_bookmarked_ids', JSON.stringify(updated));
   };
 
-  // Process image file with validation
   const processImageFile = async (file: File) => {
     const val = validateImageFile(file, selectedImages.length);
     if (!val.valid) {
@@ -484,7 +463,6 @@ export default function ChatPage() {
       return;
     }
 
-    // Check if active model supports vision
     const activeModel = AI_MODELS.find((m) => m.id === selectedModelId);
     if (activeModel && !activeModel.supportsVision) {
       setSelectedModelId(DEFAULT_VISION_MODEL_ID);
@@ -516,7 +494,6 @@ export default function ChatPage() {
     }
   };
 
-  // Process PDF file with validation and extraction
   const processPdfFile = async (file: File) => {
     const isDuplicate = attachedPdfs.some(
       (p) => p.name === file.name && p.size === file.size
@@ -684,15 +661,13 @@ export default function ChatPage() {
     setPdfPages(0);
   };
 
-  // Load Chats (Cloud first if authenticated, localStorage fallback)
   useEffect(() => {
     let isMounted = true;
 
     async function initChats() {
-      // 1. Authenticated User flow:
       if (user?.id) {
         setMemoryActiveUser(user.id);
-        syncMemoriesWithCloud(user.id).catch(() => {});
+        syncMemoriesWithCloud(user.id).catch(() => { });
         try {
           const cloudChats = await fetchCloudConversations(user.id);
           if (!isMounted) return;
@@ -700,7 +675,6 @@ export default function ChatPage() {
             setChats(cloudChats);
             setCurrentChatId(cloudChats[0].id);
 
-            // Check if local chats exist for this user to migrate
             const userLocalKey = `nyra_chats_${user.id}`;
             const localSaved = localStorage.getItem(userLocalKey);
             if (localSaved) {
@@ -722,7 +696,6 @@ export default function ChatPage() {
           console.warn('Could not load cloud conversations:', e);
         }
 
-        // Fallback to user-specific local storage
         const userSaved = localStorage.getItem(`nyra_chats_${user.id}`);
         if (userSaved) {
           try {
@@ -742,9 +715,6 @@ export default function ChatPage() {
         }
       }
 
-      // 2. Guest User flow:
-      // When in guest mode, NEVER display chats from other accounts or old sessions.
-      // Only load from the current isolated guest storage if active.
       const isGuestMode = isGuest || (typeof window !== 'undefined' && localStorage.getItem('nyra_is_guest') === 'true');
       if (isGuestMode) {
         const guestSaved = localStorage.getItem('nyra_chats_guest');
@@ -766,7 +736,6 @@ export default function ChatPage() {
         }
       }
 
-      // Default: Initialize brand new clean chat
       if (isMounted) {
         const firstChat: Chat = {
           id: Date.now().toString(),
@@ -786,7 +755,6 @@ export default function ChatPage() {
     };
   }, [user, isGuest]);
 
-  // Save Chats (Sanitize attachments before persisting to localStorage with strict user/guest isolation)
   useEffect(() => {
     if (chats.length > 0) {
       const sanitized = chats.map((c) => ({
@@ -801,8 +769,8 @@ export default function ChatPage() {
       const storageKey = user?.id
         ? `nyra_chats_${user.id}`
         : isGuestMode
-        ? 'nyra_chats_guest'
-        : 'nyra_chats';
+          ? 'nyra_chats_guest'
+          : 'nyra_chats';
 
       localStorage.setItem(storageKey, JSON.stringify(sanitized));
     }
@@ -817,8 +785,6 @@ export default function ChatPage() {
   };
 
 
-
-  // Reset scroll state on switching chat
   useEffect(() => {
     isUserScrolledUpRef.current = false;
     setShowScrollButton(false);
@@ -827,7 +793,6 @@ export default function ChatPage() {
     }
   }, [currentChatId]);
 
-  // Close tools menu on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
@@ -896,10 +861,8 @@ export default function ChatPage() {
       'qwen/qwen3.6-27b';
     setSelectedModelId(defaultModel);
 
-    // Clean up empty chats from state to prevent duplicates in history
     setChats((prev) => prev.filter((c) => c.messages && c.messages.length > 0));
 
-    // Fresh draft conversation state (not saved in history until first message is sent)
     const freshDraftId = Date.now().toString();
     setCurrentChatId(freshDraftId);
     setGreetingData(getDynamicGreeting());
@@ -923,26 +886,20 @@ export default function ChatPage() {
   };
 
   const handleClearAllHistory = async () => {
-    // 1. Abort any active AI response generation / stream
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
 
-    // 2. Stop speech synthesis if active
     stopSpeaking();
 
-    // 3. Reset loading and thinking states
     setIsLoading(false);
     setThinking(false);
 
-    // 4. Clear in-memory chat list
     setChats([]);
 
-    // 5. Clear all local storage chat entries across guest, user, and legacy keys
     clearAllChats(user?.id);
 
-    // 6. Clear cloud conversations and messages if authenticated with Supabase
     if (user?.id) {
       try {
         await clearAllUserConversations(user.id);
@@ -951,15 +908,12 @@ export default function ChatPage() {
       }
     }
 
-    // 7. Clear bookmarked message IDs
     setBookmarkedIds([]);
 
-    // 8. Close in-chat search if open
     setIsInChatSearchOpen(false);
     setInChatSearchQuery('');
     setCurrentMatchIndex(0);
 
-    // 9. Reset composer input, attachments, and start a fresh conversation draft
     const freshDraftId = Date.now().toString();
     setCurrentChatId(freshDraftId);
     setGreetingData(getDynamicGreeting());
@@ -973,7 +927,6 @@ export default function ChatPage() {
     setDeepResearch(false);
     setSidebarOpen(false);
 
-    // 10. Close settings modal if open
     setIsSettingsOpen(false);
 
     addToast({ type: 'success', title: 'All chat history cleared' });
@@ -1189,7 +1142,6 @@ export default function ChatPage() {
         }
         if (!response.body) throw new Error('No response body');
 
-        // Increment local client usage counters
         try {
           const isUserAdmin = profile?.role === 'admin' || user?.email?.toLowerCase() === 'pooja@gmail.com';
           incrementLocalUsage('aiRequests', 1);
@@ -1230,13 +1182,11 @@ export default function ChatPage() {
                 return updatedChats;
               });
 
-              // Follow streaming response with buttery-smooth RAF glider
               followStreamingScroll();
             }
           }
         }
 
-        // Drain any remaining decoded bytes
         const remainingChunk = decoder.decode();
         if (remainingChunk) {
           streamAccumulated += remainingChunk;
@@ -1251,7 +1201,6 @@ export default function ChatPage() {
           finalFullContent,
         });
 
-        // Fetch dynamic follow-up suggestions non-blockingly
         const lastUserMsg = [...nextMessages].reverse().find((m) => m.role === 'user');
         const previousSuggestions = nextMessages
           .flatMap((m) => m.suggestedFollowUps || [])
@@ -1295,7 +1244,6 @@ export default function ChatPage() {
           return updatedChats;
         });
 
-        // Save completed assistant message to cloud
         if (user?.id) {
           saveCloudMessage(user.id, chatId, {
             ...assistantMessage,
@@ -1406,7 +1354,6 @@ export default function ChatPage() {
 
     if ((!textToSend.trim() && selectedImages.length === 0 && readyPdfs.length === 0 && !pdfText) || isLoading) return;
 
-    // Pre-flight capability validation for attachments
     const hasImagesToSend = selectedImages.length > 0;
     const modelCap = validateModelCapabilities(selectedModelId, { hasImages: hasImagesToSend });
     if (!modelCap.valid) {
@@ -1614,7 +1561,6 @@ export default function ChatPage() {
       onDrop={handleDrop}
       className="relative flex h-[100dvh] w-full max-w-full overflow-hidden bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-[#ede7f3] transition-colors"
     >
-      {/* DRAG AND DROP OVERLAY */}
       {isDraggingOver && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md border-2 border-dashed border-pink-500/50">
           <div className="text-center p-6 sm:p-8 rounded-2xl bg-[#16091F] border border-pink-500/30 max-w-[90vw] shadow-2xl shadow-pink-500/20">
@@ -1625,19 +1571,16 @@ export default function ChatPage() {
         </div>
       )}
 
-      {/* MOBILE DRAWER OVERLAY (Below md) */}
       <div
         className={`fixed inset-0 z-50 flex md:hidden pointer-events-none transition-all duration-300 ${sidebarOpen ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
       >
-        {/* Backdrop */}
         <div
           onClick={() => setSidebarOpen(false)}
           className={`fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
         />
 
-        {/* Mobile Slide-in Drawer */}
         <div
           className={`relative z-10 flex h-full w-[285px] sm:w-[300px] max-w-[85vw] flex-col bg-[#FAF8FB] dark:bg-[#08020D] border-r border-[#E7B8CF] dark:border-pink-500/20 shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
@@ -1710,7 +1653,6 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* DESKTOP SIDEBAR - TRANSPARENT (NO BACKGROUND) */}
       <aside
         style={{
           width: desktopSidebarOpen ? 290 : 0,
@@ -1782,19 +1724,12 @@ export default function ChatPage() {
         </div>
       </aside>
 
-      {/* =========================================================
-          CURVED CHAT SCREEN CONTAINER (Edge-to-edge on Mobile/Tablet, Floating rounded workspace on Desktop)
-      ========================================================= */}
       <main className="flex-1 p-0 md:p-3 relative z-10 overflow-hidden flex flex-col min-w-0 h-full w-full bg-[#FAF8FB] dark:bg-[#050505] transition-colors">
-        {/* THE WORKSPACE CANVAS (Full viewport on Mobile, Curved on Desktop) */}
         <div className="relative flex-1 w-full h-full rounded-none md:rounded-[32px] overflow-hidden flex flex-col bg-[#FFFFFF] dark:bg-[linear-gradient(180deg,#16091F_0%,#0E0514_30%,#08020D_65%,#050505_100%)] border-0 md:border md:border-[#E8E4EF] dark:md:border-pink-500/20 md:shadow-[0_12px_40px_rgba(38,24,39,0.04)] dark:md:shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(229,42,131,0.08)] transition-colors">
 
 
-          {/* FLOATING TOP NAVBAR (Responsive, Modern & Clean) */}
           <header className="relative z-30 flex items-center justify-between px-3.5 sm:px-5 md:px-6 pt-2 sm:pt-2.5 md:pt-3 pb-1.5 sm:pb-2 md:pb-2.5 min-h-[52px] sm:min-h-[56px] bg-transparent shrink-0 w-full select-none">
-            {/* TOP LEFT: Sidebar Trigger + New Chat + Model Selector Pill */}
             <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-              {/* Mobile Sidebar Drawer Trigger */}
               <button
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open sidebar"
@@ -1803,7 +1738,6 @@ export default function ChatPage() {
                 <PanelLeft size={18} />
               </button>
 
-              {/* Mobile New Chat Trigger */}
               <button
                 onClick={() => handleNewChat()}
                 aria-label="New chat"
@@ -1813,7 +1747,6 @@ export default function ChatPage() {
                 <SquarePen size={17} />
               </button>
 
-              {/* Desktop Re-Open Sidebar Trigger & New Chat */}
               {!desktopSidebarOpen && (
                 <div className="hidden md:flex items-center gap-1">
                   <button
@@ -1835,14 +1768,12 @@ export default function ChatPage() {
                 </div>
               )}
 
-              {/* Model Selector Dropdown */}
               <ModelSelector
                 selectedModelId={selectedModelId}
                 onSelectModel={handleSelectModel}
                 variant="navbar"
               />
 
-              {/* Active Workspace Indicator Pill (Desktop Only) */}
               {(() => {
                 const currentProj = projects.find((p) => p.id === activeProjectId);
                 if (!currentProj) return null;
@@ -1859,9 +1790,7 @@ export default function ChatPage() {
               })()}
             </div>
 
-            {/* TOP RIGHT: Clean Action Buttons (Desktop & Mobile Optimized) */}
             <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
-              {/* Prompts Screen Pill */}
               <button
                 onClick={() => setIsPromptLibraryOpen(true)}
                 className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-200 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
@@ -1871,7 +1800,6 @@ export default function ChatPage() {
                 <span className="hidden xs:inline">Prompts</span>
               </button>
 
-              {/* Desktop Share Button Pill */}
               <button
                 onClick={handleShareConversation}
                 className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E4EF] dark:border-pink-400/25 bg-[#F7F3FA] dark:bg-pink-500/10 hover:bg-[#F4DCE9] dark:hover:bg-pink-500/20 text-xs font-semibold text-[#261827] dark:text-pink-100 hover:text-[#B31372] dark:hover:text-white transition cursor-pointer shadow-xs active:scale-95"
@@ -1881,7 +1809,6 @@ export default function ChatPage() {
                 <span>Share</span>
               </button>
 
-              {/* Search in Chat Trigger */}
               <button
                 onClick={() => setIsInChatSearchOpen(!isInChatSearchOpen)}
                 className="flex h-9 w-9 sm:h-8.5 sm:w-8.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-zinc-700 dark:text-zinc-200 hover:text-[#B31372] dark:hover:text-white transition items-center justify-center cursor-pointer active:scale-95"
@@ -1890,7 +1817,6 @@ export default function ChatPage() {
                 <Search size={16} />
               </button>
 
-              {/* Desktop Light / Dark Mode Switcher */}
               <button
                 onClick={() => {
                   const next: ThemeMode = themeMode === 'light' ? 'dark' : 'light';
@@ -1912,7 +1838,6 @@ export default function ChatPage() {
                 )}
               </button>
 
-              {/* More Options Dropdown (...) */}
               <div className="relative" ref={navMoreRef}>
                 <button
                   onClick={() => {
@@ -1928,7 +1853,6 @@ export default function ChatPage() {
 
                 {isNavMoreOpen && (
                   <div className="absolute right-0 top-11 sm:top-10 w-56 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-white dark:bg-[#12051B] shadow-2xl p-1.5 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-2xl">
-                    {/* Share conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
@@ -1942,7 +1866,6 @@ export default function ChatPage() {
                       </div>
                     </button>
 
-                    {/* Copy conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
@@ -1956,7 +1879,6 @@ export default function ChatPage() {
                       </div>
                     </button>
 
-                    {/* Export conversation */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
@@ -1970,7 +1892,6 @@ export default function ChatPage() {
                       </div>
                     </button>
 
-                    {/* Bookmark */}
                     <button
                       onClick={() => {
                         setIsNavMoreOpen(false);
@@ -1992,7 +1913,6 @@ export default function ChatPage() {
                 )}
               </div>
 
-              {/* User Profile Avatar & Dropdown Menu */}
               <div className="relative" ref={avatarMenuRef}>
                 <button
                   onClick={() => {
@@ -2012,7 +1932,6 @@ export default function ChatPage() {
 
                 {isAvatarMenuOpen && (
                   <div className="absolute right-0 top-11 sm:top-10 w-60 max-w-[calc(100vw-24px)] rounded-2xl border border-[#E8E4EF] dark:border-pink-500/25 bg-white dark:bg-[#12051B] shadow-2xl p-2 z-50 animate-[fadeIn_0.12s_ease-out] backdrop-blur-2xl">
-                    {/* User Identity Header */}
                     <div className="p-2.5 rounded-xl bg-[#F8F5FA] dark:bg-white/[0.04] border border-[#E8E4EF] dark:border-white/[0.06] mb-1.5">
                       <div className="flex items-center gap-2.5">
                         <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#E52A83] to-[#B31372] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
@@ -2033,7 +1952,6 @@ export default function ChatPage() {
                       </div>
                     </div>
 
-                    {/* Active Mode / Model Indicator */}
                     <div className="px-2.5 py-1.5 rounded-xl bg-pink-500/5 dark:bg-pink-500/10 border border-pink-500/15 mb-1.5 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0 shadow-[0_0_6px_#10b981]" />
@@ -2048,7 +1966,6 @@ export default function ChatPage() {
 
                     <div className="h-[1px] bg-[#E8E4EF] dark:bg-pink-500/20 my-1" />
 
-                    {/* Profile & Settings (Navigates directly to Settings -> Profile) */}
                     <button
                       onClick={() => {
                         setIsAvatarMenuOpen(false);
@@ -2061,7 +1978,6 @@ export default function ChatPage() {
                       <span className="font-medium">Profile & Settings</span>
                     </button>
 
-                    {/* Log out / Sign in */}
                     {user ? (
                       <button
                         onClick={async () => {
@@ -2090,7 +2006,6 @@ export default function ChatPage() {
               </div>
             </div>
 
-            {/* In-Chat Search Bar Overlay */}
             {isInChatSearchOpen && (() => {
               const matchingIds = inChatSearchQuery.trim()
                 ? messages
@@ -2135,13 +2050,8 @@ export default function ChatPage() {
             })()}
           </header>
 
-          {/* =========================================================
-              CLAUDE-STYLE SPLIT WORKSPACE: CHAT ON LEFT + IN-CHAT PANEL ON RIGHT
-          ========================================================= */}
           <div className="flex-1 flex overflow-hidden relative">
-            {/* LEFT COLUMN: CHAT FEED + FLOATING COMPOSER */}
             <div className="flex-1 flex flex-col min-w-0 h-full relative transition-all duration-300">
-              {/* CHAT SCROLL AREA (ChatGPT Structured Feed Flow) */}
               <div
                 ref={scrollRef}
                 onScroll={handleChatScroll}
@@ -2149,7 +2059,6 @@ export default function ChatPage() {
               >
                 <div className="w-full max-w-3xl mx-auto">
                   {messages.length === 0 ? (
-                    /* EMPTY STATE HERO: MINIMAL CLAUDE/CHATGPT STYLE GREETING */
                     <div className="flex flex-col items-center justify-center text-center px-4 min-h-[calc(100vh-280px)] sm:min-h-[calc(100vh-320px)] select-none">
                       <motion.div
                         key={greetingData.greeting}
@@ -2158,12 +2067,10 @@ export default function ChatPage() {
                         transition={{ duration: 0.25, ease: 'easeOut' }}
                         className="flex flex-col items-center max-w-xl mx-auto space-y-2.5 -translate-y-4 sm:-translate-y-6"
                       >
-                        {/* Dynamic Greeting */}
                         <h1 className="chat-greeting-title text-2xl sm:text-[28px] md:text-[34px] font-semibold tracking-tight leading-snug">
                           {greetingData.greeting}
                         </h1>
 
-                        {/* Optional Natural Subtitle */}
                         {greetingData.subtitle && (
                           <p className="chat-greeting-subtitle text-sm sm:text-base font-normal max-w-md">
                             {greetingData.subtitle}
@@ -2172,7 +2079,6 @@ export default function ChatPage() {
                       </motion.div>
                     </div>
                   ) : (
-                    /* MESSAGES FEED */
                     <div className="py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6">
                       {messages.map((msg, i) => {
                         const prev = messages[i - 1];
@@ -2219,16 +2125,12 @@ export default function ChatPage() {
                           </div>
                         );
                       })}
-                      {/* Scroll Anchor */}
                       <div ref={messagesEndRef} className="h-4 w-full pointer-events-none" />
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* =========================================================
-                  CHATGPT FLOATING COMPOSER
-              ========================================================= */}
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
@@ -2242,7 +2144,6 @@ export default function ChatPage() {
                 className="absolute bottom-0 left-0 right-0 z-20 px-2 sm:px-4 md:px-6 pb-2 sm:pb-4 md:pb-5 pointer-events-none bg-gradient-to-t from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent pt-6 sm:pt-8 chatscreen-bottom-bar"
               >
                 <div className="relative mx-auto w-full max-w-3xl pointer-events-auto">
-                  {/* ChatGPT Scroll to Bottom Button ("Jump to latest") */}
                   <AnimatePresence>
                     {showScrollButton && (
                       <motion.div
@@ -2280,21 +2181,18 @@ export default function ChatPage() {
                     </div>
                   )}
 
-                  {/* Structured Chat Input Bar */}
                   <div
                     className={`chat-composer-box rounded-[22px] sm:rounded-[28px] border transition-all px-3 sm:px-4 py-2.5 sm:py-3 backdrop-blur-2xl ${isDraggingOver
                       ? 'border-[#E52A83] bg-[#F4DCE9]/98 ring-2 ring-[#E52A83]/50 shadow-[0_0_40px_rgba(229,42,131,0.2)]'
                       : 'border-[#E8E4EF] hover:border-[#B31372]/40 focus-within:border-[#B31372]/60 focus-within:ring-2 focus-within:ring-[#B31372]/20 bg-[#FFFFFF] dark:border-pink-500/25 dark:hover:border-pink-500/40 dark:focus-within:border-pink-500/60 dark:bg-gradient-to-b dark:from-[#16091F]/95 dark:via-[#0E0514]/95 dark:to-[#08020D]/95 shadow-[0_8px_30px_rgba(38,24,39,0.04)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)]'
                       }`}
                   >
-                    {/* Drag-over indicator overlay text */}
                     {isDraggingOver && (
                       <div className="mb-2 text-center text-xs font-semibold text-[#E52A83] dark:text-pink-300 animate-pulse">
                         ✦ Drop images or PDF documents here to attach to Nyra
                       </div>
                     )}
 
-                    {/* Attachments Preview */}
                     {(selectedImages.length > 0 || attachedPdfs.length > 0) && (
                       <div className="mb-2.5 flex flex-wrap gap-2">
                         {selectedImages.length > 0 && (
@@ -2310,7 +2208,6 @@ export default function ChatPage() {
                       </div>
                     )}
 
-                    {/* Context-aware suggestions for uploaded media/documents */}
                     {(selectedImages.length > 0 || attachedPdfs.length > 0) && !input.trim() && (
                       <div className="mb-2.5 pt-0.5 animate-[fadeIn_0.15s_ease-out]">
                         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-0.5 px-0.5">
@@ -2334,7 +2231,6 @@ export default function ChatPage() {
                       </div>
                     )}
 
-                    {/* Top: Auto-expanding Textarea */}
                     <div className="flex items-start">
                       <textarea
                         ref={composerTextareaRef}
@@ -2365,11 +2261,8 @@ export default function ChatPage() {
                       />
                     </div>
 
-                    {/* Bottom Tools Row */}
                     <div className="mt-2 pt-2 border-t border-[#E8E4EF] dark:border-pink-500/20 flex items-center justify-between gap-1.5 sm:gap-2">
-                      {/* Left Action Toolbar */}
                       <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 flex-nowrap overflow-x-auto no-scrollbar sm:overflow-visible">
-                        {/* ChatGPT '+' Attach Button with Popover */}
                         <div ref={toolsMenuRef} className="relative">
                           <button
                             type="button"
@@ -2467,7 +2360,6 @@ export default function ChatPage() {
                           )}
                         </div>
 
-                        {/* Active Model Selector Inside Composer */}
                         <ModelSelector
                           selectedModelId={selectedModelId}
                           onSelectModel={handleSelectModel}
@@ -2475,7 +2367,6 @@ export default function ChatPage() {
                           compact={true}
                         />
 
-                        {/* Deep Research Toggle Button */}
                         <button
                           type="button"
                           onClick={() => {
@@ -2503,7 +2394,6 @@ export default function ChatPage() {
                           )}
                         </button>
 
-                        {/* Prompts Library Pill */}
                         <button
                           type="button"
                           onClick={() => {
@@ -2517,7 +2407,6 @@ export default function ChatPage() {
                           <span>Prompts</span>
                         </button>
 
-                        {/* Save prompt from input if text is present */}
                         {input.trim().length > 3 && (
                           <button
                             type="button"
@@ -2534,9 +2423,7 @@ export default function ChatPage() {
                         )}
                       </div>
 
-                      {/* Right Action Tools: Voice Dictation & Send / Stop */}
                       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                        {/* Voice Input Microphone Button */}
                         <button
                           type="button"
                           aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
@@ -2565,7 +2452,6 @@ export default function ChatPage() {
                           {isListening ? <Square size={12} className="fill-white" /> : <Mic size={14} />}
                         </button>
 
-                        {/* Circular Send / Stop Button with ChatGPT Style */}
                         <button
                           type="button"
                           onClick={isLoading ? handleStopGeneration : () => {
@@ -2599,7 +2485,6 @@ export default function ChatPage() {
                     </div>
                   </div>
 
-                  {/* ChatGPT Signature Footer Disclaimer */}
                   <p className="mt-1.5 sm:mt-2 text-center text-[10.5px] sm:text-[11.5px] text-[#9E93A2] dark:text-pink-300/60 select-none tracking-tight font-normal">
                     Nyra can make mistakes. Check important info.
                   </p>
@@ -2607,7 +2492,6 @@ export default function ChatPage() {
               </div>
             </div>
 
-            {/* RIGHT COLUMN: CLAUDE-STYLE IN-CHAT RIGHT WORKSPACE PANEL */}
             <RightPanel
               isOpen={isPromptLibraryOpen}
               onClose={() => {
@@ -2639,7 +2523,6 @@ export default function ChatPage() {
         </div>
       </main>
 
-      {/* ALL MODALS */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

@@ -17,7 +17,6 @@ export default function InstallButton({
 }: InstallButtonProps) {
   const { isInstallable, installApp } = usePwaInstall();
 
-  // ONLY render when installation is genuinely available
   if (!isInstallable) {
     return null;
   }
@@ -60,7 +59,6 @@ export default function InstallButton({
     );
   }
 
-  // Default 'sidebar' variant: fits seamlessly into the Nyra sidebar design
   return (
     <div className={`px-2 py-1 ${className}`}>
       <button

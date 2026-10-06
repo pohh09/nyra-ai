@@ -23,7 +23,6 @@ export interface AdminUserRecord {
 
 export async function GET(request: NextRequest) {
   try {
-    // 1. Strict Server-Side Admin Authorization Check
     const auth = await verifyAdminUser(request);
     if (!auth.isAuthorized) {
       return NextResponse.json(
@@ -68,7 +67,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Individual User Details Query
     if (specificUserId) {
       const [profileRes, convosRes, msgsRes, promptsRes, tasksRes, memoriesRes, activityRes] =
         await Promise.allSettled([
@@ -118,7 +116,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // List All Users Query
     const { data: profiles, error: profError } = await supabase
       .from('profiles')
       .select('*')
@@ -151,7 +148,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Fetch counts per user in parallel for quick aggregation
     const [convosRes, tasksRes, promptsRes] = await Promise.allSettled([
       supabase.from('conversations').select('user_id'),
       supabase.from('tasks').select('user_id'),

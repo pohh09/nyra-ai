@@ -9,7 +9,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    // Call chat API or Gemini to generate deep synthesis
     const prompt = `Conduct an in-depth research investigation on the following topic:
 Topic: "${topic}"
 Depth: ${depth}
@@ -35,7 +34,6 @@ Format in clear Markdown.`;
     });
 
     if (!chatRes.ok) {
-      // Fallback structured generation
       const fallbackBrief = `# Research Brief: ${topic}\n\n## 1. Executive Summary\nIn-depth investigation exploring key paradigms, advancements, and strategic implications of ${topic}.\n\n## 2. Core Findings\n- Rapid architectural evolution with high scalability.\n- Increased efficiency through modern integration patterns.\n\n## 3. Actionable Recommendations\n- Adopt modular service layer abstraction.\n- Monitor continuous performance benchmarks.\n`;
       return NextResponse.json({
         success: true,

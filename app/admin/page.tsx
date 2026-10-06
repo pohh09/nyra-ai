@@ -85,11 +85,9 @@ export default function AdminPage() {
   const [registeredUsers, setRegisteredUsers] = useState<AdminUserRecord[]>([]);
   const [activities, setActivities] = useState<ActivityEvent[]>([]);
 
-  // Filter & Search states
   const [searchQuery, setSearchQuery] = useState('');
   const [userTypeFilter, setUserTypeFilter] = useState<'all' | 'registered' | 'guest'>('all');
 
-  // Selected User Modal
   const [selectedUser, setSelectedUser] = useState<DisplayUserRow | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [selectedUserStats, setSelectedUserStats] = useState<{
@@ -149,7 +147,6 @@ export default function AdminPage() {
     }
   }, [user, authLoading, router]);
 
-  // Format date helper
   const formatDate = (dateStr?: string | number) => {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
@@ -189,11 +186,9 @@ export default function AdminPage() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  // Build unified user rows (Registered + Guest)
   const allUsersList = useMemo(() => {
     const list: DisplayUserRow[] = [];
 
-    // 1. Registered users
     registeredUsers.forEach((u) => {
       list.push({
         id: u.id,
@@ -208,7 +203,6 @@ export default function AdminPage() {
       });
     });
 
-    // 2. Guests from activity sessions
     const guestMap = new Map<string, ActivityEvent>();
     activities.forEach((act) => {
       if (
@@ -238,14 +232,11 @@ export default function AdminPage() {
     return list;
   }, [registeredUsers, activities]);
 
-  // Filtered users
   const filteredUsers = useMemo(() => {
     return allUsersList.filter((u) => {
-      // Type filter
       if (userTypeFilter === 'registered' && u.type !== 'Registered') return false;
       if (userTypeFilter === 'guest' && u.type !== 'Guest') return false;
 
-      // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchEmail = u.email.toLowerCase().includes(q);
@@ -258,7 +249,6 @@ export default function AdminPage() {
     });
   }, [allUsersList, userTypeFilter, searchQuery]);
 
-  // Open user details
   const handleInspectUser = async (u: DisplayUserRow) => {
     setSelectedUser(u);
     if (u.type === 'Registered') {
@@ -294,7 +284,6 @@ export default function AdminPage() {
     }
   };
 
-  // Activity description helper
   const formatActivityText = (event: ActivityEvent) => {
     const actor = event.email || 'Guest';
     const time = formatRelativeTime(event.created_at);
@@ -351,7 +340,6 @@ export default function AdminPage() {
     }
   };
 
-  // Loading Screen
   if (authLoading || (loading && !accessDenied && !errorMessage)) {
     return (
       <main className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633] flex flex-col items-center justify-center p-6">
@@ -361,7 +349,6 @@ export default function AdminPage() {
     );
   }
 
-  // Access Denied Screen
   if (accessDenied) {
     return (
       <main className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633] flex items-center justify-center p-6">
@@ -391,7 +378,6 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen dark:bg-[#07090E] bg-[#F8F7FB] dark:text-white text-[#292633] flex flex-col transition-colors">
-      {/* HEADER */}
       <header className="border-b dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14] bg-white px-6 py-4 transition-colors">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -429,10 +415,8 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* BODY CONTENT */}
       <div className="flex-1 max-w-5xl w-full mx-auto p-6 sm:p-8 space-y-8">
 
-        {/* 1. SIMPLE SUMMARY CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="p-4 rounded-xl dark:bg-[#0A0C14] bg-white border dark:border-white/10 border-[#E8E4EF] shadow-sm">
             <span className="text-[11px] font-semibold dark:text-white/40 text-[#686477] uppercase tracking-wider block">
@@ -471,13 +455,11 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 2. USERS TABLE — MAIN SECTION */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <h2 className="text-lg font-bold dark:text-white text-[#292633]">Users</h2>
 
             <div className="flex items-center gap-2">
-              {/* Search Field */}
               <div className="relative flex-1 sm:w-60">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-white/40 text-[#686477]" />
                 <input
@@ -489,7 +471,6 @@ export default function AdminPage() {
                 />
               </div>
 
-              {/* Simple Filter Pills */}
               <div className="flex items-center dark:bg-white/5 bg-[#F5F3F9] border dark:border-white/10 border-[#E8E4EF] rounded-lg p-0.5 text-xs">
                 <button
                   type="button"
@@ -528,7 +509,6 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Simple Users Table */}
           <div className="rounded-xl border dark:border-white/10 border-[#E8E4EF] dark:bg-[#0A0C14] bg-white overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
@@ -595,7 +575,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 3. RECENT ACTIVITY */}
         <div className="space-y-3">
           <h2 className="text-lg font-bold dark:text-white text-[#292633]">Recent Activity</h2>
 
@@ -626,7 +605,6 @@ export default function AdminPage() {
 
       </div>
 
-      {/* 4. SIMPLE USER DETAILS MODAL */}
       {selectedUser && (
         <div className="fixed inset-0 z-50 bg-black/70 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md dark:bg-[#0C0E17] bg-white border dark:border-white/15 border-[#E8E4EF] rounded-2xl p-6 shadow-2xl space-y-5">

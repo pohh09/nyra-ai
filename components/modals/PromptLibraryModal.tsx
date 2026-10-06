@@ -73,13 +73,11 @@ export default function PromptLibraryModal({
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [isCategoryDropdownOpen]);
 
-  // Manual Form State (Create / Edit)
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formTitle, setFormTitle] = useState('');
   const [formPrompt, setFormPrompt] = useState('');
   const [formCategory, setFormCategory] = useState<string>('General');
 
-  // AI Prompt Creator State
   const [aiGoal, setAiGoal] = useState('');
   const [aiRoleTone, setAiRoleTone] = useState('');
   const [aiDesiredOutput, setAiDesiredOutput] = useState('');
@@ -93,7 +91,6 @@ export default function PromptLibraryModal({
     category: string;
   } | null>(null);
 
-  // Load user prompts on modal open
   useEffect(() => {
     if (!isOpen) return;
 
@@ -123,7 +120,6 @@ export default function PromptLibraryModal({
     }
   }, [isOpen, initialPromptToSave, user?.id]);
 
-  // Filter user prompts by category and search
   const filteredPrompts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     const terms = q ? q.split(/\s+/).filter(Boolean) : [];
@@ -147,7 +143,6 @@ export default function PromptLibraryModal({
     });
   }, [prompts, selectedCategory, searchQuery]);
 
-  // Open manual creation form
   const handleOpenCreate = () => {
     setEditingId(null);
     setFormTitle('');
@@ -156,7 +151,6 @@ export default function PromptLibraryModal({
     setViewMode('manual-create');
   };
 
-  // Open manual edit form
   const handleOpenEdit = (p: PromptItem) => {
     setEditingId(p.id);
     setFormTitle(p.title);
@@ -165,7 +159,6 @@ export default function PromptLibraryModal({
     setViewMode('manual-create');
   };
 
-  // Save manual prompt
   const handleSavePrompt = () => {
     if (!formTitle.trim()) {
       addToast({ type: 'error', title: 'Please enter a prompt name' });
@@ -214,7 +207,6 @@ export default function PromptLibraryModal({
     setEditingId(null);
   };
 
-  // Delete prompt
   const handleDeletePrompt = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     const updatedList = prompts.filter((p) => p.id !== id);
@@ -227,7 +219,6 @@ export default function PromptLibraryModal({
     addToast({ type: 'info', title: 'Prompt deleted' });
   };
 
-  // Copy prompt text
   const handleCopyPrompt = (id: string, text: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (typeof navigator !== 'undefined') {
@@ -238,14 +229,12 @@ export default function PromptLibraryModal({
     }
   };
 
-  // Use prompt -> Inserts into chat composer without auto-sending
   const handleUsePrompt = (promptText: string) => {
     onSelectPrompt(promptText);
     onClose();
     addToast({ type: 'info', title: 'Prompt inserted into composer' });
   };
 
-  // Generate prompt with AI
   const handleGenerateAiPrompt = async () => {
     if (!aiGoal.trim()) {
       addToast({ type: 'error', title: 'Please describe what you want the prompt to do' });
@@ -289,7 +278,6 @@ export default function PromptLibraryModal({
     }
   };
 
-  // Save AI-generated prompt to library
   const handleSaveAiPromptToLibrary = () => {
     if (!aiGeneratedPrompt) return;
 
@@ -319,7 +307,6 @@ export default function PromptLibraryModal({
     setAiConstraints('');
   };
 
-  // Test AI-generated prompt in composer immediately
   const handleTestAiPrompt = () => {
     if (!aiGeneratedPrompt) return;
     onSelectPrompt(aiGeneratedPrompt.prompt);
@@ -327,7 +314,6 @@ export default function PromptLibraryModal({
     addToast({ type: 'info', title: 'Prompt inserted into composer for testing' });
   };
 
-  // Edit AI-generated prompt in manual form before saving
   const handleEditAiPrompt = () => {
     if (!aiGeneratedPrompt) return;
     setEditingId(null);
@@ -341,7 +327,6 @@ export default function PromptLibraryModal({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex justify-end pointer-events-none">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -351,7 +336,6 @@ export default function PromptLibraryModal({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto"
           />
 
-          {/* Right-Side Screen Panel */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -359,7 +343,6 @@ export default function PromptLibraryModal({
             transition={{ type: 'spring', damping: 30, stiffness: 320 }}
             className="relative z-10 w-full sm:w-[440px] md:w-[480px] lg:w-[520px] max-w-[100vw] h-full border-l border-[#E8E4EF] dark:border-white/[0.08] bg-white dark:bg-[#0E0514] p-4 sm:p-5 shadow-[-16px_0_40px_rgba(0,0,0,0.15)] dark:shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden text-[#261827] dark:text-zinc-100 pointer-events-auto backdrop-blur-xl"
           >
-            {/* Clean Header */}
             <div className="flex items-start justify-between border-b border-[#E8E4EF] dark:border-white/[0.08] pt-1 pb-3 mb-3 shrink-0">
               <div className="min-w-0 pr-2">
                 <h2 className="text-base font-bold text-[#261827] dark:text-white tracking-tight leading-tight">
@@ -410,7 +393,6 @@ export default function PromptLibraryModal({
               </div>
             </div>
 
-            {/* VIEW 1: AI PROMPT CREATOR */}
             {viewMode === 'ai-creator' && (
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
@@ -611,7 +593,6 @@ export default function PromptLibraryModal({
               </motion.div>
             )}
 
-            {/* VIEW 2: MANUAL CREATE / EDIT PROMPT */}
             {viewMode === 'manual-create' && (
               <motion.div
                 initial={{ opacity: 0, y: 6 }}
@@ -682,12 +663,9 @@ export default function PromptLibraryModal({
               </motion.div>
             )}
 
-            {/* VIEW 3: PROMPTS LIBRARY */}
             {viewMode === 'library' && (
               <div className="flex-1 flex flex-col min-h-0">
-                {/* Controls: Search + Categories */}
                 <div className="space-y-2.5 mb-3 shrink-0">
-                  {/* Search Bar */}
                   <div className="relative group">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9E93A2] dark:text-zinc-500 group-focus-within:text-[#B31372] dark:group-focus-within:text-pink-400 transition-colors pointer-events-none" />
                     <input
@@ -720,7 +698,6 @@ export default function PromptLibraryModal({
                     )}
                   </div>
 
-                  {/* Category Dropdown Filter Popover */}
                   <div className="relative" ref={categoryDropdownRef}>
                     <button
                       type="button"
@@ -811,9 +788,7 @@ export default function PromptLibraryModal({
                   </div>
                 </div>
 
-                {/* Prompts Cards List */}
                 <div className="flex-1 overflow-y-auto space-y-2.5 pr-0.5 scrollbar-thin">
-                  {/* My Prompts Section Header */}
                   <div className="flex items-center justify-between pt-0.5 pb-1 text-xs text-[#6E6072] dark:text-zinc-400 font-semibold border-b border-[#E8E4EF] dark:border-white/[0.08]">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[#261827] dark:text-white font-bold text-xs">My Prompts</span>

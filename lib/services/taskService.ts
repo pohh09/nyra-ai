@@ -64,9 +64,7 @@ async function getAuthUserId(): Promise<string | null> {
       cachedUserId = session.user.id;
       return cachedUserId;
     }
-  } catch {
-    // Ignore auth lookup failure
-  }
+  } catch {}
   return null;
 }
 
@@ -123,7 +121,6 @@ export async function syncTasksWithCloud(userId: string): Promise<TaskItem[]> {
       return cloudTasks;
     }
 
-    // Cloud is empty for this user: if we have starter/local tasks, migrate them to cloud
     const local = getTasks(userId);
     if (local.length > 0) {
       await migrateLocalTasksToCloud(userId, local);
@@ -173,7 +170,6 @@ export function createTask(params: {
   const updated = [newTask, ...current];
   saveTasks(updated, userId);
 
-  // Sync to Supabase in the background if authenticated
   const targetUid = userId || cachedUserId;
   if (targetUid) {
     saveCloudTask(targetUid, newTask).catch((e) => console.warn('Cloud task save error:', e));
@@ -209,7 +205,6 @@ export function updateTask(
   if (updatedTask) {
     saveTasks(updatedList, userId);
 
-    // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
     if (targetUid) {
       updateCloudTask(targetUid, id, updates).catch((e) => console.warn('Cloud task update error:', e));
@@ -229,7 +224,6 @@ export function deleteTask(id: string, userId?: string): boolean {
   if (filtered.length !== current.length) {
     saveTasks(filtered, userId);
 
-    // Sync to Supabase in the background if authenticated
     const targetUid = userId || cachedUserId;
     if (targetUid) {
       deleteCloudTask(targetUid, id).catch((e) => console.warn('Cloud task delete error:', e));

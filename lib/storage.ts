@@ -71,7 +71,6 @@ export const clearAllChats = (userId?: string | null) => {
         sessionStorage.removeItem('nyra_initial_prompt');
       } catch {}
 
-      // Explicitly set active key and fallback keys to empty arrays
       if (userId) {
         localStorage.setItem(`nyra_chats_${userId}`, JSON.stringify([]));
       }

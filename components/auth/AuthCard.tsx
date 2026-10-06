@@ -42,13 +42,11 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
   const [isDesktop, setIsDesktop] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  // Signup form state
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
@@ -184,32 +182,23 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
         mass: 0.85,
       };
 
-  // 50/50 split horizontal exchange on desktop
   const formX = isDesktop && mode === 'signup' ? 'calc(100% + 2rem)' : 0;
   const themeX = isDesktop && mode === 'signup' ? 'calc(-100% - 2rem)' : 0;
 
   return (
     <main className="relative min-h-screen w-full bg-[#030006] text-white flex items-center justify-center p-4 sm:p-6 lg:p-8 select-none selection:bg-[#E52A83]/30 overflow-x-hidden">
-      {/* Ambient Depth Glows */}
       <div className="pointer-events-none absolute -top-48 -left-48 w-[850px] h-[850px] bg-gradient-to-br from-[#E52A83]/18 via-[#B31372]/12 to-transparent rounded-full blur-[160px]" />
       <div className="pointer-events-none absolute -bottom-48 -right-48 w-[850px] h-[850px] bg-gradient-to-tl from-[#9333EA]/20 via-[#7928CA]/12 to-transparent rounded-full blur-[160px]" />
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1150px] h-[750px] bg-gradient-to-tr from-[#E52A83]/09 via-[#9333EA]/09 to-[#3B82F6]/06 rounded-full blur-[200px]" />
 
-      {/* Subtle Matrix Dot Grid */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:28px_28px] opacity-40" />
 
-      {/* Stable Two-Panel Shell Container (Exact matching 1140px width & 700px height for both modes) */}
       <div className="relative z-10 w-full max-w-[1140px] min-h-[660px] lg:h-[700px] bg-[#0A0515]/95 rounded-[30px] shadow-[0_30px_100px_rgba(0,0,0,0.85),0_0_60px_rgba(229,42,131,0.12)] p-4 sm:p-6 lg:p-8 border border-white/[0.1] backdrop-blur-2xl overflow-hidden flex flex-col justify-center animate-in fade-in duration-500">
         
-        {/* Top Highlight Hairline */}
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#E52A83]/45 to-transparent pointer-events-none" />
 
-        {/* 2-Panel Layout Track with 50/50 Balance & Locked Height */}
         <div className="relative flex flex-col lg:flex-row items-stretch w-full h-full lg:h-[636px] gap-6 lg:gap-8">
           
-          {/* ========================================================= */}
-          {/* PANEL A: AUTH CONTENT PANEL (Form Side - 50% width)       */}
-          {/* ========================================================= */}
           <motion.div
             animate={{ x: formX }}
             transition={slideTransition}
@@ -217,7 +206,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
           >
             <div className="w-full">
               
-              {/* Header: Brand and Mode Switcher */}
               <div className="flex items-center justify-between mb-5">
                 <Link
                   href="/"
@@ -237,7 +225,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                   </div>
                 </Link>
 
-                {/* Segmented Control Pill */}
                 <div className="inline-flex h-[38px] p-1 rounded-xl bg-white/[0.05] border border-white/[0.1] shadow-inner">
                   <button
                     type="button"
@@ -264,7 +251,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 </div>
               </div>
 
-              {/* Title & Subtitle with smooth cross-fade */}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={mode}
@@ -285,7 +271,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Error Alert */}
               {errorMsg && (
                 <div className="mb-3.5 p-3 rounded-xl border border-rose-500/30 bg-rose-500/10 text-xs sm:text-sm text-rose-300 flex items-start gap-2.5 animate-in fade-in">
                   <AlertCircle size={16} className="text-rose-400 shrink-0 mt-0.5" />
@@ -293,10 +278,8 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 </div>
               )}
 
-              {/* Form Content with Cross-Fade */}
               <AnimatePresence mode="wait" initial={false}>
                 {mode === 'login' ? (
-                  /* ==================== LOGIN FORM ==================== */
                   <motion.form
                     key="login-form"
                     initial={{ opacity: 0, y: 6 }}
@@ -399,7 +382,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                     </button>
                   </motion.form>
                 ) : (
-                  /* ==================== SIGNUP FORM ==================== */
                   <motion.form
                     key="signup-form"
                     initial={{ opacity: 0, y: 6 }}
@@ -508,7 +490,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 )}
               </AnimatePresence>
 
-              {/* Clean Visible Divider */}
               <div className="relative flex items-center justify-center my-3.5">
                 <div className="w-full border-t border-white/10" />
                 <span className="absolute px-3 text-[10.5px] font-mono font-bold uppercase tracking-wider text-[#7E778E] bg-[#0A0515]">
@@ -516,7 +497,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 </span>
               </div>
 
-              {/* Guest Instant Access Button */}
               <div>
                 <button
                   type="button"
@@ -529,7 +509,6 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
                 </button>
               </div>
 
-              {/* Mode Toggle Footer Link */}
               <div className="text-center text-xs sm:text-[13px] text-[#A7A7B0] mt-3.5">
                 {mode === 'login' ? (
                   <span>
@@ -558,15 +537,11 @@ export function AuthCard({ initialMode = 'login' }: AuthCardProps) {
             </div>
           </motion.div>
 
-          {/* ========================================================= */}
-          {/* PANEL B: NYRA THEME PANEL (Visual Side - 50% width)       */}
-          {/* ========================================================= */}
           <motion.div
             animate={{ x: themeX }}
             transition={slideTransition}
             className="hidden lg:flex lg:w-[calc(50%-1rem)] h-full relative rounded-[24px] overflow-hidden bg-gradient-to-b from-[#14072A]/90 via-[#0B0218]/95 to-[#04010A] border border-white/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] select-none shrink-0 relative group"
           >
-            {/* 3D Wave SVG Background Visual */}
             <svg
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
               viewBox="0 0 520 680"

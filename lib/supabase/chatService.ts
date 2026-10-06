@@ -5,7 +5,6 @@ import { sanitizeAttachmentForStorage } from '@/lib/fileHandling';
 export async function fetchCloudConversations(userId: string): Promise<Chat[]> {
   if (!isSupabaseConfigured() || !userId) return [];
   try {
-    // 1. Fetch conversations
     const { data: convos, error: convosErr } = await supabase
       .from('conversations')
       .select('*')
@@ -19,7 +18,6 @@ export async function fetchCloudConversations(userId: string): Promise<Chat[]> {
 
     if (convos.length === 0) return [];
 
-    // 2. Fetch all messages for these conversations
     const convoIds = convos.map((c) => c.id);
     const { data: msgs, error: msgsErr } = await supabase
       .from('messages')
@@ -291,9 +289,6 @@ export async function deleteCloudPrompt(userId: string, promptId: string): Promi
   }
 }
 
-// =========================================================
-// TASKS CLOUD PERSISTENCE
-// =========================================================
 
 function toSafeIsoDate(val?: string | null): string | null {
   if (!val) return null;
@@ -464,9 +459,6 @@ export async function migrateLocalTasksToCloud(
   }
 }
 
-// =========================================================
-// AI MEMORIES CLOUD PERSISTENCE
-// =========================================================
 
 export async function fetchCloudMemories(userId: string): Promise<MemoryItem[]> {
   if (!isSupabaseConfigured() || !userId) return [];

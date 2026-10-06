@@ -32,9 +32,7 @@ export function useSpeechRecognition({
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {
-        // ignore if already stopped
-      }
+      } catch (e) {}
     }
     setIsListening(false);
   }, []);
@@ -83,7 +81,6 @@ export function useSpeechRecognition({
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           setError('Microphone permission denied. Please allow microphone access in browser settings.');
         } else if (event.error === 'no-speech') {
-          // No speech detected, quietly end
         } else if (event.error === 'audio-capture') {
           setError('No microphone found. Ensure your microphone is properly connected.');
         } else if (event.error === 'network') {
@@ -112,7 +109,6 @@ export function useSpeechRecognition({
     setError(null);
   }, []);
 
-  // Clean up on unmount
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {

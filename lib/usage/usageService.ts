@@ -12,7 +12,6 @@ export async function checkAndIncrementUsage(
   const limits = isAuth ? USAGE_LIMITS.free : USAGE_LIMITS.guest;
   const maxLimit = limits[feature];
 
-  // If Supabase server client and authenticated user are available, enforce atomically via RPC
   if (isAuth && supabaseServer && userId) {
     try {
       const { data, error } = await supabaseServer.rpc('check_and_increment_usage', {
@@ -24,7 +23,6 @@ export async function checkAndIncrementUsage(
 
       if (error) {
         console.warn('RPC check_and_increment_usage error, fallback to table check:', error);
-        // Fallback: query usage table directly
         const today = new Date().toISOString().split('T')[0];
         const { data: record } = await supabaseServer
           .from('usage_records')
@@ -46,7 +44,6 @@ export async function checkAndIncrementUsage(
           return { allowed: false, current, limit: maxLimit };
         }
 
-        // Upsert record
         if (record) {
           await supabaseServer
             .from('usage_records')
@@ -76,7 +73,6 @@ export async function checkAndIncrementUsage(
     }
   }
 
-  // Guest / unconfigured fallback: allow up to guest limits
   return { allowed: true, limit: maxLimit };
 }
 

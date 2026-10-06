@@ -1,8 +1,6 @@
 import fs from 'fs';
 import Groq from 'groq-sdk';
 import OpenAI from 'openai';
-
-// Read .env.local
 const envContent = fs.readFileSync('.env.local', 'utf8');
 const env = {};
 for (const line of envContent.split('\n')) {
@@ -27,8 +25,6 @@ async function checkGroq() {
     console.log('Groq Available Models count:', list.data.length);
     const activeModelIds = list.data.map((m) => m.id);
     console.log('Groq Model IDs:', activeModelIds);
-
-    // Test each model configured in our app with a real completion
     const testIds = [
       'llama-3.3-70b-versatile',
       'llama-3.1-8b-instant',

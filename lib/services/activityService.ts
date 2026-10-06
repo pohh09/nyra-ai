@@ -17,10 +17,6 @@ export interface ActivityPayload {
   metadata?: Record<string, any>;
 }
 
-/**
- * Record an authentication or system lifecycle event to the auth_activity table.
- * Strips all sensitive credentials and keeps metadata minimal.
- */
 export async function recordAuthActivity(payload: ActivityPayload): Promise<void> {
   if (typeof window === 'undefined') return;
 
@@ -37,7 +33,6 @@ export async function recordAuthActivity(payload: ActivityPayload): Promise<void
       },
     };
 
-    // Fire and forget via fetch to /api/activity
     fetch('/api/activity', {
       method: 'POST',
       headers: {
@@ -45,10 +40,6 @@ export async function recordAuthActivity(payload: ActivityPayload): Promise<void
       },
       body: JSON.stringify(cleanPayload),
       keepalive: true,
-    }).catch(() => {
-      // Non-blocking catch
-    });
-  } catch {
-    // Non-blocking catch
-  }
+    }).catch(() => {});
+  } catch {}
 }

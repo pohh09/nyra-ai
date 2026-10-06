@@ -5,7 +5,6 @@ import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
   try {
-    // 1. Strict Server-Side Admin Authorization Check
     const auth = await verifyAdminUser(request);
     if (!auth.isAuthorized) {
       return NextResponse.json(
@@ -52,7 +51,6 @@ export async function GET(request: NextRequest) {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-    // 2. Fetch real stats concurrently
     const [
       profilesRes,
       conversationsRes,
@@ -84,11 +82,9 @@ export async function GET(request: NextRequest) {
 
     const activities = activityRes.status === 'fulfilled' ? activityRes.value.data || [] : [];
 
-    // New signups
     const signupsToday = profiles.filter((p: any) => p.created_at && p.created_at >= todayStart).length;
     const signups7d = profiles.filter((p: any) => p.created_at && p.created_at >= sevenDaysAgo).length;
 
-    // Active users in 24h
     const activeUserIds24h = new Set<string>();
     profiles.forEach((p: any) => {
       if (p.updated_at && p.updated_at >= twentyFourHoursAgo) activeUserIds24h.add(p.id);
@@ -98,19 +94,15 @@ export async function GET(request: NextRequest) {
     });
     const activeUsers24h = activeUserIds24h.size;
 
-    // Guest sessions & messages
     const guestStartedEvents = activities.filter((a: any) => a.event_type === 'guest_started');
     const guestSessions = guestStartedEvents.length;
 
-    // Recent Logins
     const recentLogins = activities
       .filter((a: any) => a.event_type === 'login' || a.event_type === 'google_login')
       .slice(0, 10);
 
-    // Recent activity list
     const recentActivity = activities.slice(0, 25);
 
-    // Feature Usage Breakdown
     const usageRecords = usageRes.status === 'fulfilled' ? usageRes.value.data || [] : [];
     let totalAiRequests = 0;
     let totalWebSearches = 0;

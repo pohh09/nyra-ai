@@ -1,8 +1,3 @@
-/**
- * Automated Regression Test Suite: Protected Multimodal Pipeline (PDF + Vision)
- * Run with: npx tsx tests/multimodal.test.ts
- */
-
 import {
   normalizeAttachments,
   extractDocumentContext,
@@ -36,10 +31,6 @@ async function runTestSuite() {
   console.log('\n======================================================');
   console.log('🧪 RUNNING NYRA PROTECTED MULTIMODAL PIPELINE TESTS');
   console.log('======================================================\n');
-
-  // ---------------------------------------------------------
-  // TEST 1: Normal Text Request Contract
-  // ---------------------------------------------------------
   console.log('--- Test 1: Normal Text Request Contract ---');
   const sampleMessages: ChatMessage[] = [
     { role: 'user', content: 'Hello Nyra, what is the capital of France?' },
@@ -52,10 +43,6 @@ async function runTestSuite() {
   });
   assert(budgetNormal.estimatedInputTokens > 0, 'Estimated input tokens calculated correctly');
   assert(budgetNormal.maxOutputTokens >= 2048, 'Guaranteed healthy output tokens reserved for normal chat');
-
-  // ---------------------------------------------------------
-  // TEST 2: PDF Document Pipeline & Context Injection
-  // ---------------------------------------------------------
   console.log('\n--- Test 2: PDF Document Pipeline ---');
   const mockPdfs: ChatAttachment[] = [
     {
@@ -83,10 +70,6 @@ async function runTestSuite() {
   assert(docContext.docNames.includes('Architecture_Plan.pdf'), 'Extracted Document 2 name');
   assert(docContext.totalPages === 3, 'Calculated total page count');
   assert(docContext.pdfText.includes('MS in Computer Science in 2024'), 'Extracted actual document text content');
-
-  // ---------------------------------------------------------
-  // TEST 3: Vision Image Pipeline & Formatting
-  // ---------------------------------------------------------
   console.log('\n--- Test 3: Vision Image Pipeline ---');
   const mockImageAttachment: ChatAttachment = {
     id: 'img-1',
@@ -99,14 +82,8 @@ async function runTestSuite() {
   const extractedImages = extractImageContext(normalizedImages);
   assert(extractedImages.length === 1, 'Extracted 1 image data payload');
   assert(extractedImages[0].startsWith('data:image/png;base64,'), 'Image data URL format preserved');
-
-  // Verify vision-capable model recognizes vision support
   const balancedConfig = getModelConfig('balanced');
   assert(balancedConfig.supportsVision === true, 'Balanced model declared vision support');
-
-  // ---------------------------------------------------------
-  // TEST 4: Unsupported Model Rejection
-  // ---------------------------------------------------------
   console.log('\n--- Test 4: Unsupported Model Rejection ---');
   const fastValidation = validateModelCapabilities('fast', { hasImages: true });
   assert(fastValidation.valid === false, 'Text-only model (Fast) rejected image request');
@@ -118,12 +95,8 @@ async function runTestSuite() {
 
   const balancedValidation = validateModelCapabilities('balanced', { hasImages: true });
   assert(balancedValidation.valid === true, 'Vision-capable model (Balanced) accepted image request');
-
-  // ---------------------------------------------------------
-  // TEST 5: Large PDF Context Budgeting (No 413 Errors)
-  // ---------------------------------------------------------
   console.log('\n--- Test 5: Large PDF Context Budgeting ---');
-  const largeDocumentText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(1500); // ~85,000 chars
+  const largeDocumentText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(1500);
   const largeMessages: ChatMessage[] = [
     {
       role: 'user',
@@ -153,10 +126,6 @@ async function runTestSuite() {
   });
   assert(geminiBudget.maxOutputTokens === 8192, 'Gemini allocates full 8192 output tokens for large context');
   assert(geminiBudget.maxPdfChars === 160000, 'Gemini accommodates massive document context');
-
-  // ---------------------------------------------------------
-  // TEST 6: All Models Catalog Integrity
-  // ---------------------------------------------------------
   console.log('\n--- Test 6: Model Catalog Integrity ---');
   for (const model of AI_MODELS) {
     assert(Boolean(model.id), `Model has valid ID: ${model.id}`);

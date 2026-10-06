@@ -13,18 +13,16 @@ async function generateAllPwaAssets() {
     fs.mkdirSync(splashDir, { recursive: true });
   }
 
-  // Base brand cover logo
   const logoPath = 'public/logo.png';
   if (!fs.existsSync(logoPath)) {
     throw new Error(`Logo file not found at ${logoPath}`);
   }
 
   const logoBuffer = fs.readFileSync(logoPath);
-  const BG_COLOR = '#07090E'; // Deep obsidian base matching Nyra visual identity
+  const BG_COLOR = '#07090E';
 
   console.log('--- Generating Nyra AI Mobile App Covers & Icons from existing Logo ---');
 
-  // Helper to create a feathered version of the logo at any size
   async function createFeatheredLogo(size) {
     const maskSvg = Buffer.from(`
       <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +47,6 @@ async function generateAllPwaAssets() {
       .toBuffer();
   }
 
-  // 1. Standard Icons (512x512 and 192x192) - High fidelity direct covers
   await sharp(logoBuffer)
     .resize(512, 512, { fit: 'cover' })
     .png({ quality: 100 })
@@ -62,7 +59,6 @@ async function generateAllPwaAssets() {
     .toFile('public/icons/icon-192x192.png');
   console.log('✓ Created public/icons/icon-192x192.png');
 
-  // 2. Next.js app icons (app/icon.png and public/icon.png)
   await sharp(logoBuffer)
     .resize(512, 512, { fit: 'cover' })
     .png({ quality: 100 })
@@ -75,8 +71,6 @@ async function generateAllPwaAssets() {
     .toFile('app/icon.png');
   console.log('✓ Updated app/icon.png');
 
-  // 3. Android Maskable Icons (Must be seamless within 80% safe zone)
-  // Background with subtle radial ambient glow matching Nyra's neon magenta & cyan
   const maskableBgSvg = Buffer.from(`
     <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -104,30 +98,24 @@ async function generateAllPwaAssets() {
     .toFile('public/icons/icon-maskable-512x512.png');
   console.log('✓ Created seamless public/icons/icon-maskable-512x512.png');
 
-  // Maskable 192x192
   await sharp('public/icons/icon-maskable-512x512.png')
     .resize(192, 192)
     .png({ quality: 100 })
     .toFile('public/icons/icon-maskable-192x192.png');
   console.log('✓ Created seamless public/icons/icon-maskable-192x192.png');
 
-  // 4. Apple Touch Icon (180x180) for iOS home screen
-  // Apple squircle rounds the corners. We provide the full rich logo cover at 180x180
   await sharp(logoBuffer)
     .resize(180, 180, { fit: 'cover' })
     .png({ quality: 100 })
     .toFile('public/apple-touch-icon.png');
   console.log('✓ Created public/apple-touch-icon.png');
 
-  // 5. Favicon PNG (64x64)
   await sharp(logoBuffer)
     .resize(64, 64, { fit: 'cover' })
     .png({ quality: 100 })
     .toFile('public/favicon.png');
   console.log('✓ Updated public/favicon.png');
 
-  // 6. Mobile Splash Covers (iOS Apple Startup Images & Mobile Launch Cover)
-  // Portrait 1170x2532 (iPhone standard) with ambient background and seamless logo cover
   const splashWidth = 1170;
   const splashHeight = 2532;
   const logoSplashSize = 750;
@@ -162,7 +150,6 @@ async function generateAllPwaAssets() {
     .toFile('public/splash/apple-splash.png');
   console.log('✓ Created seamless public/splash/apple-splash.png (1170x2532)');
 
-  // Large Pro Max Splash (1290 x 2796)
   const splashMaxW = 1290;
   const splashMaxH = 2796;
   const logoSplashMaxSize = 840;
@@ -197,7 +184,6 @@ async function generateAllPwaAssets() {
     .toFile('public/splash/apple-splash-1290x2796.png');
   console.log('✓ Created seamless public/splash/apple-splash-1290x2796.png (1290x2796)');
 
-  // 7. Mobile Cover Screenshot (1080 x 1920) for Web App Manifest rich installation preview
   const coverW = 1080;
   const coverH = 1920;
   const logoCoverSize = 720;

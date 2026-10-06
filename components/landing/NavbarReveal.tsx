@@ -29,7 +29,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
   const { user, profile } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Streamlined, high-value nav items
   const navItems = [
     { label: 'About', href: '/about', icon: Globe },
     { label: 'Workspace', href: '#desktop-workspace', icon: Terminal },
@@ -47,7 +46,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
         }`}
       >
         <div className="flex w-full items-center justify-between">
-          {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="relative flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden shadow-sm border border-pink-500/25 bg-[#16091F] shrink-0 group-hover:border-pink-400/50 transition-colors">
               <NyraIcon size={20} variant="primary" glow />
@@ -57,7 +55,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
             </span>
           </Link>
 
-          {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
             {navItems.map((item) =>
               item.href.startsWith('/') ? (
@@ -80,7 +77,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
             )}
           </nav>
 
-          {/* Action Buttons */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
             {user ? (
               <>
@@ -123,7 +119,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
               </>
             )}
 
-            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="flex md:hidden h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-[#16091F]/80 text-[#F5F5F7] hover:text-white hover:bg-[#24103A] cursor-pointer transition-colors"
@@ -135,7 +130,6 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div className="pointer-events-auto mt-2.5 overflow-hidden md:hidden rounded-3xl border border-white/10 bg-[#07040B]/95 backdrop-blur-2xl p-4 shadow-2xl shadow-black/90 w-full max-w-[1240px] animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col gap-1">
@@ -208,4 +202,4 @@ export default function NavbarReveal({ isScrolled = false }: NavbarRevealProps) 
   );
 }
 
-
+

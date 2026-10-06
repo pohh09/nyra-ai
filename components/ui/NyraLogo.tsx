@@ -11,17 +11,14 @@ export default function NyraLogo({ size = 80 }: { size?: number }) {
       className="relative flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      {/* Rotating ambient glow ring */}
       <motion.div
         className="absolute inset-0 rounded-2xl border border-pink-500/30"
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 12, ease: 'linear' }}
       />
 
-      {/* Inner radial aura */}
       <div className="absolute inset-2 rounded-2xl bg-gradient-to-tr from-pink-500/20 via-purple-600/20 to-cyan-500/20 blur-xl" />
 
-      {/* Distinctive Nyra Brand Vector Icon */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -32,4 +29,4 @@ export default function NyraLogo({ size = 80 }: { size?: number }) {
       </motion.div>
     </div>
   );
-}
+}

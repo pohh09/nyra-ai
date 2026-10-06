@@ -24,7 +24,6 @@ export default function ClaudeThinkingBlock({
 
   const isActivelyThinking = thinking || (loading && !thoughtContent);
 
-  // Real-time live seconds timer while actively thinking or loading
   useEffect(() => {
     if (!isActivelyThinking) return;
 
@@ -37,7 +36,6 @@ export default function ClaudeThinkingBlock({
     return () => clearInterval(interval);
   }, [isActivelyThinking]);
 
-  // Keep open while actively streaming thought content, collapse when response starts
   useEffect(() => {
     if (isActivelyThinking && thoughtContent) {
       setIsExpanded(true);
@@ -48,7 +46,6 @@ export default function ClaudeThinkingBlock({
 
   return (
     <div className="my-1.5 w-full select-none">
-      {/* Claude Style Inline Thinking Trigger */}
       <button
         type="button"
         onClick={() => setIsExpanded((prev) => !prev)}
@@ -58,7 +55,6 @@ export default function ClaudeThinkingBlock({
             : 'text-[#686477] hover:text-[#292633] hover:bg-[#EEE8FA] dark:text-purple-300/80 dark:hover:text-purple-100 dark:hover:bg-purple-500/10'
         }`}
       >
-        {/* Claude Asterisk / Spark Icon */}
         <div className="relative flex items-center justify-center text-[#8B6FC9] group-hover:text-[#795BB8] dark:text-purple-400 dark:group-hover:text-purple-300 transition-colors">
           {isActivelyThinking ? (
             <span className="inline-block animate-spin text-sm" style={{ animationDuration: '3s' }}>
@@ -69,7 +65,6 @@ export default function ClaudeThinkingBlock({
           )}
         </div>
 
-        {/* Text Label */}
         <span className="font-normal italic tracking-tight">
           {isActivelyThinking
             ? (thinkingText
@@ -78,7 +73,6 @@ export default function ClaudeThinkingBlock({
             : `Thought for ${Math.max(1, elapsedSeconds)} ${elapsedSeconds === 1 ? 'second' : 'seconds'}`}
         </span>
 
-        {/* Expand / Collapse Chevron */}
         <ChevronDown
           size={13}
           className={`text-[#8B6FC9]/70 group-hover:text-[#8B6FC9] dark:text-purple-400/70 dark:group-hover:text-purple-200 transition-transform duration-200 ${
@@ -87,7 +81,6 @@ export default function ClaudeThinkingBlock({
         />
       </button>
 
-      {/* Expandable Reasoning / Thought Stream */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div

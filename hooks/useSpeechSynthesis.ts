@@ -14,7 +14,6 @@ export function useSpeechSynthesis() {
   const chunksRef = useRef<string[]>([]);
   const activeMessageIdRef = useRef<string | null>(null);
 
-  // Initialize and load voices
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       setIsSupported(true);
@@ -78,7 +77,6 @@ export function useSpeechSynthesis() {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
     if (chunkIndexRef.current >= chunksRef.current.length) {
-      // Completed reading all chunks
       stop();
       return;
     }
@@ -86,7 +84,6 @@ export function useSpeechSynthesis() {
     const chunkText = chunksRef.current[chunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunkText);
 
-    // Apply voice
     if (selectedVoiceName) {
       const voiceObj = voices.find((v) => v.name === selectedVoiceName);
       if (voiceObj) utterance.voice = voiceObj;
@@ -100,7 +97,6 @@ export function useSpeechSynthesis() {
     };
 
     utterance.onerror = (e) => {
-      // Interrupted error happens on cancel, which is normal
       if (e.error !== 'interrupted' && e.error !== 'canceled') {
         console.warn('SpeechSynthesis error:', e.error);
       }
@@ -114,7 +110,6 @@ export function useSpeechSynthesis() {
     (messageId: string, markdownContent: string) => {
       if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
-      // Always cancel any active speech first (strictly one speech at a time)
       stop();
 
       const cleanedText = cleanTextForSpeech(markdownContent);
@@ -133,7 +128,6 @@ export function useSpeechSynthesis() {
     [speakNextChunk, stop]
   );
 
-  // Stop speech if page unmounts
   useEffect(() => {
     return () => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {

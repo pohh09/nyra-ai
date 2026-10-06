@@ -1,7 +1,3 @@
-/**
- * Privacy-Preserving Product Analytics for Nyra AI
- * Tracks user interaction milestones without recording private prompts, messages, or files.
- */
 
 export type AnalyticsEvent =
   | 'page_view'
@@ -22,17 +18,12 @@ export function trackEvent(event: AnalyticsEvent, metadata?: Record<string, stri
   if (typeof window === 'undefined') return;
 
   try {
-    // Only log high-level event names and safe metadata (e.g. model name, count)
-    // Never include user prompt text, document contents, or private keys
     if (process.env.NODE_ENV === 'development') {
       console.log(`[Analytics: ${event}]`, metadata || {});
     }
 
-    // Custom window analytics hook if configured (e.g. Vercel Analytics / Plausible / Custom)
     if ((window as any).va) {
       (window as any).va('event', { name: event, data: metadata });
     }
-  } catch {
-    // Fail silently without disrupting user experience
-  }
+  } catch {}
 }

@@ -49,7 +49,6 @@ export default function ChatInput({
   const [showToolsMenu, setShowToolsMenu] = useState(false);
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto resize height
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -57,7 +56,6 @@ export default function ChatInput({
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
   }, [value]);
 
-  // Click outside to close tools menu
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
@@ -68,7 +66,6 @@ export default function ChatInput({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle enter key submit
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -82,7 +79,6 @@ export default function ChatInput({
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      {/* Floating Status Controls Directly Above Input Bar */}
       {(isLoading || thinking || showScrollButton) && (
         <div className="flex items-center justify-center gap-2 mb-2">
           {(isLoading || thinking) && (
@@ -125,7 +121,6 @@ export default function ChatInput({
           )}
         </div>
       )}
-      {/* Redesigned Glassmorphic Input Container */}
       <div
         className="
           rounded-[26px] sm:rounded-[30px]
@@ -141,7 +136,6 @@ export default function ChatInput({
           transition-all duration-200
         "
       >
-        {/* Textarea */}
         <div className="flex items-start">
           <textarea
             ref={textareaRef}
@@ -168,11 +162,8 @@ export default function ChatInput({
           />
         </div>
 
-        {/* Bottom Toolbar */}
         <div className="mt-2.5 pt-2.5 border-t border-[#DFD0F2]/80 dark:border-purple-400/20 flex items-center justify-between gap-2">
-          {/* Left: Attach & Search Tools */}
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-            {/* '+' Attach button */}
             {(onImageUpload || onPdfUpload) && (
               <div ref={toolsMenuRef} className="relative">
                 <button
@@ -237,7 +228,6 @@ export default function ChatInput({
               </div>
             )}
 
-            {/* Web Search Toggle Pill */}
             {onToggleWebSearch && (
               <button
                 type="button"
@@ -258,9 +248,7 @@ export default function ChatInput({
             )}
           </div>
 
-          {/* Right: Voice Dictation & Send / Stop Button */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Voice Dictation Button */}
             {onVoiceToggle && (
               <button
                 type="button"
@@ -284,7 +272,6 @@ export default function ChatInput({
               </button>
             )}
 
-            {/* Circular Send / Stop Button */}
             <button
               type="button"
               onClick={isLoading ? onStop : onSubmit}
@@ -318,7 +305,6 @@ export default function ChatInput({
         </div>
       </div>
 
-      {/* Footer Disclaimer */}
       <p className="mt-1.5 sm:mt-2 text-center text-[10.5px] sm:text-[11.5px] text-[#7A6E8C] dark:text-purple-300/60 select-none tracking-tight font-normal flex items-center justify-center gap-1.5">
         <span>🔒 100% In-Browser Privacy</span>
         <span>•</span>

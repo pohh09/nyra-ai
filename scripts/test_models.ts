@@ -1,7 +1,5 @@
 import fs from 'fs';
 import Groq from 'groq-sdk';
-
-// 1. Read environment variables securely
 const envContent = fs.readFileSync('.env.local', 'utf8');
 const env: Record<string, string> = {};
 for (const line of envContent.split('\n')) {
@@ -28,8 +26,6 @@ interface TestResult {
 }
 
 const results: TestResult[] = [];
-
-// 1x1 transparent PNG base64 for vision testing
 const TEST_IMAGE_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
 async function runSmokeTests() {
@@ -95,7 +91,6 @@ async function runSmokeTests() {
 
     const startTime = Date.now();
     try {
-      // 1. Single-turn chat & streaming
       const streamParams: any = {
         model: mode.modelIdentifier,
         messages: [
@@ -126,8 +121,6 @@ async function runSmokeTests() {
       testRes.latencyMs = Date.now() - startTime;
       console.log(`  ✓ Single-turn & Streaming PASS (${testRes.latencyMs}ms, ${chunkCount} chunks)`);
       console.log(`    Response sample: "${fullText.trim().slice(0, 100)}..."`);
-
-      // 2. Multi-turn chat context verification (Alex -> What is my name?)
       const multiTurnStream: any = await groq.chat.completions.create({
         model: mode.modelIdentifier,
         messages: [
@@ -160,8 +153,6 @@ async function runSmokeTests() {
 
     results.push(testRes);
   }
-
-  // 3. Testing Multimodal Vision Engine (Gemini)
   console.log('\nTesting Multimodal Vision Engine [Gemini 3.6 Flash] (gemini-3.6-flash)...');
   const visionRes: TestResult = {
     provider: 'Gemini',
@@ -240,8 +231,6 @@ async function runSmokeTests() {
     console.log(`  ✗ Gemini vision error:`, err.message);
   }
   results.push(visionRes);
-
-  // Print Summary Table
   console.log('\n================================================================');
   console.log('                    MODEL VERIFICATION REPORT                   ');
   console.log('================================================================');

@@ -24,21 +24,12 @@ export interface SearchResultChunk {
 const DOCUMENTS_STORAGE_KEY = 'nyra_rag_documents';
 const CHUNKS_STORAGE_KEY = 'nyra_rag_chunks';
 
-/**
- * Extract target page numbers from user query if explicitly mentioned.
- * Examples handled:
- * - "What information is on page 13?" -> [13]
- * - "What is on pg. 42?" -> [42]
- * - "Show me page 7 and 8" -> [7, 8]
- * - "Summarize pages 10-12" -> [10, 11, 12]
- */
 export function extractTargetPageNumbers(query: string): number[] {
   if (!query || typeof query !== 'string') return [];
 
   const pages = new Set<number>();
   const cleanQuery = query.toLowerCase();
 
-  // Pattern 1: Range "pages 10-12", "pages 10 to 12"
   const rangeRegex = /\b(?:pages?|pgs?\.?|p\.?)\s*(\d+)\s*(?:-|to)\s*(\d+)\b/gi;
   let rangeMatch;
   while ((rangeMatch = rangeRegex.exec(cleanQuery)) !== null) {
@@ -51,7 +42,6 @@ export function extractTargetPageNumbers(query: string): number[] {
     }
   }
 
-  // Pattern 2: Single or comma/and-separated page mentions: "page 13", "pg. 13", "p 13", "page 13 and 14"
   const singleRegex = /\b(?:pages?|pgs?\.?|p\.?)\s*#?\s*(\d+)\b/gi;
   let singleMatch;
   while ((singleMatch = singleRegex.exec(cleanQuery)) !== null) {
@@ -61,7 +51,6 @@ export function extractTargetPageNumbers(query: string): number[] {
     }
   }
 
-  // Pattern 3: Specific natural phrasing like "page number 13", "page no 13"
   const phrasingRegex = /\b(?:page\s+number|page\s+no\.?)\s*#?\s*(\d+)\b/gi;
   let phraseMatch;
   while ((phraseMatch = phrasingRegex.exec(cleanQuery)) !== null) {
@@ -71,7 +60,6 @@ export function extractTargetPageNumbers(query: string): number[] {
     }
   }
 
-  // Pattern 4: Ordinal phrasing like "40th page", "13th page", "1st page", "2nd page", "3rd page"
   const ordinalRegex = /\b(\d+)(?:st|nd|rd|th)\s+pages?\b/gi;
   let ordMatch;
   while ((ordMatch = ordinalRegex.exec(cleanQuery)) !== null) {
@@ -84,9 +72,6 @@ export function extractTargetPageNumbers(query: string): number[] {
   return Array.from(pages).sort((a, b) => a - b);
 }
 
-/**
- * Split text from structured DocumentPages into page-preserved semantic chunks.
- */
 export function chunkDocumentPages(
   pages: Array<{ pageNumber: number; text: string; charCount?: number }>,
   docName: string,
@@ -106,7 +91,6 @@ export function chunkDocumentPages(
     if (!pageText) continue;
 
     if (pageText.length <= chunkSize) {
-      // Entire page fits in a single chunk
       const embedding = generateEmbedding(pageText);
       chunks.push({
         id: `chunk_${docId}_${pageNum}_${globalChunkIndex}`,
@@ -121,7 +105,6 @@ export function chunkDocumentPages(
       });
       globalChunkIndex++;
     } else {
-      // Long page: create overlapping sliding window chunks strictly bounded to this page
       let startIdx = 0;
       let pageChunkIdx = 0;
 
@@ -129,7 +112,6 @@ export function chunkDocumentPages(
         const endIdx = Math.min(startIdx + chunkSize, pageText.length);
         let chunkSlice = pageText.slice(startIdx, endIdx).trim();
 
-        // Snap to nearest sentence boundary or space to prevent word slicing
         if (endIdx < pageText.length) {
           const lastSentenceEnd = Math.max(
             chunkSlice.lastIndexOf('. '),
@@ -178,9 +160,6 @@ export function chunkDocumentPages(
   return chunks;
 }
 
-/**
- * Split unstructured text into chunks. Detects embedded [Page X] markers if available.
- */
 export function chunkDocumentText(
   text: string,
   docName: string,
@@ -189,7 +168,6 @@ export function chunkDocumentText(
 ): DocumentChunk[] {
   if (!text || text.trim().length === 0) return [];
 
-  // Check if text has explicit [Page X of Y] or [Page X] tags
   const pageTagRegex = /\[Page\s+(\d+)(?:\s+of\s+\d+)?\]/i;
   if (pageTagRegex.test(text)) {
     const rawPages: Array<{ pageNumber: number; text: string }> = [];
@@ -209,7 +187,6 @@ export function chunkDocumentText(
     }
   }
 
-  // Fallback: estimate ~1800 chars per page
   const chunkSize = options.chunkSize || 650;
   const overlap = options.overlap || 120;
   const chunks: DocumentChunk[] = [];
@@ -259,13 +236,7 @@ export function chunkDocumentText(
   return chunks;
 }
 
-// ----------------------------------------------------
-// DOCUMENT AND CHUNK STORAGE & RECOVERY
-// ----------------------------------------------------
 
-/**
- * Reconstructs DocumentPage array from text with [Page X of Y] or [Page X] tags.
- */
 export function extractPageMapFromText(text: string): DocumentPage[] {
   if (!text) return [];
   const pageMap: DocumentPage[] = [];
@@ -287,16 +258,12 @@ export function extractPageMapFromText(text: string): DocumentPage[] {
   return pageMap;
 }
 
-/**
- * Extracts exact, unchunked text for a specific page number directly from DocumentRecord or raw text.
- */
 export function extractExactPageText(
   source: DocumentRecord | string | undefined,
   pageNumber: number
 ): { found: boolean; text: string; pageNumber: number } {
   if (!source) return { found: false, text: '', pageNumber };
 
-  // 1. If source is a DocumentRecord with pageMap
   if (typeof source === 'object' && source.pageMap && source.pageMap.length > 0) {
     const pageItem = source.pageMap.find((p) => p.pageNumber === pageNumber);
     if (pageItem) {
@@ -304,7 +271,6 @@ export function extractExactPageText(
     }
   }
 
-  // 2. Extract from raw text using regex
   const rawText = typeof source === 'string' ? source : source.extractedText || '';
   if (rawText) {
     const regex = new RegExp(`\\[Page\\s+${pageNumber}(?:\\s+of\\s+\\d+)?\\]([\\s\\S]*?)(?=\\[Page\\s+\\d+(?:\\s+of\\s+\\d+)?\\]|$)`, 'i');
@@ -313,7 +279,6 @@ export function extractExactPageText(
       return { found: true, text: match[1].trim(), pageNumber };
     }
 
-    // Check if reconstructed pageMap finds it
     const reconstructed = extractPageMapFromText(rawText);
     const foundPage = reconstructed.find((p) => p.pageNumber === pageNumber);
     if (foundPage) {
@@ -348,7 +313,6 @@ export function getIndexedDocuments(userId?: string): DocumentRecord[] {
     if (!raw) return [];
     const docs: DocumentRecord[] = JSON.parse(raw);
 
-    // Auto-heal documents: ensure pageMap is present on every document
     let modified = false;
     for (const doc of docs) {
       if ((!doc.pageMap || doc.pageMap.length === 0) && doc.extractedText) {
@@ -405,9 +369,6 @@ export function saveAllChunks(chunks: DocumentChunk[], userId?: string): void {
   }
 }
 
-/**
- * Index a document with exact page map or plain text.
- */
 export function indexDocument(params: {
   name: string;
   text: string;
@@ -448,16 +409,12 @@ export function indexDocument(params: {
   const existingDocs = getIndexedDocuments(userId).filter((d) => d.name !== params.name);
   saveIndexedDocuments([newDoc, ...existingDocs], userId);
 
-  // Clean out any old chunks from this document name and save new chunks
   const existingChunks = getAllChunks(userId).filter((c) => c.documentName !== params.name);
   saveAllChunks([...chunks, ...existingChunks], userId);
 
   return { document: newDoc, chunks };
 }
 
-/**
- * Delete a document and its indexed chunks.
- */
 export function deleteDocument(docId: string, userId?: string): boolean {
   const docs = getIndexedDocuments(userId).filter((d) => d.id !== docId);
   saveIndexedDocuments(docs, userId);
@@ -468,16 +425,10 @@ export function deleteDocument(docId: string, userId?: string): boolean {
   return true;
 }
 
-/**
- * Get chunks belonging to a specific document.
- */
 export function getChunksForDocument(docId: string, userId?: string): DocumentChunk[] {
   return getAllChunks(userId).filter((c) => c.documentId === docId);
 }
 
-// ----------------------------------------------------
-// HYBRID RETRIEVAL (PAGE TARGETING + SEMANTIC + LEXICAL)
-// ----------------------------------------------------
 
 const QUERY_STOP_WORDS = new Set([
   'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are',
@@ -495,10 +446,6 @@ const QUERY_STOP_WORDS = new Set([
   'what is on', 'what does', 'what are', 'say', 'says',
 ]);
 
-/**
- * Compute keyword and entity match score between query and chunk.
- * Rewards exact keywords, numbers, uppercase acronyms, and consecutive phrases.
- */
 function computeLexicalScore(query: string, chunkText: string): { score: number; matchCount: number; queryTermCount: number } {
   if (!query || !chunkText) return { score: 0, matchCount: 0, queryTermCount: 0 };
 
@@ -527,7 +474,6 @@ function computeLexicalScore(query: string, chunkText: string): { score: number;
     }
   }
 
-  // Bonus for exact multi-word phrase matching (2+ words)
   if (termsToSearch.length >= 2) {
     for (let i = 0; i < termsToSearch.length - 1; i++) {
       const phrase = `${termsToSearch[i]} ${termsToSearch[i + 1]}`;
@@ -541,13 +487,6 @@ function computeLexicalScore(query: string, chunkText: string): { score: number;
   return { score: normalizedScore, matchCount, queryTermCount: termsToSearch.length };
 }
 
-/**
- * Search and retrieve the most relevant chunks:
- * 1. For page-targeted questions (e.g. "What is on page 40?"), extracts and returns the EXACT text of that page.
- *    NEVER performs semantic search or injects unrelated chunks from other pages.
- * 2. For general questions, combines dense vector cosine similarity with lexical scoring.
- * 3. Logs detailed diagnostics for verification.
- */
 export function searchSimilarChunks(
   query: string,
   options: {
@@ -565,18 +504,15 @@ export function searchSimilarChunks(
 
   const targetPages = extractTargetPageNumbers(query);
 
-  // Resolve active document record if available
   let activeDoc = options.document;
   if (!activeDoc && options.documentId) {
     activeDoc = getIndexedDocuments().find((d) => d.id === options.documentId);
   }
 
-  // 1. PAGE-SPECIFIC QUERY: Exact Page Retrieval Priority
   if (targetPages.length > 0) {
     const pageResults: SearchResultChunk[] = [];
 
     for (const pageNum of targetPages) {
-      // First try extracting exact page text directly from DocumentRecord or pageMap
       let exactText = '';
       let docName = activeDoc?.name || 'Document';
       let docId = activeDoc?.id || options.documentId || 'doc_current';
@@ -588,7 +524,6 @@ export function searchSimilarChunks(
         }
       }
 
-      // If not found in DocumentRecord, check in memory chunks
       if (!exactText) {
         const allChunks = options.chunks || (options.documentId ? getChunksForDocument(options.documentId) : getAllChunks());
         const matchingChunks = allChunks.filter((c) => c.pageNumber === pageNum);
@@ -619,7 +554,6 @@ export function searchSimilarChunks(
       }
     }
 
-    // Debug logging
     console.log(`[NYRA RAG RETRIEVAL]`, {
       query,
       detectedExplicitPage: targetPages.join(', '),
@@ -628,11 +562,9 @@ export function searchSimilarChunks(
       retrievedTextPreview: pageResults.map((r) => `[Page ${r.chunk.pageNumber}]: ${r.chunk.text.slice(0, 100)}...`),
     });
 
-    // Return ONLY exact page results. Do NOT perform semantic search or add unrelated pages.
     return pageResults;
   }
 
-  // 2. GENERAL QUERY: Hybrid Vector Cosine + Lexical Token Scoring
   const allAvailableChunks = options.chunks || (options.documentId ? getChunksForDocument(options.documentId) : getAllChunks());
   if (allAvailableChunks.length === 0) return [];
 
@@ -664,7 +596,6 @@ export function searchSimilarChunks(
   scoredResults.sort((a, b) => b.score - a.score);
   const finalResults = scoredResults.slice(0, topK);
 
-  // Debug logging
   console.log(`[NYRA RAG RETRIEVAL]`, {
     query,
     detectedExplicitPage: 'None (General Search)',
@@ -676,9 +607,6 @@ export function searchSimilarChunks(
   return finalResults;
 }
 
-/**
- * Format retrieved search results into structured, grounded context for AI prompts.
- */
 export function formatChunksForRAGPrompt(results: SearchResultChunk[]): string {
   if (results.length === 0) return '';
 

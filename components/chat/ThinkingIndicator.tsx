@@ -62,7 +62,6 @@ export default function ThinkingIndicator({
     );
   }
 
-  // Default 'bubble' variant inside MessageBubble
   return (
     <div
       role="status"
@@ -71,7 +70,6 @@ export default function ThinkingIndicator({
     >
       <span className="sr-only">Nyra is generating a response...</span>
 
-      {/* 4 Staggered Animated Dots with Ambient Glow */}
       <div className="flex items-center gap-1.5" aria-hidden="true">
         {[0, 1, 2, 3].map((i) => (
           <span
@@ -84,7 +82,6 @@ export default function ThinkingIndicator({
         ))}
       </div>
 
-      {/* Subtle Thinking Text */}
       <span className="text-[13px] sm:text-[13.5px] font-medium tracking-tight text-[#7A6E8C] dark:text-pink-200/75 animate-pulse duration-[2.5s]">
         {thinkingText}
       </span>

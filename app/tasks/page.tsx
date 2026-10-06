@@ -72,7 +72,6 @@ const GOAL_SUGGESTIONS = [
   '☁️ AWS Cloud in 7 days',
 ];
 
-// Clean & Compact Quick Reminder Menu
 function TaskReminderMenu({
   task,
   onSetPreset,
@@ -173,7 +172,6 @@ function TaskReminderMenu({
   );
 }
 
-// Clean Dedicated Modal Dialog for Custom Date & Time Selection
 function CustomReminderModal({
   task,
   isOpen,
@@ -202,7 +200,6 @@ function CustomReminderModal({
           }
         } catch {}
       }
-      // Default to tomorrow 9:00 AM
       const tmrw = new Date(Date.now() + 86400000);
       setDateVal(tmrw.toISOString().split('T')[0]);
       setTimeVal('09:00');
@@ -262,7 +259,6 @@ function CustomReminderModal({
           </button>
         </div>
 
-        {/* Task Title Context */}
         <div className="p-2.5 rounded-2xl bg-purple-500/5 border border-purple-400/15">
           <p className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 tracking-wider">
             For Task:
@@ -272,7 +268,6 @@ function CustomReminderModal({
           </p>
         </div>
 
-        {/* Quick Date Shortcuts */}
         <div className="space-y-1">
           <label className="tasks-modal-label block text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
             Quick Day:
@@ -368,23 +363,18 @@ export default function TasksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isClient, setIsClient] = useState(false);
 
-  // Quick Add & AI Generator State
   const [quickTitle, setQuickTitle] = useState('');
   const [quickDate, setQuickDate] = useState<'today' | 'tomorrow' | 'someday'>('today');
   const [isAiMode, setIsAiMode] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiLoadingStep, setAiLoadingStep] = useState('Analyzing curriculum...');
 
-  // Selected Day Filter in Roadmap View ('all' or specific day number)
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<number | 'all'>('all');
 
-  // Quick Reminder Popover State
   const [activeReminderTaskId, setActiveReminderTaskId] = useState<string | null>(null);
 
-  // Dedicated Custom Reminder Modal State
   const [customReminderModalTask, setCustomReminderModalTask] = useState<TaskItem | null>(null);
 
-  // Edit Modal State
   const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -421,7 +411,6 @@ export default function TasksPage() {
     return () => window.removeEventListener('nyra_tasks_updated', handleUpdate);
   }, [user?.id]);
 
-  // Close reminder menu when clicking outside
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (reminderPickerRef.current && !reminderPickerRef.current.contains(e.target as Node)) {
@@ -434,7 +423,6 @@ export default function TasksPage() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [activeReminderTaskId]);
 
-  // Request browser notification permission if available
   const requestNotificationPermission = async () => {
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
       try {
@@ -443,7 +431,6 @@ export default function TasksPage() {
     }
   };
 
-  // Periodic Reminder Checker (checks every 10s)
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
@@ -456,10 +443,8 @@ export default function TasksPage() {
             if (!isNaN(remTime) && remTime <= now) {
               updateTask(t.id, { reminderSent: true }, user?.id);
 
-              // Play audio chime
               playReminderChime();
 
-              // Toast alert
               addToast({
                 type: 'info',
                 title: `⏰ Task Reminder: ${t.title}`,
@@ -468,7 +453,6 @@ export default function TasksPage() {
                   : t.description || 'This task is due now!',
               });
 
-              // Native Browser Notification
               if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
                 new Notification(`Nyra Reminder: ${t.title}`, {
                   body: t.roadmapTopic ? `Day ${t.roadmapDay}: ${t.roadmapTopic}` : 'Task is due now',
@@ -484,7 +468,6 @@ export default function TasksPage() {
     return () => clearInterval(interval);
   }, [tasks, user?.id, addToast]);
 
-  // Helper date classifiers
   const isDueUpcoming = (dueDate?: string) => {
     if (!dueDate) return false;
     try {
@@ -572,7 +555,6 @@ export default function TasksPage() {
     }
   };
 
-  // Group tasks for standard tabs
   const { todayTasks, upcomingTasks, completedTasks } = useMemo(() => {
     const today: TaskItem[] = [];
     const upcoming: TaskItem[] = [];
@@ -593,7 +575,6 @@ export default function TasksPage() {
     return { todayTasks: today, upcomingTasks: upcoming, completedTasks: completed };
   }, [tasks]);
 
-  // Group tasks into structured Day-by-Day Roadmap
   const roadmapGroups = useMemo(() => {
     const safeTasks = Array.isArray(tasks)
       ? tasks.filter((t): t is TaskItem => Boolean(t && t.id && t.roadmapDay))
@@ -629,7 +610,6 @@ export default function TasksPage() {
     return roadmapGroups.reduce((acc, g) => acc + g.tasks.filter((t) => t.status === 'completed').length, 0);
   }, [roadmapGroups]);
 
-  // Identify today's roadmap day (if active)
   const todayRoadmapGroup = useMemo(() => {
     if (!hasRoadmap) return null;
     const matchingToday = roadmapGroups.find((g) => isDueToday(g.dueDate));
@@ -657,7 +637,6 @@ export default function TasksPage() {
     );
   }, [activeFilter, todayTasks, upcomingTasks, completedTasks, tasks, searchQuery]);
 
-  // Navigate to Chat with tailored query
   const handleLearnInChat = (topic: string, query?: string) => {
     const targetPrompt =
       query ||
@@ -668,7 +647,6 @@ export default function TasksPage() {
     router.push(`/chat-ui?q=${encodeURIComponent(targetPrompt)}`);
   };
 
-  // Structured AI Plan & Roadmap Generator using dedicated API
   const handleGenerateRoadmap = async (targetGoal: string) => {
     const goalText = targetGoal.trim();
     if (!goalText) return;
@@ -769,7 +747,6 @@ export default function TasksPage() {
       return;
     }
 
-    // Normal Quick Add
     let targetDueDate: string | undefined = undefined;
     if (quickDate === 'today') {
       targetDueDate = new Date().toISOString();
@@ -824,7 +801,6 @@ export default function TasksPage() {
     }
   };
 
-  // Quick Preset Reminder Trigger
   const handleSetQuickReminderPreset = async (task: TaskItem, preset: string) => {
     await requestNotificationPermission();
     setActiveReminderTaskId(null);
@@ -862,7 +838,6 @@ export default function TasksPage() {
     });
   };
 
-  // Custom Reminder Saver (from Modal)
   const handleSaveCustomReminder = async (task: TaskItem, isoDate: string) => {
     await requestNotificationPermission();
     updateTask(task.id, { reminderTime: isoDate, reminderSent: false }, user?.id);
@@ -980,9 +955,7 @@ export default function TasksPage() {
 
   return (
     <div className="tasks-page-root min-h-screen w-full bg-[#FAF8FB] dark:bg-[#050505] text-[#261827] dark:text-slate-100 flex flex-col p-3 sm:p-6 md:p-8 select-text transition-colors duration-200">
-      {/* Container */}
       <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col gap-5 pb-16">
-        {/* Top Header */}
         <div className="flex items-center justify-between pt-1">
           <Link
             href="/chat-ui"
@@ -999,7 +972,6 @@ export default function TasksPage() {
           )}
         </div>
 
-        {/* Title & Date */}
         <div className="space-y-0.5 pt-1">
           {todayFormatted && (
             <p className="tasks-text-subtle text-[11px] uppercase tracking-wider text-purple-600 dark:text-purple-400 font-medium font-mono">
@@ -1012,7 +984,6 @@ export default function TasksPage() {
           </h1>
         </div>
 
-        {/* Quick-Add Task & AI Roadmap Box */}
         <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[#130c26]/90 border border-[#E8E4EF] dark:border-purple-400/25 p-3 sm:p-4 shadow-sm dark:shadow-xl space-y-3">
           <form onSubmit={handleQuickAdd} className="flex items-center gap-2">
             <div className="flex items-center justify-center pl-2 text-purple-600 dark:text-purple-400">
@@ -1051,7 +1022,6 @@ export default function TasksPage() {
             </button>
           </form>
 
-          {/* Quick AI Loading Step Indicator */}
           {isAiLoading && (
             <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-400/30 flex items-center gap-2.5 text-xs text-purple-800 dark:text-purple-200 animate-pulse">
               <Loader2 size={14} className="animate-spin text-purple-600 dark:text-purple-400" />
@@ -1059,7 +1029,6 @@ export default function TasksPage() {
             </div>
           )}
 
-          {/* Quick Filter & AI Mode Chips */}
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
             <button
               type="button"
@@ -1104,7 +1073,6 @@ export default function TasksPage() {
               <span>AI Learning Roadmap</span>
             </button>
 
-            {/* Quick Suggestions when in AI Mode */}
             {isAiMode && (
               <div className="flex flex-wrap items-center gap-1.5 w-full pt-1.5 pb-0.5">
                 <span className="text-[10px] text-[#8C7E92] dark:text-zinc-500 shrink-0 font-medium">Try:</span>
@@ -1127,9 +1095,7 @@ export default function TasksPage() {
           </div>
         </div>
 
-        {/* Navigation Tabs & Search */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
-          {/* Mobile Filter Dropdown (sm:hidden) */}
           <div className="block sm:hidden w-full">
             <ResponsiveDropdown<ViewFilter>
               options={[
@@ -1152,7 +1118,6 @@ export default function TasksPage() {
             />
           </div>
 
-          {/* Desktop Segmented Bar (hidden sm:flex) */}
           <div className="hidden sm:flex tasks-segmented-bar items-center gap-1.5 p-1 rounded-2xl bg-white dark:bg-white/[0.03] border border-[#E8E4EF] dark:border-purple-400/15 overflow-x-auto custom-scrollbar shadow-2xs">
             {hasRoadmap && (
               <button
@@ -1213,7 +1178,6 @@ export default function TasksPage() {
             </button>
           </div>
 
-          {/* Search */}
           <div className="relative w-full sm:w-64 min-w-[180px]">
             <Search size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-600/70 dark:text-purple-400/60" />
             <input
@@ -1234,7 +1198,6 @@ export default function TasksPage() {
           </div>
         </div>
 
-        {/* TODAY VIEW WITH FEATURED LEARNING PLAN BANNER */}
         {activeFilter === 'today' && todayRoadmapGroup && (
           <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[linear-gradient(135deg,#1c123d_0%,#100a26_100%)] border border-[#E8E4EF] dark:border-purple-400/35 p-4 sm:p-5 shadow-sm dark:shadow-xl space-y-3">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -1255,7 +1218,6 @@ export default function TasksPage() {
                 </h2>
               </div>
 
-              {/* Learn more in Chat */}
               <button
                 onClick={() => handleLearnInChat(todayRoadmapGroup.topic, todayRoadmapGroup.chatQuery)}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-500/25 dark:hover:bg-purple-500/40 border border-purple-300 dark:border-purple-400/40 text-xs font-semibold text-purple-800 dark:text-purple-100 hover:text-purple-950 dark:hover:text-white transition cursor-pointer shadow-xs dark:shadow-md dark:shadow-purple-600/20 active:scale-95 shrink-0"
@@ -1265,7 +1227,6 @@ export default function TasksPage() {
               </button>
             </div>
 
-            {/* Description & Learning Focus */}
             {(todayRoadmapGroup.description || todayRoadmapGroup.learningFocus) && (
               <div className="p-3 rounded-2xl bg-[#F7F3FA] dark:bg-black/35 border border-[#E8E4EF] dark:border-purple-400/20 space-y-1.5 text-xs">
                 {todayRoadmapGroup.description && (
@@ -1285,10 +1246,8 @@ export default function TasksPage() {
           </div>
         )}
 
-        {/* ROADMAP DAY-BY-DAY VIEW */}
         {activeFilter === 'roadmap' && hasRoadmap ? (
           <div className="space-y-4 pt-1">
-            {/* Roadmap Overview Banner */}
             <div className="tasks-card rounded-2xl sm:rounded-3xl bg-white dark:bg-[linear-gradient(135deg,#181033_0%,#0e0824_100%)] border border-[#E8E4EF] dark:border-purple-400/30 p-4 sm:p-5 shadow-sm dark:shadow-xl space-y-3">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="space-y-1">
@@ -1305,7 +1264,6 @@ export default function TasksPage() {
                   </h2>
                 </div>
 
-                {/* Progress Meter & Clear Action */}
                 <div className="w-full sm:w-60 space-y-1.5">
                   <div className="flex items-center justify-between text-[11px] text-[#6E6072] dark:text-zinc-300">
                     <span>Overall Progress</span>
@@ -1333,7 +1291,6 @@ export default function TasksPage() {
                 </div>
               </div>
 
-              {/* Day filter: Mobile dropdown (sm:hidden) */}
               <div className="block sm:hidden pt-2 border-t border-[#E8E4EF] dark:border-purple-400/15">
                 <ResponsiveDropdown<string>
                   options={[
@@ -1352,7 +1309,6 @@ export default function TasksPage() {
                 />
               </div>
 
-              {/* Day filter: Desktop pills (hidden sm:flex) */}
               <div className="hidden sm:flex items-center gap-1.5 pt-2 overflow-x-auto custom-scrollbar border-t border-[#E8E4EF] dark:border-purple-400/15">
                 <button
                   onClick={() => setSelectedRoadmapDay('all')}
@@ -1384,7 +1340,6 @@ export default function TasksPage() {
               </div>
             </div>
 
-            {/* Daily Milestone Cards */}
             <div className="space-y-3.5">
               {filteredRoadmapGroups.map((group) => {
                 const groupCompleted = group.tasks.filter((t) => t.status === 'completed').length;
@@ -1400,7 +1355,6 @@ export default function TasksPage() {
                         : 'bg-white dark:bg-[#140d2b]/90 border-[#E8E4EF] dark:border-purple-400/25 shadow-xs dark:shadow-lg'
                     }`}
                   >
-                    {/* Day Header */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-2 border-b border-[#E8E4EF] dark:border-purple-400/15">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
@@ -1426,7 +1380,6 @@ export default function TasksPage() {
                         <h3 className="text-sm sm:text-base font-bold text-[#261827] dark:text-white pt-1">{group.topic}</h3>
                       </div>
 
-                      {/* "Learn more in Chat" Action Button */}
                       <button
                         onClick={() => handleLearnInChat(group.topic, group.chatQuery)}
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-500/25 dark:hover:bg-purple-500/35 border border-purple-300 dark:border-purple-400/35 text-xs font-semibold text-purple-800 dark:text-purple-100 hover:text-purple-950 dark:hover:text-white transition cursor-pointer shadow-xs shrink-0 active:scale-95"
@@ -1437,7 +1390,6 @@ export default function TasksPage() {
                       </button>
                     </div>
 
-                    {/* Day Focus & Learning Outcome */}
                     {(group.description || group.learningFocus) && (
                       <div className="p-3 rounded-2xl bg-[#F7F3FA] dark:bg-black/30 border border-[#E8E4EF] dark:border-purple-400/15 space-y-1.5 text-xs">
                         {group.description && (
@@ -1455,7 +1407,6 @@ export default function TasksPage() {
                       </div>
                     )}
 
-                    {/* Tasks for this Day */}
                     <div className="space-y-2">
                       <p className="text-[11px] uppercase tracking-wider font-bold text-[#6E6072] dark:text-zinc-400 font-mono">
                         Day {group.day} Action Items:
@@ -1512,7 +1463,6 @@ export default function TasksPage() {
                                 </div>
                               </div>
 
-                              {/* Action buttons */}
                               <div
                                 className="flex items-center gap-1.5 shrink-0"
                                 onClick={(e) => e.stopPropagation()}
@@ -1523,7 +1473,6 @@ export default function TasksPage() {
                                   </span>
                                 )}
 
-                                {/* Quick Reminder Trigger */}
                                 <div className="relative">
                                   <button
                                     onClick={() =>
@@ -1539,7 +1488,6 @@ export default function TasksPage() {
                                     <Bell size={13} className={t.reminderTime ? 'text-purple-600 dark:text-purple-400' : ''} />
                                   </button>
 
-                                  {/* Clean Quick Reminder Menu */}
                                   {activeReminderTaskId === t.id && (
                                     <TaskReminderMenu
                                       task={t}
@@ -1579,7 +1527,6 @@ export default function TasksPage() {
           </div>
         ) : null}
 
-        {/* STANDARD TASK LIST VIEW (Today / Upcoming / Completed / All) */}
         {activeFilter !== 'roadmap' || !hasRoadmap ? (
           <div className="space-y-2 pt-1">
             {displayedTasks.length === 0 ? (
@@ -1616,7 +1563,6 @@ export default function TasksPage() {
                         : 'tasks-item-card bg-white dark:bg-white/[0.03] hover:bg-[#FAF8FC] dark:hover:bg-white/[0.06] border-[#E8E4EF] dark:border-purple-400/15 hover:border-purple-300 dark:hover:border-purple-400/30 shadow-xs'
                     }`}
                   >
-                    {/* Left: 1-Tap Circular Checkbox + Title */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <button
                         type="button"
@@ -1668,7 +1614,6 @@ export default function TasksPage() {
                       </div>
                     </div>
 
-                    {/* Right: Quick Action Controls */}
                     <div
                       className="flex items-center gap-1 shrink-0"
                       onClick={(e) => e.stopPropagation()}
@@ -1690,7 +1635,6 @@ export default function TasksPage() {
                         </span>
                       )}
 
-                      {/* Reminder Button */}
                       <div className="relative">
                         <button
                           onClick={() =>
@@ -1706,7 +1650,6 @@ export default function TasksPage() {
                           <Bell size={13} className={t.reminderTime ? 'text-purple-600 dark:text-purple-400' : ''} />
                         </button>
 
-                        {/* Clean Quick Reminder Menu */}
                         {activeReminderTaskId === t.id && (
                           <TaskReminderMenu
                             task={t}
@@ -1742,7 +1685,6 @@ export default function TasksPage() {
         ) : null}
       </div>
 
-      {/* Dedicated Custom Reminder Modal */}
       <AnimatePresence>
         {customReminderModalTask && (
           <CustomReminderModal
@@ -1754,7 +1696,6 @@ export default function TasksPage() {
         )}
       </AnimatePresence>
 
-      {/* Edit & Reminder Modal */}
       <AnimatePresence>
         {editingTask && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -1841,7 +1782,6 @@ export default function TasksPage() {
                   </div>
                 </div>
 
-                {/* Reminder Settings */}
                 <div className="space-y-1.5 pt-1">
                   <label className="tasks-modal-label block text-xs font-medium text-[#4A3E4E] dark:text-zinc-300 flex items-center gap-1">
                     <Bell size={12} className="text-purple-600 dark:text-purple-400" />

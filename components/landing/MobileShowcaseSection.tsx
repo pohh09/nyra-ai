@@ -106,13 +106,11 @@ export default function MobileShowcaseSection() {
       id="mobile-showcase"
       className="relative z-10 w-full bg-transparent py-20 sm:py-28 lg:py-32 overflow-hidden transition-colors"
     >
-      {/* Dark Ambient Violet Glow */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0 select-none">
         <div className="h-[600px] w-[800px] rounded-full bg-[#B31372]/[0.08] blur-[150px] transform -translate-y-10" />
       </div>
 
       <div className="relative w-[94%] sm:w-[90%] max-w-[1800px] mx-auto px-2 sm:px-4 z-10">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -120,7 +118,6 @@ export default function MobileShowcaseSection() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto space-y-3 relative z-10"
         >
-          {/* Eyebrow Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/70 px-3.5 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl hover:border-pink-300/40 transition-all mb-1">
             <div className="flex h-4 w-4 items-center justify-center rounded-full bg-pink-500/20 text-pink-300">
               <Smartphone className="h-2.5 w-2.5" />
@@ -144,7 +141,6 @@ export default function MobileShowcaseSection() {
             Voice ideation, visual reasoning, and quick prompts built for mobile screens.
           </p>
 
-          {/* Clean Focus Mode Filter Tabs */}
           <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
             {[
               { id: 'all', label: 'All Modes', icon: Layers },
@@ -172,21 +168,15 @@ export default function MobileShowcaseSection() {
           </div>
         </motion.div>
 
-        {/* 3D Showcase Stage with Elevated Center Device */}
         <div className="mt-16 sm:mt-24 lg:mt-32 xl:mt-36 relative">
-          {/* Subtle Ground Pedestal Shadow */}
           <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 w-[85%] max-w-[1000px] h-16 bg-[#B31372]/[0.10] rounded-[100%] blur-2xl hidden lg:block" />
 
-          {/* Device Showcase Grid */}
           <div
             className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-center justify-center max-w-[1360px] mx-auto"
             style={{
               perspective: isMobile ? 'none' : '2000px',
             }}
           >
-            {/* =========================================================
-                PHONE 1 (LEFT) — VOICE MODE (Supporting Flank)
-            ========================================================= */}
             <motion.div
               initial={{ opacity: 0, y: 30, rotateY: isMobile ? 0 : 16, rotateZ: isMobile ? 0 : -3 }}
               whileInView={{
@@ -200,11 +190,8 @@ export default function MobileShowcaseSection() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-4 flex flex-col items-center order-2 lg:order-1 w-full lg:-mr-5 z-10"
             >
-              {/* Phone Outer Chassis - Dark Titanium Border */}
               <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-pink-500/25 transition-all duration-300 hover:border-pink-300/50">
-                {/* Inner Screen Surface - Deep Dark Obsidian */}
                 <div className="relative w-full rounded-[45px] bg-[#0A0410] p-4 flex flex-col justify-between min-h-[550px] text-white overflow-hidden border border-pink-500/15">
-                  {/* Status Bar & Dynamic Capsule */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2">
                     <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
                     <div className="h-4.5 w-24 rounded-full bg-white/[0.08] flex items-center justify-center gap-1.5 border border-pink-400/25">
@@ -219,7 +206,6 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* App Header */}
                   <div className="flex items-center justify-between px-1 pb-2.5 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <div className="h-7 w-7 rounded-xl bg-pink-500/15 border border-pink-400/30 flex items-center justify-center shadow-2xs">
@@ -235,9 +221,7 @@ export default function MobileShowcaseSection() {
                     </span>
                   </div>
 
-                  {/* Voice Orb & Equalizer Stage */}
                   <div className="flex-1 flex flex-col items-center justify-center py-3 space-y-3.5">
-                    {/* Multi-Layer Studio Acoustic Mic Orb */}
                     <div className="relative flex items-center justify-center py-2">
                       {isVoiceRecording && (
                         <>
@@ -254,7 +238,6 @@ export default function MobileShowcaseSection() {
                         </>
                       )}
 
-                      {/* Tactile Outer Bezel Rim */}
                       <div className="relative p-1 rounded-full bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_10px_25px_rgba(0,0,0,0.5)] border border-pink-400/30">
                         <button
                           onClick={() => setIsVoiceRecording(!isVoiceRecording)}
@@ -280,13 +263,11 @@ export default function MobileShowcaseSection() {
                       </div>
                     </div>
 
-                    {/* Live Voice Frequency Telemetry Pill */}
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-pink-400/25 text-[9.5px] font-mono font-semibold text-pink-200">
                       <span className={`h-1.5 w-1.5 rounded-full ${isVoiceRecording ? 'bg-emerald-400 animate-pulse' : 'bg-slate-400'}`} />
                       <span>{isVoiceRecording ? '48kHz Stereo · Active' : 'Microphone Muted'}</span>
                     </div>
 
-                    {/* Multi-Frequency Equalizer Wave */}
                     <div className="flex items-center justify-center gap-1 h-7 px-4">
                       {[30, 65, 100, 75, 95, 85, 50, 90, 70, 85, 45, 30].map((h, idx) => (
                         <motion.div
@@ -305,7 +286,6 @@ export default function MobileShowcaseSection() {
                       ))}
                     </div>
 
-                    {/* Dark Transcript Bubble */}
                     <div className="w-full p-3 rounded-xl bg-[#12051A] border border-pink-400/20 text-left space-y-1 shadow-2xs">
                       <div className="flex items-center justify-between text-[9px] font-mono text-pink-300 font-bold">
                         <span>LIVE TRANSCRIPT</span>
@@ -317,7 +297,6 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* Bottom Action Controls */}
                   <div className="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2">
                     <button
                       onClick={() => setIsVoiceRecording(!isVoiceRecording)}
@@ -338,16 +317,12 @@ export default function MobileShowcaseSection() {
                 </div>
               </div>
 
-              {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
                 <h3 className="text-sm font-bold text-white">Voice Mode</h3>
                 <p className="text-xs text-[#A7A7B0]">Hands-free conversational speech with zero latency.</p>
               </div>
             </motion.div>
 
-            {/* =========================================================
-                PHONE 2 (CENTER) — IMAGE SHARING & MULTIMODAL VISION
-            ========================================================= */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{
@@ -359,11 +334,8 @@ export default function MobileShowcaseSection() {
               transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-4 flex flex-col items-center order-1 lg:order-2 z-30 w-full"
             >
-              {/* Center Hero Phone Outer Chassis */}
               <div className="group relative w-full max-w-[315px] xs:max-w-[350px] sm:max-w-[390px] lg:max-w-[415px] rounded-[46px] xs:rounded-[50px] sm:rounded-[54px] p-[3px] sm:p-[4px] bg-gradient-to-b from-[#2E1242] via-[#1A092A] to-[#0A0212] shadow-[0_32px_85px_rgba(0,0,0,0.85)] border-2 border-pink-500/35 transition-all duration-300 hover:border-pink-300/60">
-                {/* Inner Screen Surface */}
                 <div className="relative w-full rounded-[42px] xs:rounded-[46px] sm:rounded-[50px] bg-[#050208] p-3.5 sm:p-5 flex flex-col justify-between min-h-[580px] xs:min-h-[640px] sm:min-h-[730px] lg:min-h-[750px] text-white overflow-hidden border border-pink-500/20">
-                  {/* Status Bar & Dynamic Island Pill */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2.5">
                     <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
                     <div className="h-5 w-30 xs:w-34 rounded-full bg-black/80 text-white flex items-center justify-between px-2.5 shadow-xs border border-pink-400/30">
@@ -379,7 +351,6 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* App Header */}
                   <div className="flex items-center justify-between px-1 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2.5">
                       <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-[#E52A83] to-[#B31372] flex items-center justify-center shadow-2xs border border-pink-300/40">
@@ -398,12 +369,9 @@ export default function MobileShowcaseSection() {
                     </button>
                   </div>
 
-                  {/* Chat Thread: Image Upload & Vision Reasoning */}
                   <div className="flex-1 overflow-y-auto space-y-3 px-0.5 py-2.5 sm:py-3.5 text-xs">
-                    {/* User Shared Image Message Bubble */}
                     <div className="flex justify-end">
                       <div className="rounded-2xl rounded-tr-xs bg-gradient-to-r from-[#B31372] to-[#800A4C] p-2.5 sm:p-3 text-white max-w-[92%] sm:max-w-[90%] text-[11px] sm:text-[11.5px] shadow-xs leading-relaxed space-y-2 border border-pink-400/30">
-                        {/* Image Attachment Card */}
                         <div className="rounded-xl bg-[#0F0418] p-2 sm:p-2.5 border border-pink-300/30 text-left space-y-1.5 sm:space-y-2">
                           <div className="flex items-center justify-between text-[9px] sm:text-[9.5px] font-mono text-pink-200">
                             <span className="flex items-center gap-1.5 font-bold truncate">
@@ -413,7 +381,6 @@ export default function MobileShowcaseSection() {
                             <span className="text-[8px] sm:text-[8.5px] bg-white/10 px-1.5 py-0.5 rounded text-pink-200 shrink-0">2.4 MB</span>
                           </div>
 
-                          {/* Architecture Diagram Visual Preview */}
                           <div className="rounded-lg bg-[#050109] p-2 border border-pink-500/20 text-[9px] font-mono space-y-1.5 overflow-hidden">
                             <div className="flex items-center justify-between text-[8px] text-pink-300/80">
                               <span>DIAGRAM PREVIEW</span>
@@ -435,14 +402,12 @@ export default function MobileShowcaseSection() {
                       </div>
                     </div>
 
-                    {/* AI Vision Analysis Response */}
                     <div className="flex items-start gap-2.5">
                       <div className="h-7.5 w-7.5 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                         <Bot className="h-4 w-4 text-[#FF4FA3]" />
                       </div>
 
                       <div className="flex-1 rounded-2xl rounded-tl-xs border border-pink-400/25 bg-[#0D0416] p-3 text-pink-100 space-y-2.5 shadow-2xs">
-                        {/* Inspection Verification Badge */}
                         <div className="flex items-center justify-between text-[9px] font-mono text-pink-300 pb-1.5 border-b border-white/10">
                           <span className="flex items-center gap-1 text-emerald-400 font-bold">
                             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
@@ -455,7 +420,6 @@ export default function MobileShowcaseSection() {
                           Diagram scanned successfully. Here are the 3 architecture findings:
                         </p>
 
-                        {/* Visual Breakdown Points */}
                         <div className="space-y-1.5">
                           <div className="p-2 rounded-lg bg-[#160722] border border-pink-400/20 text-[10.5px] space-y-0.5">
                             <div className="flex items-center gap-1.5 font-bold text-white">
@@ -478,7 +442,6 @@ export default function MobileShowcaseSection() {
                           </div>
                         </div>
 
-                        {/* Action Pill */}
                         <div className="pt-1 flex items-center gap-1.5">
                           <button
                             onClick={() => router.push('/chat-ui')}
@@ -492,7 +455,6 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* Input Bar */}
                   <div className="pt-3 pb-1 border-t border-white/10 flex items-center gap-2 px-0.5">
                     <button
                       onClick={() => router.push('/chat-ui')}
@@ -518,16 +480,12 @@ export default function MobileShowcaseSection() {
                 </div>
               </div>
 
-              {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
                 <h3 className="text-sm font-bold text-white">Vision & Image Sharing</h3>
                 <p className="text-xs text-[#A7A7B0]">Upload diagrams, UI mockups, and charts for instant visual reasoning.</p>
               </div>
             </motion.div>
 
-            {/* =========================================================
-                PHONE 3 (RIGHT) — PROMPT MESH (Supporting Flank)
-            ========================================================= */}
             <motion.div
               initial={{ opacity: 0, y: 30, rotateY: isMobile ? 0 : -16, rotateZ: isMobile ? 0 : 3 }}
               whileInView={{
@@ -541,11 +499,8 @@ export default function MobileShowcaseSection() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
               className="lg:col-span-4 flex flex-col items-center order-3 w-full lg:-ml-5 z-10"
             >
-              {/* Phone Outer Chassis - Dark Titanium Border */}
               <div className="group relative w-full max-w-[315px] xs:max-w-[330px] rounded-[48px] p-[3px] bg-gradient-to-b from-[#24103A] via-[#16091F] to-[#08020D] shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-pink-500/25 transition-all duration-300 hover:border-pink-300/50">
-                {/* Inner Screen Surface */}
                 <div className="relative w-full rounded-[44px] bg-[#0A0410] p-4 flex flex-col justify-between min-h-[550px] text-white overflow-hidden border border-pink-500/15">
-                  {/* Status Bar */}
                   <div className="flex items-center justify-between px-2 pt-0.5 pb-2">
                     <span className="text-[11px] font-mono font-semibold text-pink-300/80">9:41</span>
                     <div className="h-4.5 w-24 rounded-full bg-white/[0.08] flex items-center justify-center border border-pink-400/25">
@@ -560,7 +515,6 @@ export default function MobileShowcaseSection() {
                     </div>
                   </div>
 
-                  {/* App Header */}
                   <div className="flex items-center justify-between px-1 pb-2 border-b border-white/10">
                     <div className="flex items-center gap-2">
                       <div className="h-7 w-7 rounded-xl bg-pink-500/15 border border-pink-400/30 flex items-center justify-center shadow-2xs">
@@ -574,7 +528,6 @@ export default function MobileShowcaseSection() {
                     <span className="text-[9px] font-mono text-pink-300 font-semibold">50+ Templates</span>
                   </div>
 
-                  {/* Category Filter Pills */}
                   <div className="flex items-center gap-1 pt-2 pb-1 overflow-x-auto scrollbar-none">
                     {['All', 'Code', 'Docs', 'Search'].map((cat) => {
                       const isActive = activeCategory === cat;
@@ -594,7 +547,6 @@ export default function MobileShowcaseSection() {
                     })}
                   </div>
 
-                  {/* 4 Prompt Cards in Dark Theme */}
                   <div className="flex-1 overflow-y-auto space-y-2 py-1.5 px-0.5">
                     {filteredPrompts.map((p) => {
                       const Icon = p.icon;
@@ -623,7 +575,6 @@ export default function MobileShowcaseSection() {
                     })}
                   </div>
 
-                  {/* Action Button */}
                   <div className="pt-2 border-t border-white/10">
                     <button
                       onClick={() => router.push('/chat-ui')}
@@ -636,7 +587,6 @@ export default function MobileShowcaseSection() {
                 </div>
               </div>
 
-              {/* Subtitle Card */}
               <div className="mt-4 text-center space-y-0.5">
                 <h3 className="text-sm font-bold text-white">Prompt Mesh</h3>
                 <p className="text-xs text-[#A7A7B0]">Pre-configured multimodal templates for rapid exploration.</p>

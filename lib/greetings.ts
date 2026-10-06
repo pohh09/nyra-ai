@@ -1,7 +1,3 @@
-/**
- * Dynamic Time-Based Greeting System for Nyra AI
- * Selects a natural, context-aware greeting based on the user's local hour.
- */
 
 export interface GreetingData {
   greeting: string;
@@ -116,34 +112,26 @@ let lastSubtitle = '';
 
 export function getDynamicGreeting(): GreetingData {
   const now = new Date();
-  const hour = now.getHours(); // 0 to 23
+  const hour = now.getHours(); 
 
   let pool: string[];
 
   if (hour >= 5 && hour < 8) {
-    // 5:00 AM to 7:59 AM
     pool = GREETINGS_EARLY_MORNING;
   } else if (hour >= 8 && hour < 12) {
-    // 8:00 AM to 11:59 AM
     pool = GREETINGS_MORNING;
   } else if (hour >= 12 && hour < 17) {
-    // 12:00 PM to 4:59 PM
     pool = GREETINGS_AFTERNOON;
   } else if (hour >= 17 && hour < 21) {
-    // 5:00 PM to 8:59 PM
     pool = GREETINGS_EVENING;
   } else if (hour >= 21 && hour < 24) {
-    // 9:00 PM to 11:59 PM
     pool = GREETINGS_NIGHT;
   } else if (hour >= 0 && hour < 3) {
-    // 12:00 AM to 2:59 AM
     pool = GREETINGS_LATE_NIGHT;
   } else {
-    // 3:00 AM to 4:59 AM
     pool = GREETINGS_DEEP_NIGHT;
   }
 
-  // Filter out the last greeting if alternatives exist
   const availableGreetings =
     pool.length > 1 && lastGreeting
       ? pool.filter((g) => g !== lastGreeting)
@@ -155,8 +143,6 @@ export function getDynamicGreeting(): GreetingData {
 
   lastGreeting = chosenGreeting;
 
-  // Decide if we show a subtitle (keep it minimal and natural)
-  // Check if greeting already ends with a question
   const greetingIsQuestion =
     chosenGreeting.endsWith('?') ||
     chosenGreeting.endsWith('👀') ||

@@ -19,7 +19,6 @@ export async function GET() {
     openrouter: isProviderConfigured('openrouter'),
   };
 
-  // Determine available models across all configured providers
   const availableModels = configuredProviders.groq
     ? USER_FACING_MODELS
     : AI_MODELS.filter((m) => configuredProviders[m.provider]);

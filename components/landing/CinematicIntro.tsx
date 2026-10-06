@@ -30,7 +30,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
   const skipBtnRef = useRef<HTMLButtonElement>(null);
   const masterTimeline = useRef<gsap.core.Timeline | null>(null);
 
-  // 3D Scene Elements Refs
   const gridFloorRef = useRef<HTMLDivElement>(null);
   const gridCeilingRef = useRef<HTMLDivElement>(null);
   const starParticlesRef = useRef<HTMLDivElement>(null);
@@ -39,7 +38,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
   const hudReticleRef = useRef<HTMLDivElement>(null);
   const telemetryNodesRef = useRef<HTMLDivElement>(null);
 
-  // Scene 2+ Refs
   const textLine1Ref = useRef<HTMLHeadingElement>(null);
   const textLine2Ref = useRef<HTMLHeadingElement>(null);
   const fragmentsGroupRef = useRef<HTMLDivElement>(null);
@@ -51,7 +49,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
   onCompleteRef.current = onComplete;
   const [hasSkipped, setHasSkipped] = useState(false);
 
-  // Precomputed 3D Particle Starfield
   const particles = useMemo(() => [
     { size: 2, left: 12, top: 18, z: -300, color: '#c084fc', opacity: 0.6 },
     { size: 3, left: 24, top: 72, z: -600, color: '#38bdf8', opacity: 0.8 },
@@ -124,9 +121,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
 
       masterTimeline.current = tl;
 
-      // ==========================================
-      // INITIAL 3D CAMERA & DEPTH LAYERING SETUP
-      // ==========================================
       gsap.set(skipBtnRef.current, { opacity: 0, y: -10 });
       gsap.set(cameraRef.current, {
         z: 0,
@@ -135,7 +129,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         rotationZ: 0,
       });
 
-      // Scene 1: Background Grids, Particles, Core & HUD Initial States
       gsap.set(gridFloorRef.current, { opacity: 0, scale: 0.7 });
       gsap.set(gridCeilingRef.current, { opacity: 0, scale: 0.7 });
       gsap.set(starParticlesRef.current, { opacity: 0, scale: 0.8 });
@@ -145,7 +138,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
       gsap.set(hudReticleRef.current, { opacity: 0, scale: 0.5, z: -550 });
       gsap.set('.scene1-node', { opacity: 0, scale: 0.7, y: 15 });
 
-      // Scene 2: 3D Flying Typography
       gsap.set(textLine1Ref.current, {
         z: -600,
         scale: 0.45,
@@ -162,7 +154,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         filter: 'blur(18px)',
       });
 
-      // Scene 3: Floating UI Fragments Initial Positions (in depth)
       gsap.set('.frag-chat', {
         x: 350,
         y: 220,
@@ -208,7 +199,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         scale: 0.65,
       });
 
-      // Scene 5 & 6: Nyra Hero Glass Card
       gsap.set(nyraHeroCardRef.current, {
         opacity: 0,
         scale: 0.75,
@@ -217,17 +207,11 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         z: -350,
       });
 
-      // Scene 7 & 8: Energy Core & Expansion
       gsap.set(energyCoreRef.current, { opacity: 0, scale: 0.1, y: 0 });
       gsap.set(expandingAuraRef.current, { opacity: 0, scale: 0.1 });
 
-      // Reveal Skip Button early
       tl.to(skipBtnRef.current, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 0.1);
 
-      // =========================================================================
-      // SCENE 1: REDESIGNED QUANTUM SPACE & SINGULARITY IGNITION (~0.0s - 2.0s)
-      // =========================================================================
-      // 1. Grid planes & starfield materialize
       tl.to(
         [gridFloorRef.current, gridCeilingRef.current],
         {
@@ -250,7 +234,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.05
       );
 
-      // 2. Singularity core ignites with anamorphic flare
       tl.to(
         ignitionCoreRef.current,
         {
@@ -274,7 +257,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.2
       );
 
-      // 3. Shockwave rings pulse outward through depth
       tl.fromTo(
         '.scene1-ring',
         { scale: 0.1, opacity: 0.9, z: -700 },
@@ -289,7 +271,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.2
       );
 
-      // 4. Futuristic HUD Reticle & Boot Telemetry Lock-In
       tl.to(
         hudReticleRef.current,
         {
@@ -302,7 +283,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.25
       );
 
-      // 5. Floating Telemetry Matrix tags appear
       tl.to(
         '.scene1-node',
         {
@@ -316,7 +296,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.35
       );
 
-      // 6. Smooth forward camera dolly
       tl.to(
         cameraRef.current,
         {
@@ -327,7 +306,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         0.1
       );
 
-      // 7. Scene 1 dissolves as camera pushes through toward Scene 2
       tl.to(
         [ignitionCoreRef.current, '.scene1-flare-bar'],
         {
@@ -366,10 +344,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         1.4
       );
 
-      // ==========================================
-      // SCENE 2: 3D PROJECT STATEMENT THROUGH DEPTH (~0.8s - 4.2s)
-      // "From interface to intelligence — I build experiences that feel alive."
-      // ==========================================
       tl.to(
         textLine1Ref.current,
         {
@@ -399,7 +373,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         1.2
       );
 
-      // Camera accelerates past text, text moves into forward viewer space and dissolves
       tl.to(
         textLine1Ref.current,
         {
@@ -426,11 +399,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         3.35
       );
 
-      // ==========================================
-      // SCENE 3: SHOW WORK THROUGH 5 FLOATING UI FRAGMENTS (~3.4s - 7.6s)
-      // Connected spring arrivals from different 3D angles
-      // ==========================================
-      // Fragment 1: AI Chat (from bottom right)
       tl.to(
         '.frag-chat',
         {
@@ -447,7 +415,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         3.5
       );
 
-      // Fragment 2: Code Editor (from upper left)
       tl.to(
         '.frag-code',
         {
@@ -464,7 +431,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         3.75
       );
 
-      // Fragment 3: Voice Interface (from left depth plane)
       tl.to(
         '.frag-voice',
         {
@@ -481,7 +447,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         4.0
       );
 
-      // Fragment 4: System Metrics (from right depth plane)
       tl.to(
         '.frag-metrics',
         {
@@ -498,7 +463,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         4.2
       );
 
-      // Fragment 5: Prompt Library (from bottom floor)
       tl.to(
         '.frag-prompt',
         {
@@ -514,10 +478,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         4.45
       );
 
-      // ==========================================
-      // SCENE 4: 3D UI FRAGMENTS ORBIT & CAMERA DRIFT (~5.2s - 8.2s)
-      // Slow, luxurious orbit around the floating product ecosystem
-      // ==========================================
       tl.to(
         cameraRef.current,
         {
@@ -530,7 +490,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         5.0
       );
 
-      // Parallax floating of fragments
       tl.to(
         '.frag-chat',
         {
@@ -557,10 +516,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         5.3
       );
 
-      // ==========================================
-      // SCENE 5 & 6: NYRA TAKES CENTER STAGE & 3D GLASS FLIP REVEAL (~7.6s - 10.8s)
-      // Fragments converge and recede backward; Nyra emerges and rotates into place
-      // ==========================================
       tl.to(
         ['.frag-chat', '.frag-code', '.frag-voice', '.frag-metrics', '.frag-prompt'],
         {
@@ -587,7 +542,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         7.8
       );
 
-      // 3D Glass Panel Flip of Nyra Hero Card
       tl.to(
         nyraHeroCardRef.current,
         {
@@ -602,7 +556,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         8.0
       );
 
-      // Light Sweep Reflection across Nyra Glass
       tl.fromTo(
         '.nyra-glass-sweep',
         { x: '-120%', opacity: 0 },
@@ -610,10 +563,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         8.9
       );
 
-      // ==========================================
-      // SCENE 7 & 8: CORE POINT OF LIGHT & CIRCLE EXPANSION (~10.4s - 13.6s)
-      // Energy core ignites at bottom of Nyra card, collapses card, and expands outward
-      // ==========================================
       tl.to(
         energyCoreRef.current,
         {
@@ -625,7 +574,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         10.4
       );
 
-      // Nyra card condenses into core point
       tl.to(
         nyraHeroCardRef.current,
         {
@@ -639,7 +587,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         10.9
       );
 
-      // Energy core rises toward top navbar position
       tl.to(
         energyCoreRef.current,
         {
@@ -651,7 +598,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         11.2
       );
 
-      // Expanding Aura sweeps across the viewport
       tl.to(
         expandingAuraRef.current,
         {
@@ -697,7 +643,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
       className="fixed inset-0 z-[100] flex items-center justify-center bg-[#02040a] text-white overflow-hidden select-none pointer-events-auto"
       style={{ willChange: 'opacity, transform' }}
     >
-      {/* 3D PERSPECTIVE VIEWPORT */}
       <div
         ref={viewport3DRef}
         className="relative w-full h-full flex items-center justify-center"
@@ -707,7 +652,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* 3D CAMERA RIG */}
         <div
           ref={cameraRef}
           className="relative w-full h-full flex items-center justify-center pointer-events-none"
@@ -716,10 +660,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             willChange: 'transform',
           }}
         >
-          {/* =========================================================
-              SCENE 1: REDESIGNED QUANTUM SPACE & SINGULARITY IGNITION
-          ========================================================= */}
-          {/* Floating 3D Star/Particle Field */}
           <div
             ref={starParticlesRef}
             className="absolute inset-0 pointer-events-none"
@@ -743,7 +683,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             ))}
           </div>
 
-          {/* Deep 3D Laser Grid Floor */}
           <div
             ref={gridFloorRef}
             className="absolute -bottom-[320px] w-[2600px] h-[1500px] pointer-events-none opacity-0"
@@ -758,7 +697,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-purple-600/10 to-transparent" />
           </div>
 
-          {/* Deep 3D Laser Grid Ceiling */}
           <div
             ref={gridCeilingRef}
             className="absolute -top-[320px] w-[2600px] h-[1500px] pointer-events-none opacity-0"
@@ -771,7 +709,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             }}
           />
 
-          {/* Atmospheric Nebula Spheres in Depth */}
           <div
             className="absolute h-[600px] w-[850px] rounded-full bg-purple-700/15 blur-[160px] pointer-events-none"
             style={{ transform: 'translateZ(-500px)' }}
@@ -785,25 +722,21 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             style={{ transform: 'translateZ(-400px) translateX(-200px)' }}
           />
 
-          {/* Singularity Ignition Core & Anamorphic Lens Flare Beam */}
           <div
             ref={ignitionCoreRef}
             className="absolute flex items-center justify-center pointer-events-none"
             style={{ transform: 'translateZ(-750px)', transformStyle: 'preserve-3d' }}
           >
             <div className="relative flex items-center justify-center">
-              {/* Central Glowing Quantum Singularity */}
               <div className="h-7 w-7 rounded-full bg-white shadow-[0_0_50px_#c084fc,0_0_100px_#9333ea,0_0_150px_#7c3aed]" />
               <div className="absolute h-20 w-20 rounded-full bg-purple-400/25 animate-ping" />
 
-              {/* Anamorphic Lens Flare Horizontal Rays */}
               <div className="scene1-flare-bar absolute h-[2px] w-[950px] bg-gradient-to-r from-transparent via-cyan-300 via-white via-purple-300 to-transparent shadow-[0_0_24px_#a855f7]" />
               <div className="scene1-flare-bar absolute h-[8px] w-[550px] bg-gradient-to-r from-transparent via-purple-400 to-transparent blur-[3px]" />
               <div className="scene1-flare-bar absolute h-[140px] w-[2px] bg-gradient-to-b from-transparent via-white to-transparent" />
             </div>
           </div>
 
-          {/* Expanding 3D Shockwave Rings */}
           <div
             ref={shockwaveRingsRef}
             className="absolute flex items-center justify-center pointer-events-none"
@@ -814,13 +747,11 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             <div className="scene1-ring absolute h-[520px] w-[520px] rounded-full border border-purple-300/40 border-dashed" />
           </div>
 
-          {/* Futuristic HUD Reticle & Calibration Lock-In */}
           <div
             ref={hudReticleRef}
             className="absolute flex flex-col items-center justify-center pointer-events-none text-center"
             style={{ transform: 'translateZ(-450px)', transformStyle: 'preserve-3d' }}
           >
-            {/* Circular HUD Compass & Reticle */}
             <div className="relative flex items-center justify-center w-[220px] h-[220px]">
               <div className="absolute inset-0 rounded-full border border-purple-400/35 border-dashed animate-[spin_24s_linear_infinite]" />
               <div className="absolute inset-4 rounded-full border border-cyan-400/30 animate-[spin_16s_linear_infinite_reverse]" />
@@ -828,14 +759,12 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               <div className="absolute w-full h-[1px] bg-purple-400/25" />
               <div className="absolute h-2 w-2 rounded-full bg-purple-300/80 shadow-[0_0_10px_#d8b4fe]" />
 
-              {/* Corner crosshair brackets */}
               <div className="absolute top-0 left-0 w-3.5 h-3.5 border-t-2 border-l-2 border-purple-400" />
               <div className="absolute top-0 right-0 w-3.5 h-3.5 border-t-2 border-r-2 border-purple-400" />
               <div className="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-2 border-l-2 border-purple-400" />
               <div className="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-2 border-r-2 border-purple-400" />
             </div>
 
-            {/* HUD Boot Sequence Labels */}
             <div className="mt-4 font-mono text-[11px] tracking-[0.2em] text-purple-200/90 flex flex-col items-center gap-1.5">
               <div className="flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-950/70 border border-purple-400/35 backdrop-blur-md shadow-lg shadow-purple-950/50">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -849,7 +778,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             </div>
           </div>
 
-          {/* Floating 3D Telemetry Nodes */}
           <div
             ref={telemetryNodesRef}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -881,9 +809,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             </div>
           </div>
 
-          {/* =========================================================
-              SCENE 2: 3D PROJECT STATEMENT (Moving through Depth)
-          ========================================================= */}
           <div
             className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-6 text-center"
             style={{ transformStyle: 'preserve-3d' }}
@@ -905,15 +830,11 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             </h2>
           </div>
 
-          {/* =========================================================
-              SCENE 3 & 4: 5 FLOATING 3D UI FRAGMENTS
-          ========================================================= */}
           <div
             ref={fragmentsGroupRef}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
             style={{ transformStyle: 'preserve-3d' }}
           >
-            {/* Fragment 1: AI Chat Window */}
             <div
               className="frag-chat absolute w-[310px] sm:w-[360px] rounded-2xl border border-purple-500/40 bg-[#0d091a]/90 p-4 shadow-[0_15px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl"
               style={{ transformStyle: 'preserve-3d' }}
@@ -940,7 +861,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               </div>
             </div>
 
-            {/* Fragment 2: Code Editor */}
             <div
               className="frag-code absolute w-[300px] sm:w-[340px] rounded-2xl border border-purple-500/40 bg-[#0c0817]/90 p-4 shadow-[0_15px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl"
               style={{ transformStyle: 'preserve-3d' }}
@@ -965,7 +885,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               </pre>
             </div>
 
-            {/* Fragment 3: Voice Interaction Mode */}
             <div
               className="frag-voice absolute w-[260px] sm:w-[290px] rounded-2xl border border-purple-500/40 bg-[#0e091d]/90 p-3.5 shadow-[0_15px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl"
               style={{ transformStyle: 'preserve-3d' }}
@@ -991,7 +910,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               </p>
             </div>
 
-            {/* Fragment 4: System Metrics */}
             <div
               className="frag-metrics absolute w-[270px] sm:w-[300px] rounded-2xl border border-purple-500/30 bg-[#090614]/90 p-3.5 shadow-[0_15px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl"
               style={{ transformStyle: 'preserve-3d' }}
@@ -1015,7 +933,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               </div>
             </div>
 
-            {/* Fragment 5: Prompt Library */}
             <div
               className="frag-prompt absolute w-[290px] sm:w-[320px] rounded-2xl border border-purple-700/60 bg-[#080512]/90 p-3.5 shadow-[0_15px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl"
               style={{ transformStyle: 'preserve-3d' }}
@@ -1033,15 +950,11 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             </div>
           </div>
 
-          {/* =========================================================
-              SCENE 5 & 6: NYRA HERO 3D GLASS PANEL FLIP REVEAL
-          ========================================================= */}
           <div
             ref={nyraHeroCardRef}
             className="absolute w-[90%] max-w-[580px] rounded-3xl border-2 border-purple-400/50 bg-[#0d091c]/95 p-6 sm:p-8 shadow-[0_0_90px_rgba(168,85,247,0.35)] backdrop-blur-2xl overflow-hidden"
             style={{ transformStyle: 'preserve-3d' }}
           >
-            {/* Glass Sweep Sheen */}
             <div className="nyra-glass-sweep absolute inset-0 bg-gradient-to-r from-transparent via-purple-300/30 to-transparent skew-x-12 pointer-events-none" />
 
             <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
@@ -1085,9 +998,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             </div>
           </div>
 
-          {/* =========================================================
-              SCENE 7 & 8: ENERGY CORE & EXPANDING AURA REVEAL
-          ========================================================= */}
           <div
             ref={energyCoreRef}
             className="absolute bottom-16 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-gradient-to-r from-purple-300 via-violet-200 to-fuchsia-400 shadow-[0_0_35px_rgba(168,85,247,1)] pointer-events-none"
@@ -1101,7 +1011,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
         </div>
       </div>
 
-      {/* TOP RIGHT UNOBTRUSIVE SKIP BUTTON */}
       <div className="absolute top-6 right-6 sm:top-8 sm:right-8 z-[120]">
         <button
           ref={skipBtnRef}

@@ -1,7 +1,6 @@
 import assert from 'assert';
 import { clearAllChats, loadChats, saveChats } from '../lib/storage';
 
-// Mock browser localStorage & sessionStorage environment
 const storageMap: Record<string, string> = {};
 const sessionMap: Record<string, string> = {};
 
@@ -26,7 +25,6 @@ console.log('======================================================');
 console.log('CLEAR HISTORY VERIFICATION SUITE');
 console.log('======================================================');
 
-// Setup mock chats for user and guest
 const userAId = 'usr_test_123';
 const mockUserChats = [
   {

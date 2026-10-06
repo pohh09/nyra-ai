@@ -23,16 +23,13 @@ export async function GET(request: Request) {
               cookiesToSet.forEach(({ name, value, options }) =>
                 cookieStore.set(name, value, options)
               );
-            } catch {
-              // Can happen in Server Components
-            }
+            } catch {}
           },
         },
       });
 
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error && data?.user) {
-        // Log Google OAuth login activity
         try {
           await supabase.from('auth_activity').insert({
             user_id: data.user.id,
@@ -43,7 +40,6 @@ export async function GET(request: Request) {
           });
         } catch {}
 
-        // Check if user has completed onboarding
         let targetRoute = '/chat-ui';
         try {
           const { data: profile } = await supabase
@@ -56,7 +52,6 @@ export async function GET(request: Request) {
             targetRoute = '/onboarding';
           }
         } catch {
-          // If profile check fails, route to onboarding for safety
           targetRoute = '/onboarding';
         }
 
@@ -65,6 +60,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // Return user to login with error message if exchange failed
   return NextResponse.redirect(`${origin}/login?error=oauth_failed`);
 }

@@ -48,7 +48,6 @@ export default function VoiceModeModal({
     }
   }, []);
 
-  // Timer effect
   useEffect(() => {
     if (isListening) {
       setRecordingSeconds(0);
@@ -64,7 +63,6 @@ export default function VoiceModeModal({
     };
   }, [isListening]);
 
-  // Handle Web Speech API recognition
   useEffect(() => {
     if (!isOpen) {
       stopListening();
@@ -180,7 +178,6 @@ export default function VoiceModeModal({
           exit={{ opacity: 0, scale: 0.92 }}
           className="w-full max-w-xl flex flex-col items-center justify-between min-h-[480px] sm:min-h-[560px] max-h-[90dvh] overflow-y-auto p-4 sm:p-6 rounded-3xl border border-[#E7B8CF] dark:border-pink-500/25 bg-[#FAF8FB] dark:bg-[#16091F] text-[#261827] dark:text-white shadow-2xl relative"
         >
-          {/* Header Bar */}
           <div className="w-full flex items-center justify-between border-b border-[#E7B8CF] dark:border-pink-500/15 pb-3 sm:pb-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#B31372] dark:text-pink-400" />
@@ -188,7 +185,6 @@ export default function VoiceModeModal({
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Speed Selector */}
               <div className="flex items-center gap-0.5 sm:gap-1 bg-[#F4DCE9] dark:bg-[#08020D] border border-[#E7B8CF] dark:border-pink-500/20 rounded-xl p-1 text-xs">
                 {[0.75, 1, 1.25, 1.5].map((rate) => (
                   <button
@@ -212,13 +208,11 @@ export default function VoiceModeModal({
             </div>
           </div>
 
-          {/* Interactive Visualizer Orb */}
           <div className="my-6 flex flex-col items-center justify-center relative">
             <div className={`transition-all duration-500 ${isListening || speaking ? 'scale-110' : 'scale-100'}`}>
               <NyraOrb size={200} />
             </div>
 
-            {/* Live Audio Waveform Equalizer */}
             {isListening && (
               <div className="mt-4 flex items-center gap-1.5 h-8">
                 {[40, 75, 55, 90, 60, 100, 70, 85, 45, 95, 65, 80, 50, 70].map((height, i) => (
@@ -239,7 +233,6 @@ export default function VoiceModeModal({
               </div>
             )}
 
-            {/* Status Indicator & Timer */}
             <div className="mt-4 text-center">
               {permissionError ? (
                 <div className="flex items-center gap-2 text-[#A85A5A] dark:text-rose-300 text-xs font-medium max-w-sm">
@@ -264,7 +257,6 @@ export default function VoiceModeModal({
             </div>
           </div>
 
-          {/* Live Transcript / Speech Preview */}
           <div className="w-full bg-[#F4DCE9] dark:bg-[#08020D] border border-[#E7B8CF] dark:border-pink-500/20 rounded-2xl p-4 min-h-[90px] max-h-[120px] overflow-y-auto mb-4 text-center text-sm font-medium scrollbar-thin">
             {transcript ? (
               <p className="text-[#261827] dark:text-pink-200">{transcript}</p>
@@ -275,9 +267,7 @@ export default function VoiceModeModal({
             )}
           </div>
 
-          {/* Controls Bar */}
           <div className="flex items-center justify-center gap-4">
-            {/* Cancel voice */}
             {isListening && (
               <button
                 onClick={handleCancelVoice}
@@ -287,7 +277,6 @@ export default function VoiceModeModal({
               </button>
             )}
 
-            {/* Mic Toggle Button */}
             <button
               onClick={isListening ? stopListening : startListening}
               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all transform hover:scale-105 shadow-xl cursor-pointer ${
@@ -299,7 +288,6 @@ export default function VoiceModeModal({
               {isListening ? <Square size={20} className="fill-white" /> : <Mic size={22} />}
             </button>
 
-            {/* Send transcript button */}
             {transcript && (
               <button
                 onClick={handleSendVoiceQuery}
@@ -309,7 +297,6 @@ export default function VoiceModeModal({
               </button>
             )}
 
-            {/* Speak / Stop Assistant Response */}
             {lastAssistantMessage && !isListening && (
               <button
                 onClick={speaking ? stopSpeaking : () => speakText(lastAssistantMessage)}

@@ -36,7 +36,6 @@ import {
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 
-// STEP 1: INTERESTS (2x2 Grid)
 const INTEREST_OPTIONS = [
   { id: 'tech_coding', label: 'Tech & Coding', tag: 'AI & Systems', icon: Code2, desc: 'Development, AI models, algorithms & systems' },
   { id: 'design_creativity', label: 'Design & Craft', tag: 'UI/UX & Art', icon: Palette, desc: 'Visual craft, product design & creative concepts' },
@@ -44,7 +43,6 @@ const INTEREST_OPTIONS = [
   { id: 'learning_research', label: 'Learning & Research', tag: 'Mastery', icon: GraduationCap, desc: 'New skills, deep analysis & structured knowledge' },
 ];
 
-// STEP 2: GOALS (2x2 Grid)
 const GOAL_OPTIONS = [
   { id: 'build_projects', label: 'Build Projects', tag: 'Execution', icon: Hammer, desc: 'Turn ideas into software, apps, and workflows' },
   { id: 'learn_new', label: 'Learn & Deep Dive', tag: 'Knowledge', icon: BookOpen, desc: 'Master new topics, frameworks & concepts' },
@@ -52,7 +50,6 @@ const GOAL_OPTIONS = [
   { id: 'brainstorm_ideas', label: 'Brainstorm & Plan', tag: 'Creativity', icon: Lightbulb, desc: 'Generate creative angles, ideas & roadmaps' },
 ];
 
-// STEP 3: WORK STYLE (2x2 Grid)
 const WORK_STYLE_OPTIONS = [
   { id: 'just_answer', label: 'Direct & Concise', tag: 'Fast Answers', icon: Zap, desc: 'Direct, clear answers without extra fluff' },
   { id: 'teach_step_by_step', label: 'Step-by-Step', tag: 'Mentorship', icon: GraduationCap, desc: 'Break down logic and teach core fundamentals' },
@@ -60,7 +57,6 @@ const WORK_STYLE_OPTIONS = [
   { id: 'build_with_me', label: 'Pair Programmer', tag: 'Co-Pilot', icon: Hammer, desc: 'Iterative, collaborative problem-solving partner' },
 ];
 
-// STEP 4: EXPERIENCE LEVEL (2x2 Grid)
 const EXPERIENCE_OPTIONS = [
   { id: 'Beginner', label: 'Beginner', tag: 'Zero Jargon', icon: Compass, desc: 'Intuitive, simple, and friendly explanations' },
   { id: 'Comfortable', label: 'Comfortable', tag: 'Balanced Tech', icon: Zap, desc: 'Balanced technical clarity & practical code examples' },
@@ -80,7 +76,6 @@ export default function OnboardingPage() {
   const [selectedExpLevel, setSelectedExpLevel] = useState<string>('Comfortable');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Redirect if already completed onboarding or not authenticated
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
@@ -160,7 +155,6 @@ export default function OnboardingPage() {
     }
   };
 
-  // Dynamic persona synthesis label for Step 5
   const getSynthesizedPersona = () => {
     if (selectedWorkStyle.includes('Pair Programmer') || selectedWorkStyle.includes('Build with me')) return 'Collaborative Pair-Architect';
     if (selectedWorkStyle.includes('Direct & Concise') || selectedWorkStyle.includes('Just give me the answer')) return 'High-Velocity Pragmatist';
@@ -183,7 +177,6 @@ export default function OnboardingPage() {
 
   return (
     <main className="relative min-h-screen dark:bg-[#07080D] bg-[#F8F7FB] dark:text-white text-[#292633] flex flex-col selection:bg-[#8B6FC9]/30 overflow-x-hidden transition-colors">
-      {/* Dynamic ambient background glow */}
       <div
         className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-700 dark:opacity-100 opacity-40"
         style={{
@@ -191,10 +184,8 @@ export default function OnboardingPage() {
         }}
       />
 
-      {/* Main container occupying ~88% of screen width on desktop, full width with padding on mobile */}
       <div className="relative z-10 w-full sm:w-[92%] md:w-[88%] lg:w-[82%] max-w-[1240px] mx-auto px-4 sm:px-8 lg:px-10 pt-5 sm:pt-10 pb-8 sm:pb-12 flex flex-col flex-1">
         
-        {/* Top Header */}
         <header className="w-full flex items-center justify-between pb-5 sm:pb-10">
           <div className="flex items-center gap-2.5 sm:gap-3.5">
             <div className="relative w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-sm shrink-0 border border-[#E8E4EF] dark:border-white/10 ring-1 ring-[#8B6FC9]/20 bg-[#120726]">
@@ -219,7 +210,6 @@ export default function OnboardingPage() {
           )}
         </header>
 
-        {/* Progress Section */}
         <div className="w-full mb-5 sm:mb-8">
           <div className="flex items-center justify-between text-xs sm:text-sm dark:text-white/50 text-[#686477] mb-2 font-medium">
             <span className="dark:text-white/70 text-[#292633] flex items-center gap-1.5 sm:gap-2">
@@ -243,10 +233,8 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* Dynamic Step Content */}
         <div className="w-full flex-1">
           <AnimatePresence mode="wait">
-            {/* STEP 1: INTERESTS (2x2 Grid) */}
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -325,7 +313,6 @@ export default function OnboardingPage() {
               </motion.div>
             )}
 
-            {/* STEP 2: GOALS (2x2 Grid) */}
             {step === 2 && (
               <motion.div
                 key="step2"
@@ -404,7 +391,6 @@ export default function OnboardingPage() {
               </motion.div>
             )}
 
-            {/* STEP 3: WORK STYLE (2x2 Grid) */}
             {step === 3 && (
               <motion.div
                 key="step3"
@@ -483,7 +469,6 @@ export default function OnboardingPage() {
               </motion.div>
             )}
 
-            {/* STEP 4: EXPERIENCE LEVEL (2x2 Grid) */}
             {step === 4 && (
               <motion.div
                 key="step4"
@@ -564,7 +549,6 @@ export default function OnboardingPage() {
               </motion.div>
             )}
 
-            {/* STEP 5: READY / WORKSPACE BLUEPRINT */}
             {step === 5 && (
               <motion.div
                 key="step5"
@@ -574,7 +558,6 @@ export default function OnboardingPage() {
                 transition={{ duration: 0.3 }}
                 className="w-full max-w-[580px] mx-auto text-center py-1 sm:py-6"
               >
-                {/* Completion Brand Icon with pulsing aura */}
                 <div className="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3.5 sm:mb-4.5">
                   <div className="absolute inset-0 rounded-2xl bg-[#8B6FC9]/40 blur-xl animate-pulse" />
                   <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(139,111,201,0.45)] ring-2 ring-purple-400/30 border border-white/20 bg-[#120726]">
@@ -582,7 +565,6 @@ export default function OnboardingPage() {
                   </div>
                 </div>
 
-                {/* Hero Heading & Subtitle */}
                 <h2 className="text-xl sm:text-2xl md:text-[28px] font-bold tracking-tight dark:text-white text-[#292633] mb-1 sm:mb-1.5 leading-tight">
                   Okay, I think I get your vibe.
                 </h2>
@@ -590,10 +572,8 @@ export default function OnboardingPage() {
                   Your personalized Nyra neural workspace is configured and calibrated.
                 </p>
 
-                {/* Workspace Blueprint Summary Card */}
                 <div className="w-full mb-5 sm:mb-7 p-4 sm:p-6 rounded-2xl dark:bg-white/[0.035] bg-white border dark:border-white/[0.09] border-[#E8E4EF] text-left shadow-lg shadow-black/5 dark:shadow-black/20 relative overflow-hidden">
                   
-                  {/* Card Header */}
                   <div className="flex items-center justify-between pb-3 mb-3.5 border-b dark:border-white/[0.07] border-[#E8E4EF]">
                     <div className="flex items-center gap-2">
                       <Sparkles size={14} className="dark:text-[#C4B5FD] text-[#8B6FC9]" />
@@ -606,7 +586,6 @@ export default function OnboardingPage() {
                     </span>
                   </div>
 
-                  {/* Active Persona Profile Banner */}
                   <div className="mb-3.5 p-3 rounded-xl dark:bg-[#8B6FC9]/10 bg-purple-50/80 border dark:border-[#8B6FC9]/25 border-purple-200/80 flex items-center justify-between gap-2.5">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="w-8 h-8 rounded-lg dark:bg-[#8B6FC9]/20 bg-purple-100 flex items-center justify-center shrink-0">
@@ -627,9 +606,7 @@ export default function OnboardingPage() {
                     </div>
                   </div>
                   
-                  {/* Dynamic Traits List with Responsive Badges */}
                   <div className="space-y-2.5 sm:space-y-3 divide-y dark:divide-white/[0.05] divide-[#E8E4EF]/70 text-xs sm:text-sm">
-                    {/* Interests */}
                     <div className="flex items-start justify-between gap-3 pt-1 first:pt-0">
                       <span className="dark:text-white/45 text-[#686477] text-xs sm:text-[13px] font-medium shrink-0 pt-0.5">
                         Interests
@@ -646,7 +623,6 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Goals */}
                     <div className="flex items-start justify-between gap-3 pt-2.5">
                       <span className="dark:text-white/45 text-[#686477] text-xs sm:text-[13px] font-medium shrink-0 pt-0.5">
                         Goals
@@ -663,7 +639,6 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Work Style */}
                     <div className="flex items-start justify-between gap-3 pt-2.5">
                       <span className="dark:text-white/45 text-[#686477] text-xs sm:text-[13px] font-medium shrink-0 pt-0.5">
                         Work Style
@@ -680,7 +655,6 @@ export default function OnboardingPage() {
                       </div>
                     </div>
 
-                    {/* Depth Level */}
                     <div className="flex items-center justify-between gap-3 pt-2.5">
                       <span className="dark:text-white/45 text-[#686477] text-xs sm:text-[13px] font-medium shrink-0">
                         Depth Level
@@ -692,7 +666,6 @@ export default function OnboardingPage() {
                   </div>
                 </div>
 
-                {/* Primary & Secondary Actions */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5 w-full">
                   <button
                     type="button"
@@ -727,7 +700,6 @@ export default function OnboardingPage() {
           </AnimatePresence>
         </div>
 
-        {/* Bottom Navigation Buttons (Steps 1 to 4) - Sticky on Mobile */}
         {step < 5 && (
           <footer className="sticky sm:static bottom-0 z-20 w-full pt-3.5 pb-2 sm:py-0 sm:pt-10 sm:pb-0 mt-6 sm:mt-8 border-t dark:border-white/[0.08] border-[#E8E4EF] bg-[#F8F7FB]/95 dark:bg-[#07080D]/95 backdrop-blur-xl sm:bg-transparent sm:dark:bg-transparent flex items-center justify-between gap-3 -mx-4 sm:mx-0 px-4 sm:px-0">
             <button

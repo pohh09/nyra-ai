@@ -24,13 +24,11 @@ export default function UseCasesShowcaseSection() {
       id="use-cases"
       className="scroll-mt-24 sm:scroll-mt-28 relative w-full bg-transparent py-20 sm:py-28 lg:py-32 overflow-hidden transition-colors"
     >
-      {/* Ambient Spotlight */}
       <div className="pointer-events-none absolute top-1/3 right-1/4 w-[700px] h-[350px] bg-[#E52A83]/[0.04] rounded-full blur-[140px]" />
       <div className="pointer-events-none absolute bottom-1/4 left-1/4 w-[600px] h-[300px] bg-[#B31372]/[0.03] rounded-full blur-[130px]" />
 
       <div className="w-[94%] sm:w-[90%] max-w-[1800px] mx-auto px-2 sm:px-4 relative z-10 space-y-20 sm:space-y-28 lg:space-y-36">
         
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -38,7 +36,6 @@ export default function UseCasesShowcaseSection() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto flex flex-col items-center"
         >
-          {/* Eyebrow Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/25 bg-[#16091F]/70 px-3.5 py-1.5 text-xs font-semibold text-pink-200 shadow-sm backdrop-blur-xl mb-3.5">
             <Layers className="h-3.5 w-3.5 text-pink-400" />
             <span className="font-mono text-[11px] font-bold tracking-wider uppercase text-pink-300">
@@ -58,9 +55,6 @@ export default function UseCasesShowcaseSection() {
           </p>
         </motion.div>
 
-        {/* ========================================================================= */}
-        {/* SHOWCASE 01: Research & Learn (Text Left, Visual Right)                   */}
-        {/* ========================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -97,7 +91,6 @@ export default function UseCasesShowcaseSection() {
             className="lg:col-span-7"
           >
             <div className="rounded-2xl border border-white/[0.1] bg-[#0A0512]/90 p-5 sm:p-6 shadow-2xl space-y-3.5">
-              {/* Context bar */}
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08] text-xs font-mono text-cyan-300">
                 <span className="flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" />
@@ -108,7 +101,6 @@ export default function UseCasesShowcaseSection() {
                 </span>
               </div>
 
-              {/* Research Snippet */}
               <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
                 <div className="text-xs font-semibold text-white">Synthesized Insights from 3 Verified Sources:</div>
                 <p className="text-xs text-[#A7A7B0] leading-relaxed">
@@ -129,9 +121,6 @@ export default function UseCasesShowcaseSection() {
           </motion.div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* SHOWCASE 02: Build & Create (Visual Left, Text Right)                     */}
-        {/* ========================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -194,9 +183,6 @@ export default function UseCasesShowcaseSection() {
           </motion.div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* SHOWCASE 03: Organize & Remember (Text Left, Visual Right)                */}
-        {/* ========================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -261,9 +247,6 @@ export default function UseCasesShowcaseSection() {
           </motion.div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* SHOWCASE 04: Career & Job Search (Visual Left, Text Right)                */}
-        {/* ========================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}

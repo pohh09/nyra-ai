@@ -36,10 +36,8 @@ const ACCOUNTS_STORAGE_KEY = 'nyra_accounts_store';
 const SESSION_STORAGE_KEY = 'nyra_active_session';
 const SESSION_COOKIE_NAME = 'nyra_session_token';
 
-// Web Crypto SHA-256 with Salt for secure password hashing
 async function hashPassword(password: string, salt: string): Promise<string> {
   if (typeof window === 'undefined' || !window.crypto?.subtle) {
-    // Fallback simple hash for non-crypto environments
     let hash = 0;
     const combined = password + salt;
     for (let i = 0; i < combined.length; i++) {
@@ -146,7 +144,6 @@ export async function localSignUp(
   accounts.push(newAccount);
   saveAccounts(accounts);
 
-  // Auto sign in upon sign up
   await createLocalSession(newAccount);
 
   return { success: true, user: newAccount };
@@ -178,7 +175,7 @@ export async function localSignIn(
 
 async function createLocalSession(account: StoredAccount): Promise<AuthSession> {
   const sessionToken = `session_${account.id}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; 
 
   const session: AuthSession = {
     token: sessionToken,
@@ -250,7 +247,6 @@ export function updateLocalAccountProfile(
 
   saveAccounts(accounts);
 
-  // Update session if it's the current user
   const session = getLocalSession();
   if (session && session.user.id === userId) {
     session.user.displayName = accounts[idx].displayName;

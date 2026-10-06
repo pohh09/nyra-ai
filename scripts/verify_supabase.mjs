@@ -46,7 +46,6 @@ async function verify() {
     return;
   }
 
-  // Test client initialization
   let client;
   try {
     client = createClient(supabaseUrl, supabaseAnonKey, {
@@ -58,7 +57,6 @@ async function verify() {
     return;
   }
 
-  // Test Auth API connectivity
   try {
     const { data, error } = await client.auth.getSession();
     if (error) {
@@ -70,7 +68,6 @@ async function verify() {
     console.log('4. Supabase Auth API connection check FAILED:', err.message);
   }
 
-  // Test Database schema access across all 7 user tables
   try {
     const tables = [
       'profiles',

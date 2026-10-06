@@ -40,7 +40,6 @@ export async function POST(req: Request) {
     const targetPages = extractTargetPageNumbers(query);
     const targetPagesSet = new Set(targetPages);
 
-    // 1. If explicit page number is queried, prioritize and ONLY return chunks matching target page
     if (targetPages.length > 0) {
       const pageMatched = chunks.filter((c) => c.pageNumber && targetPagesSet.has(c.pageNumber));
       if (pageMatched.length > 0) {
@@ -69,7 +68,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Hybrid vector + lexical scoring with confidence filter
     const queryVector = generateEmbedding(query);
     const queryTokens = query
       .toLowerCase()
@@ -100,7 +98,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Sort descending by score
     scoredChunks.sort((a, b) => b.score - a.score);
 
     const topResults = scoredChunks.slice(0, topK);

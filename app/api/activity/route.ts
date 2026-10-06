@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
         undefined;
       const userAgent = request.headers.get('user-agent') || undefined;
 
-      // Prefer service role client if configured, otherwise standard client
       if (supabaseServiceKey) {
         const { createClient } = await import('@supabase/supabase-js');
         const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
@@ -75,7 +74,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    // Return graceful 200 so background activity logging never throws in caller
     return NextResponse.json({ success: false, error: err.message }, { status: 200 });
   }
 }

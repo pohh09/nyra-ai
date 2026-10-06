@@ -41,23 +41,17 @@ export default function DocsPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F8F7FB] dark:bg-[#050308] text-[#292633] dark:text-white transition-all duration-500">
-      {/* BACKGROUND */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* LIGHT */}
         <div className="absolute top-[-240px] left-[-180px] w-[700px] h-[900px] rounded-full bg-[#8B6FC9]/10 blur-[150px] dark:hidden" />
         <div className="absolute bottom-[-260px] right-[-180px] w-[700px] h-[850px] rounded-full bg-[#7E9AC7]/10 blur-[150px] dark:hidden" />
 
-        {/* DARK */}
         <div className="hidden dark:block absolute top-[-240px] left-[-180px] w-[700px] h-[900px] rounded-full bg-purple-500/10 blur-[180px]" />
         <div className="hidden dark:block absolute bottom-[-260px] right-[-180px] w-[700px] h-[850px] rounded-full bg-violet-600/10 blur-[180px]" />
       </div>
 
-      {/* CONTENT */}
       <div className="relative z-10">
-        {/* NAVBAR */}
         <header className="backdrop-blur-2xl">
           <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-5 flex items-center justify-between">
-            {/* LEFT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/"
@@ -78,7 +72,6 @@ export default function DocsPage() {
               </Link>
             </div>
 
-            {/* RIGHT */}
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
@@ -99,10 +92,8 @@ export default function DocsPage() {
           </div>
         </header>
 
-        {/* HERO */}
         <section className="px-5 md:px-8 pt-12 md:pt-16 pb-16 md:pb-24">
           <div className="max-w-[1400px] mx-auto">
-            {/* TOP */}
             <div className="max-w-4xl">
               <p className="text-[#8B6FC9] dark:text-purple-400 text-xs md:text-sm font-bold tracking-[0.2em] mb-5 uppercase">
                 DOCUMENTATION
@@ -121,7 +112,6 @@ export default function DocsPage() {
               </p>
             </div>
 
-            {/* GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-14">
               {sections.map((section) => {
                 const Icon = section.icon;
@@ -147,21 +137,18 @@ export default function DocsPage() {
               })}
             </div>
 
-            {/* CODE */}
             <div className="mt-16 p-5 md:p-8 rounded-[32px] border border-[#E8E4EF] dark:border-purple-400/15 bg-white dark:bg-white/[0.04] backdrop-blur-3xl shadow-[0_4px_24px_rgba(41,38,51,0.03)]">
               <p className="text-[#8B6FC9] dark:text-purple-400 text-xs md:text-sm font-bold tracking-[0.2em] mb-5 uppercase">
                 QUICK START
               </p>
 
               <div className="overflow-hidden rounded-[24px] bg-[#F8F7FB] dark:bg-[#0c0817] border border-[#E8E4EF] dark:border-purple-500/20">
-                {/* TOP */}
                 <div className="flex items-center gap-2 px-5 py-4 border-b border-[#E8E4EF] dark:border-purple-500/15 bg-[#F5F3F9] dark:bg-[#120c22]">
                   <div className="w-3 h-3 rounded-full bg-[#C77B7B]/70 dark:bg-red-400/80" />
                   <div className="w-3 h-3 rounded-full bg-[#C49A5A]/70 dark:bg-yellow-400/80" />
                   <div className="w-3 h-3 rounded-full bg-[#6FA58A]/70 dark:bg-green-400/80" />
                 </div>
 
-                {/* CODE */}
                 <pre className="p-5 text-sm md:text-[14px] leading-7 text-[#292633] dark:text-purple-200 overflow-auto font-mono">
 {`npx create-next-app@latest nyra-ai
 

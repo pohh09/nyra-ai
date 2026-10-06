@@ -34,11 +34,9 @@ export function ConversationListSkeleton() {
 export function MessageSkeleton() {
   return (
     <div className="space-y-4 py-4 max-w-3xl mx-auto w-full">
-      {/* User message skeleton */}
       <div className="flex justify-end">
         <Skeleton className="h-12 w-64 rounded-2xl" />
       </div>
-      {/* Assistant message skeleton */}
       <div className="flex gap-3">
         <Skeleton className="h-8 w-8 rounded-full shrink-0" />
         <div className="flex-1 space-y-2">

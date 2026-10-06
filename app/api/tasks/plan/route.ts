@@ -22,41 +22,35 @@ interface PlanResponse {
 function extractDurationInDays(text: string): number {
   const clean = text.toLowerCase();
 
-  // Matches "7 days", "14-day", "30 day", "1 day"
   const dayMatch = clean.match(/(\d+)\s*(?:-| )*(?:day|days)/);
   if (dayMatch && dayMatch[1]) {
     const days = parseInt(dayMatch[1], 10);
     if (!isNaN(days) && days > 0) return Math.min(Math.max(days, 1), 30);
   }
 
-  // Matches "2 weeks", "1 week"
   const weekMatch = clean.match(/(\d+)\s*(?:-| )*(?:week|weeks)/);
   if (weekMatch && weekMatch[1]) {
     const weeks = parseInt(weekMatch[1], 10);
     if (!isNaN(weeks) && weeks > 0) return Math.min(Math.max(weeks * 7, 1), 30);
   }
 
-  // Matches "1 month"
   const monthMatch = clean.match(/(\d+)\s*(?:-| )*(?:month|months)/);
   if (monthMatch && monthMatch[1]) {
     const months = parseInt(monthMatch[1], 10);
     if (!isNaN(months) && months > 0) return Math.min(Math.max(months * 30, 1), 30);
   }
 
-  // Default to 7 days if unspecified
   return 7;
 }
 
 function cleanJsonText(raw: string): string {
   let text = raw.trim();
-  // Remove markdown json fences
   if (text.startsWith('```')) {
     text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
   }
   return text;
 }
 
-// Fallback dynamic generator if AI provider is unreachable
 function generateFallbackPlan(goal: string, days: number): PlanResponse {
   const goalClean = goal
     .replace(/(?:in\s+)?\d+\s*(?:days?|weeks?|months?)/i, '')
@@ -216,7 +210,6 @@ Return ONLY the raw JSON object. Do not include markdown code block backticks (\
 
     let generatedPlan: PlanResponse | null = null;
 
-    // Try Gemini API first if configured
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_API_KEY;
     if (geminiKey && !generatedPlan) {
       try {
@@ -251,7 +244,6 @@ Return ONLY the raw JSON object. Do not include markdown code block backticks (\
       }
     }
 
-    // Try OpenAI API if Gemini failed or unconfigured
     const openaiKey = process.env.OPENAI_API_KEY;
     if (openaiKey && !generatedPlan) {
       try {
@@ -288,7 +280,6 @@ Return ONLY the raw JSON object. Do not include markdown code block backticks (\
       }
     }
 
-    // Try Groq API if still not generated
     const groqKey = process.env.GROQ_API_KEY;
     if (groqKey && !generatedPlan) {
       try {
@@ -325,12 +316,10 @@ Return ONLY the raw JSON object. Do not include markdown code block backticks (\
       }
     }
 
-    // Fallback if AI providers failed
     if (!generatedPlan) {
       generatedPlan = generateFallbackPlan(rawGoal, totalDays);
     }
 
-    // Ensure valid structure & sanitize
     const sanitizedPlan: PlanResponse = {
       goalTitle: generatedPlan.goalTitle || `${rawGoal} (${totalDays} Days)`,
       totalDays: generatedPlan.totalDays || generatedPlan.roadmap.length,
