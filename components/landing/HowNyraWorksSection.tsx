@@ -551,24 +551,6 @@ export default function HowNyraWorksSection() {
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono bg-white/[0.05] hover:bg-white/[0.1] text-pink-300 border border-white/[0.08] transition-colors"
-                title={isPlaying ? 'Pause auto-progression' : 'Play auto-progression'}
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="h-3 w-3" />
-                    <span>Auto-Playing</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3" />
-                    <span>Paused</span>
-                  </>
-                )}
-              </button>
-
-              <button
                 onClick={() => setActiveStep(0)}
                 className="p-1 rounded-lg text-xs font-mono text-[#8E8E98] hover:text-white hover:bg-white/[0.05] transition-colors"
                 title="Restart from Step 1"
