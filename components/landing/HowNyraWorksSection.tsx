@@ -9,8 +9,6 @@ import {
   Workflow,
   ArrowRight,
   CheckCircle2,
-  Play,
-  Pause,
   RotateCcw,
   Terminal,
   FileCode,

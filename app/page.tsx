@@ -892,6 +892,7 @@ export default function HomePage() {
                         <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
                         <span>All Systems Operational</span>
                       </div>
+                    </div>
 
                     <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs">
                       <a
