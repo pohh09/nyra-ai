@@ -105,12 +105,21 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
               >
                 <defs>
-                  {/* Volumetric Chromatic Gradient for Ribbon A (Left Inverted V) - Theme Colors */}
-                  <linearGradient id="heroRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
-                    <stop offset="0%" stopColor="#E9D5FF" />
-                    <stop offset="33%" stopColor="#C084FC" />
-                    <stop offset="66%" stopColor="#9333EA" />
-                    <stop offset="100%" stopColor="#6B21A8" />
+                  {/* Volumetric Metallic Gloss for Ribbon A (Left Inverted V) */}
+                  <linearGradient id="heroRibbonA" x1="15%" y1="0%" x2="85%" y2="100%">
+                    <stop offset="0%" stopColor="#e879f9" />
+                    <stop offset="20%" stopColor="#a21caf" />
+                    <stop offset="45%" stopColor="#701a75" />
+                    <stop offset="50%" stopColor="#fdf4ff" />
+                    <stop offset="55%" stopColor="#86198f" />
+                    <stop offset="100%" stopColor="#3b0764" />
+                  </linearGradient>
+
+                  {/* Specular Edge Stroke A */}
+                  <linearGradient id="heroStrokeA" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fdf4ff" />
+                    <stop offset="50%" stopColor="#d946ef" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#fdf4ff" />
                   </linearGradient>
 
                   {/* Razor-Sharp Specular Glass Edge Highlight */}
@@ -121,33 +130,37 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
 
-                  {/* Inner Filament Grad */}
-                  <linearGradient id="heroFilamentGradA" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                  </linearGradient>
-
                   {/* Secondary Soft Highlight Reflection */}
                   <linearGradient id="heroSoftSheenA" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.7" />
                     <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
 
-                  <filter id="heroRealistic3DA" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#4C1D95" floodOpacity="0.4" result="dropShadow" />
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
-                    <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                  <filter id="heroRealistic3DA" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="#4c1d95" floodOpacity="0.6" result="dropShadow1" />
+                    <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000000" floodOpacity="0.4" result="dropShadow2" />
+                    
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="glowBlur" />
+                    <feFlood floodColor="#c026d3" floodOpacity="0.5" result="glowColor" />
+                    <feComposite in="glowColor" in2="glowBlur" operator="in" result="glow" />
+
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="bevelBlurTop" />
+                    <feOffset dx="-3" dy="-4" in="bevelBlurTop" result="offsetBlurTop" />
                     <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                    <feFlood floodColor="#E9D5FF" floodOpacity="0.8" result="highlightColor" />
+                    <feFlood floodColor="#fae8ff" floodOpacity="0.95" result="highlightColor" />
                     <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-                    <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="bevelBlurBottom" />
+                    <feOffset dx="4" dy="6" in="bevelBlurBottom" result="offsetBlurBottom" />
                     <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                    <feFlood floodColor="#4C1D95" floodOpacity="0.75" result="shadowColor" />
+                    <feFlood floodColor="#3b0764" floodOpacity="0.85" result="shadowColor" />
                     <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+
                     <feMerge>
-                      <feMergeNode in="dropShadow" />
+                      <feMergeNode in="glow" />
+                      <feMergeNode in="dropShadow1" />
+                      <feMergeNode in="dropShadow2" />
                       <feMergeNode in="SourceGraphic" />
                       <feMergeNode in="innerShadow" />
                       <feMergeNode in="highlight" />
@@ -159,7 +172,7 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 <path
                   d="M 104 392 L 104 168 C 104 125 138 93 182 106 C 216 115 243 147 269 186 L 346 304 C 371 342 394 371 408 387 C 416 397 406 413 394 413 L 312 413 C 285 413 261 398 245 374 L 179 275 L 179 392 C 179 405 168 416 155 416 L 128 416 C 115 416 104 405 104 392 Z"
                   fill="url(#heroRibbonA)"
-                  stroke="#FF94CC"
+                  stroke="url(#heroStrokeA)"
                   strokeWidth="2.5"
                   filter="url(#heroRealistic3DA)"
                 />
@@ -212,12 +225,21 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
               >
                 <defs>
-                  {/* Volumetric Chromatic Gradient for Ribbon B (Right Upright V) - Theme Colors */}
-                  <linearGradient id="heroRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
-                    <stop offset="0%" stopColor="#FFA0D2" />
-                    <stop offset="33%" stopColor="#FF4FA3" />
-                    <stop offset="66%" stopColor="#E52A83" />
-                    <stop offset="100%" stopColor="#B31372" />
+                  {/* Volumetric Metallic Gloss for Ribbon B (Right Upright V) */}
+                  <linearGradient id="heroRibbonB" x1="85%" y1="0%" x2="15%" y2="100%">
+                    <stop offset="0%" stopColor="#fbcfe8" />
+                    <stop offset="20%" stopColor="#db2777" />
+                    <stop offset="45%" stopColor="#831843" />
+                    <stop offset="50%" stopColor="#fff1f2" />
+                    <stop offset="55%" stopColor="#be185d" />
+                    <stop offset="100%" stopColor="#4c0519" />
+                  </linearGradient>
+
+                  {/* Specular Edge Stroke B */}
+                  <linearGradient id="heroStrokeB" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#fff1f2" />
+                    <stop offset="50%" stopColor="#f472b6" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#fff1f2" />
                   </linearGradient>
 
                   {/* Razor-Sharp Specular Glass Edge Highlight */}
@@ -228,33 +250,37 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
 
-                  {/* Inner Filament Grad */}
-                  <linearGradient id="heroFilamentGradB" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                  </linearGradient>
-
                   {/* Secondary Soft Highlight Reflection */}
                   <linearGradient id="heroSoftSheenB" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.7" />
                     <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
 
-                  <filter id="heroRealistic3DB" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#801456" floodOpacity="0.4" result="dropShadow" />
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
-                    <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                  <filter id="heroRealistic3DB" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="#831843" floodOpacity="0.6" result="dropShadow1" />
+                    <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000000" floodOpacity="0.4" result="dropShadow2" />
+                    
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="glowBlur" />
+                    <feFlood floodColor="#db2777" floodOpacity="0.5" result="glowColor" />
+                    <feComposite in="glowColor" in2="glowBlur" operator="in" result="glow" />
+
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="bevelBlurTop" />
+                    <feOffset dx="-3" dy="-4" in="bevelBlurTop" result="offsetBlurTop" />
                     <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                    <feFlood floodColor="#FFA0D2" floodOpacity="0.8" result="highlightColor" />
+                    <feFlood floodColor="#fff1f2" floodOpacity="0.95" result="highlightColor" />
                     <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-                    <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="bevelBlurBottom" />
+                    <feOffset dx="4" dy="6" in="bevelBlurBottom" result="offsetBlurBottom" />
                     <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                    <feFlood floodColor="#801456" floodOpacity="0.75" result="shadowColor" />
+                    <feFlood floodColor="#4c0519" floodOpacity="0.85" result="shadowColor" />
                     <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+
                     <feMerge>
-                      <feMergeNode in="dropShadow" />
+                      <feMergeNode in="glow" />
+                      <feMergeNode in="dropShadow1" />
+                      <feMergeNode in="dropShadow2" />
                       <feMergeNode in="SourceGraphic" />
                       <feMergeNode in="innerShadow" />
                       <feMergeNode in="highlight" />
@@ -266,7 +292,7 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 <path
                   d="M 408 120 L 408 344 C 408 387 374 419 330 406 C 296 397 269 365 243 326 L 166 208 C 141 170 118 141 104 125 C 96 115 106 99 118 99 L 200 99 C 227 99 251 114 267 138 L 333 237 L 333 120 C 333 107 344 96 357 96 L 384 96 C 397 96 408 107 408 120 Z"
                   fill="url(#heroRibbonB)"
-                  stroke="#A5B4FC"
+                  stroke="url(#heroStrokeB)"
                   strokeWidth="2.5"
                   filter="url(#heroRealistic3DB)"
                 />
