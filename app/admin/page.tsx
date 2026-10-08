@@ -412,7 +412,7 @@ export default function AdminPage() {
 
             <button
               type="button"
-              onClick={fetchAdminData}
+              onClick={() => fetchAdminData()}
               disabled={loading}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border dark:border-white/10 border-[#E8E4EF] dark:bg-white/5 bg-[#F5F3F9] dark:hover:bg-white/10 hover:bg-[#EAE7F2] text-xs font-medium dark:text-white text-[#292633] transition disabled:opacity-50 cursor-pointer"
             >
