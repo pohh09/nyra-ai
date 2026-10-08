@@ -157,22 +157,20 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
             className="w-[200px] xs:w-[240px] sm:w-[290px] md:w-[330px] lg:w-[360px] h-auto drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] filter"
           >
             <defs>
-              {/* Volumetric Ribbon A Gradient (Left Inverted V) */}
+              {/* Volumetric Ribbon A Gradient (Left Inverted V) - Theme Colors */}
               <linearGradient id="introRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
-                <stop offset="0%" stopColor="#FFA0D2" />
-                <stop offset="20%" stopColor="#FF54A7" />
-                <stop offset="45%" stopColor="#E52A83" />
-                <stop offset="70%" stopColor="#B31372" />
+                <stop offset="0%" stopColor="#E9D5FF" />
+                <stop offset="33%" stopColor="#C084FC" />
+                <stop offset="66%" stopColor="#9333EA" />
                 <stop offset="100%" stopColor="#6B21A8" />
               </linearGradient>
 
-              {/* Volumetric Ribbon B Gradient (Right Upright V) */}
+              {/* Volumetric Ribbon B Gradient (Right Upright V) - Theme Colors */}
               <linearGradient id="introRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
-                <stop offset="0%" stopColor="#E9D5FF" />
-                <stop offset="20%" stopColor="#C084FC" />
-                <stop offset="45%" stopColor="#9333EA" />
-                <stop offset="70%" stopColor="#3B82F6" />
-                <stop offset="100%" stopColor="#06B6D4" />
+                <stop offset="0%" stopColor="#FFA0D2" />
+                <stop offset="33%" stopColor="#FF4FA3" />
+                <stop offset="66%" stopColor="#E52A83" />
+                <stop offset="100%" stopColor="#B31372" />
               </linearGradient>
 
               {/* Specular Razor-Sharp Glass Highlight */}
@@ -209,6 +207,44 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
                 <stop offset="100%" stopColor="#E52A83" stopOpacity="0.6" />
               </linearGradient>
+
+              <filter id="introRealistic3DA" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#4C1D95" floodOpacity="0.4" result="dropShadow" />
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+                <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+                <feFlood floodColor="#E9D5FF" floodOpacity="0.8" result="highlightColor" />
+                <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+                <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+                <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+                <feFlood floodColor="#4C1D95" floodOpacity="0.75" result="shadowColor" />
+                <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+                <feMerge>
+                  <feMergeNode in="dropShadow" />
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in="innerShadow" />
+                  <feMergeNode in="highlight" />
+                </feMerge>
+              </filter>
+
+              <filter id="introRealistic3DB" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#801456" floodOpacity="0.4" result="dropShadow" />
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+                <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+                <feFlood floodColor="#FFA0D2" floodOpacity="0.8" result="highlightColor" />
+                <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+                <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+                <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+                <feFlood floodColor="#801456" floodOpacity="0.75" result="shadowColor" />
+                <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+                <feMerge>
+                  <feMergeNode in="dropShadow" />
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode in="innerShadow" />
+                  <feMergeNode in="highlight" />
+                </feMerge>
+              </filter>
             </defs>
 
             {/* =========================================================
@@ -228,16 +264,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
                 fill="url(#introRibbonA)"
                 stroke="#FF80BF"
                 strokeWidth="2.5"
+                filter="url(#introRealistic3DA)"
               />
-              <path
-                d="M 142 388 L 142 172 C 142 144 158 126 182 132 C 202 138 222 160 244 190 L 324 308 C 342 334 358 358 372 374"
-                stroke="url(#introFilament)"
-                strokeWidth="1.8"
-                strokeDasharray="6 8"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.8"
-              />
+
               <path
                 d="M 108 380 L 108 172 C 108 135 138 106 178 116 C 206 123 232 152 258 190 L 336 308 C 358 342 382 372 396 388"
                 stroke="url(#introGlassSheen)"
@@ -264,16 +293,9 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
                 fill="url(#introRibbonB)"
                 stroke="#93C5FD"
                 strokeWidth="2.5"
+                filter="url(#introRealistic3DB)"
               />
-              <path
-                d="M 370 124 L 370 340 C 370 368 354 386 330 380 C 310 374 290 352 268 322 L 188 204 C 170 178 154 154 140 138"
-                stroke="url(#introFilament)"
-                strokeWidth="1.8"
-                strokeDasharray="6 8"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.8"
-              />
+
               <path
                 d="M 404 132 L 404 340 C 404 376 376 404 336 394 C 308 387 282 358 256 320 L 178 202 C 156 168 132 138 118 122"
                 stroke="url(#introGlassSheen)"

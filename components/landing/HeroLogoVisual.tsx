@@ -64,22 +64,19 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
           PRIMARY FLOATING ANIMATED NYRA LOGO
       ========================================================= */}
       <div className="relative z-20 flex flex-col items-center justify-center overflow-visible bg-transparent cursor-default">
-        {/* Continuous Smooth Ambient Floating Oscillation */}
-        <motion.div
-          animate={
-            prefersReducedMotion || !hasAssembled
-              ? {}
-              : {
-                  y: [-8, 8, -8],
-                }
-          }
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="relative flex flex-col items-center justify-center overflow-visible bg-transparent"
-        >
+        {/* Static Logo Container */}
+        <div className="relative flex flex-col items-center justify-center overflow-visible bg-transparent">
+          {/* =========================================================
+              AMBIENT VOLUMETRIC COLOR GLOW (Scene Lighting)
+          ========================================================= */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible z-0">
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.7 }}
+              animate={hasAssembled ? { opacity: 0.45, scale: 1.1 } : { opacity: 0.15, scale: 0.85 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+              className="w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] rounded-full bg-gradient-to-tr from-[#E52A83]/30 via-[#9333EA]/25 to-[#06B6D4]/20 blur-[100px] lg:blur-[130px]"
+            />
+          </div>
           {/* Logo Container Box */}
           <div className="relative w-[280px] xs:w-[340px] sm:w-[440px] md:w-[490px] lg:w-[550px] xl:w-[610px] h-[280px] xs:h-[340px] sm:h-[440px] md:h-[490px] lg:h-[550px] xl:h-[610px] flex items-center justify-center overflow-visible bg-transparent">
             {/* =========================================================
@@ -108,14 +105,12 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
               >
                 <defs>
-                  {/* Volumetric Chromatic Gradient for Ribbon A (Left Inverted V) */}
+                  {/* Volumetric Chromatic Gradient for Ribbon A (Left Inverted V) - Theme Colors */}
                   <linearGradient id="heroRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
-                    <stop offset="0%" stopColor="#FFA0D2" />
-                    <stop offset="18%" stopColor="#FF54A7" />
-                    <stop offset="42%" stopColor="#E52A83" />
-                    <stop offset="68%" stopColor="#B31372" />
-                    <stop offset="85%" stopColor="#801456" />
-                    <stop offset="100%" stopColor="#581C87" />
+                    <stop offset="0%" stopColor="#E9D5FF" />
+                    <stop offset="33%" stopColor="#C084FC" />
+                    <stop offset="66%" stopColor="#9333EA" />
+                    <stop offset="100%" stopColor="#6B21A8" />
                   </linearGradient>
 
                   {/* Razor-Sharp Specular Glass Edge Highlight */}
@@ -139,6 +134,25 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                     <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
+
+                  <filter id="heroRealistic3DA" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#4C1D95" floodOpacity="0.4" result="dropShadow" />
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+                    <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                    <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+                    <feFlood floodColor="#E9D5FF" floodOpacity="0.8" result="highlightColor" />
+                    <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+                    <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+                    <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+                    <feFlood floodColor="#4C1D95" floodOpacity="0.75" result="shadowColor" />
+                    <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+                    <feMerge>
+                      <feMergeNode in="dropShadow" />
+                      <feMergeNode in="SourceGraphic" />
+                      <feMergeNode in="innerShadow" />
+                      <feMergeNode in="highlight" />
+                    </feMerge>
+                  </filter>
                 </defs>
 
                 {/* Main Volumetric Ribbon Body */}
@@ -147,18 +161,10 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                   fill="url(#heroRibbonA)"
                   stroke="#FF94CC"
                   strokeWidth="2.5"
+                  filter="url(#heroRealistic3DA)"
                 />
 
-                {/* Inner Luminous Energy Filament Line */}
-                <path
-                  d="M 142 388 L 142 172 C 142 144 158 126 182 132 C 202 138 222 160 244 190 L 324 308 C 342 334 358 358 372 374"
-                  stroke="url(#heroFilamentGradA)"
-                  strokeWidth="1.8"
-                  strokeDasharray="6 8"
-                  strokeLinecap="round"
-                  fill="none"
-                  opacity="0.8"
-                />
+
 
                 {/* Outer Glass Bevel Highlight Rim */}
                 <path
@@ -206,14 +212,12 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                 className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
               >
                 <defs>
-                  {/* Volumetric Chromatic Gradient for Ribbon B (Right Upright V) */}
+                  {/* Volumetric Chromatic Gradient for Ribbon B (Right Upright V) - Theme Colors */}
                   <linearGradient id="heroRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
-                    <stop offset="0%" stopColor="#E9D5FF" />
-                    <stop offset="20%" stopColor="#C084FC" />
-                    <stop offset="45%" stopColor="#9333EA" />
-                    <stop offset="70%" stopColor="#6366F1" />
-                    <stop offset="88%" stopColor="#3B82F6" />
-                    <stop offset="100%" stopColor="#06B6D4" />
+                    <stop offset="0%" stopColor="#FFA0D2" />
+                    <stop offset="33%" stopColor="#FF4FA3" />
+                    <stop offset="66%" stopColor="#E52A83" />
+                    <stop offset="100%" stopColor="#B31372" />
                   </linearGradient>
 
                   {/* Razor-Sharp Specular Glass Edge Highlight */}
@@ -237,6 +241,25 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                     <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
                     <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                   </linearGradient>
+
+                  <filter id="heroRealistic3DB" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#801456" floodOpacity="0.4" result="dropShadow" />
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+                    <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+                    <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+                    <feFlood floodColor="#FFA0D2" floodOpacity="0.8" result="highlightColor" />
+                    <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+                    <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+                    <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+                    <feFlood floodColor="#801456" floodOpacity="0.75" result="shadowColor" />
+                    <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+                    <feMerge>
+                      <feMergeNode in="dropShadow" />
+                      <feMergeNode in="SourceGraphic" />
+                      <feMergeNode in="innerShadow" />
+                      <feMergeNode in="highlight" />
+                    </feMerge>
+                  </filter>
                 </defs>
 
                 {/* Main Volumetric Ribbon Body */}
@@ -245,18 +268,10 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                   fill="url(#heroRibbonB)"
                   stroke="#A5B4FC"
                   strokeWidth="2.5"
+                  filter="url(#heroRealistic3DB)"
                 />
 
-                {/* Inner Luminous Energy Filament Line */}
-                <path
-                  d="M 370 124 L 370 340 C 370 368 354 386 330 380 C 310 374 290 352 268 322 L 188 204 C 170 178 154 154 140 138"
-                  stroke="url(#heroFilamentGradB)"
-                  strokeWidth="1.8"
-                  strokeDasharray="6 8"
-                  strokeLinecap="round"
-                  fill="none"
-                  opacity="0.8"
-                />
+
 
                 {/* Outer Glass Bevel Highlight Rim */}
                 <path
@@ -321,52 +336,62 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
                   </linearGradient>
                 </defs>
 
-                {/* Diamond Facet 1: North */}
-                <path d="M 256 204 L 296 256 L 256 256 Z" fill="url(#synapseNorth)" />
+                {/* =========================================================
+                    CENTRAL QUANTUM SYNAPSE PRISM (Burst on assembly)
+                ========================================================= */}
+                <motion.g
+                  initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
+                  animate={hasAssembled ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+                  transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
+                  style={{ transformOrigin: 'center' }}
+                >
+                  {/* Diamond Facet 1: North */}
+                  <path d="M 256 204 L 296 256 L 256 256 Z" fill="url(#synapseNorth)" />
 
-                {/* Diamond Facet 2: East */}
-                <path d="M 296 256 L 256 308 L 256 256 Z" fill="url(#synapseEast)" />
+                  {/* Diamond Facet 2: East */}
+                  <path d="M 296 256 L 256 308 L 256 256 Z" fill="url(#synapseEast)" />
 
-                {/* Diamond Facet 3: South */}
-                <path d="M 256 308 L 216 256 L 256 256 Z" fill="url(#synapseSouth)" />
+                  {/* Diamond Facet 3: South */}
+                  <path d="M 256 308 L 216 256 L 256 256 Z" fill="url(#synapseSouth)" />
 
-                {/* Diamond Facet 4: West */}
-                <path d="M 216 256 L 256 204 L 256 256 Z" fill="url(#synapseWest)" />
+                  {/* Diamond Facet 4: West */}
+                  <path d="M 216 256 L 256 204 L 256 256 Z" fill="url(#synapseWest)" />
 
-                {/* Diamond Outer Chamfer Border */}
-                <path
-                  d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth="1.8"
-                  className="drop-shadow-[0_0_12px_#FFFFFF]"
-                />
+                  {/* Diamond Outer Chamfer Border */}
+                  <path
+                    d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.8"
+                    className="drop-shadow-[0_0_12px_#FFFFFF]"
+                  />
 
-                {/* Cross-Facet Dividers */}
-                <line x1="256" y1="204" x2="256" y2="308" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
-                <line x1="216" y1="256" x2="296" y2="256" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+                  {/* Cross-Facet Dividers */}
+                  <line x1="256" y1="204" x2="256" y2="308" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+                  <line x1="216" y1="256" x2="296" y2="256" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
 
-                {/* Glowing Core Synapse Node */}
-                <circle
-                  cx="256"
-                  cy="256"
-                  r="7"
-                  fill="#38BDF8"
-                  className="animate-pulse shadow-lg"
-                />
+                  {/* Glowing Core Synapse Node */}
+                  <circle
+                    cx="256"
+                    cy="256"
+                    r="7"
+                    fill="#38BDF8"
+                    className="animate-pulse shadow-lg"
+                  />
 
-                {/* 4-Point Micro Starflare */}
-                <path
-                  d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
-                  fill="#FFFFFF"
-                  opacity="0.95"
-                  className="animate-spin"
-                  style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
-                />
+                  {/* 4-Point Micro Starflare */}
+                  <path
+                    d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
+                    fill="#FFFFFF"
+                    opacity="0.95"
+                    className="animate-spin"
+                    style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
+                  />
+                </motion.g>
               </svg>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* =========================================================
@@ -380,11 +405,11 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         animate={
           showTelemetry
             ? {
-                opacity: 1,
-                scale: 1,
-                y: prefersReducedMotion ? 0 : [-6, 6, -6],
-                x: prefersReducedMotion ? 0 : [-2, 2, -2],
-              }
+              opacity: 1,
+              scale: 1,
+              y: prefersReducedMotion ? 0 : [-6, 6, -6],
+              x: prefersReducedMotion ? 0 : [-2, 2, -2],
+            }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -418,11 +443,11 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         animate={
           showTelemetry
             ? {
-                opacity: 1,
-                scale: 1,
-                y: prefersReducedMotion ? 0 : [6, -6, 6],
-                x: prefersReducedMotion ? 0 : [2, -2, 2],
-              }
+              opacity: 1,
+              scale: 1,
+              y: prefersReducedMotion ? 0 : [6, -6, 6],
+              x: prefersReducedMotion ? 0 : [2, -2, 2],
+            }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -456,11 +481,11 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         animate={
           showTelemetry
             ? {
-                opacity: 1,
-                scale: 1,
-                y: prefersReducedMotion ? 0 : [7, -7, 7],
-                x: prefersReducedMotion ? 0 : [-3, 3, -3],
-              }
+              opacity: 1,
+              scale: 1,
+              y: prefersReducedMotion ? 0 : [7, -7, 7],
+              x: prefersReducedMotion ? 0 : [-3, 3, -3],
+            }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{
@@ -492,11 +517,11 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         animate={
           showTelemetry
             ? {
-                opacity: 1,
-                scale: 1,
-                y: prefersReducedMotion ? 0 : [-7, 7, -7],
-                x: prefersReducedMotion ? 0 : [3, -3, 3],
-              }
+              opacity: 1,
+              scale: 1,
+              y: prefersReducedMotion ? 0 : [-7, 7, -7],
+              x: prefersReducedMotion ? 0 : [3, -3, 3],
+            }
             : { opacity: 0, scale: 0.85, y: 12 }
         }
         transition={{

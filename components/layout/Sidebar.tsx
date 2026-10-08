@@ -239,8 +239,8 @@ export default function Sidebar({
               className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-[#F4DCE9] dark:hover:bg-white/[0.06] transition text-left cursor-pointer group"
               title="Start a new chat"
             >
-              <div className="relative h-7.5 w-7.5 rounded-xl overflow-hidden shadow-sm shrink-0 border border-[#E8E4EF] dark:border-pink-500/20 bg-[#140A24] flex items-center justify-center">
-                <NyraIcon size={18} variant="primary" />
+              <div className="relative flex items-center justify-center shrink-0">
+                <NyraIcon size={24} variant="primary" />
               </div>
               <span className="text-sm font-bold tracking-tight text-[#261827] dark:text-white group-hover:text-[#B31372] dark:group-hover:text-pink-300 transition-colors">
                 Nyra AI

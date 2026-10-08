@@ -11,15 +11,6 @@ export interface NyraIconProps extends React.SVGProps<SVGSVGElement> {
   glow?: boolean;
 }
 
-/**
- * Nyra AI Brand Icon
- * 
- * Distinctive, geometric AI brandmark based on the "Neural Nexus" principle:
- * Continuous intertwined neural ribbons forming a hidden abstract 'N'
- * with a luminous central focal lens.
- * 
- * Highly legible from 16px favicon to 512px hero scale.
- */
 export function NyraIcon({
   size = 32,
   variant = 'primary',
@@ -29,123 +20,210 @@ export function NyraIcon({
 }: NyraIconProps) {
   const id = React.useId().replace(/:/g, '');
 
-  // Gradient configurations based on variant
-  const getGradientDef = () => {
-    switch (variant) {
-      case 'dark':
-        return (
-          <>
-            <linearGradient id={`nyraGradA-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FF4FA3" />
-              <stop offset="50%" stopColor="#E52A83" />
-              <stop offset="100%" stopColor="#9333EA" />
-            </linearGradient>
-            <linearGradient id={`nyraGradB-${id}`} x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#C084FC" />
-              <stop offset="60%" stopColor="#7928CA" />
-              <stop offset="100%" stopColor="#3B82F6" />
-            </linearGradient>
-          </>
-        );
-      case 'light':
-        return (
-          <>
-            <linearGradient id={`nyraGradA-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#B31372" />
-              <stop offset="50%" stopColor="#D11E73" />
-              <stop offset="100%" stopColor="#7E22CE" />
-            </linearGradient>
-            <linearGradient id={`nyraGradB-${id}`} x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#9333EA" />
-              <stop offset="60%" stopColor="#6B21A8" />
-              <stop offset="100%" stopColor="#2563EB" />
-            </linearGradient>
-          </>
-        );
-      case 'monochrome':
-        return null;
-      case 'favicon':
-      case 'gradient':
-      case 'primary':
-      default:
-        return (
-          <>
-            <linearGradient id={`nyraGradA-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FF4FA3" />
-              <stop offset="30%" stopColor="#E52A83" />
-              <stop offset="70%" stopColor="#D11E73" />
-              <stop offset="100%" stopColor="#9333EA" />
-            </linearGradient>
-            <linearGradient id={`nyraGradB-${id}`} x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#A855F7" />
-              <stop offset="40%" stopColor="#7928CA" />
-              <stop offset="75%" stopColor="#3B82F6" />
-              <stop offset="100%" stopColor="#06B6D4" />
-            </linearGradient>
-            <radialGradient id={`nyraCoreGlow-${id}`} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FF4FA3" stopOpacity="0.8" />
-              <stop offset="60%" stopColor="#9333EA" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#7928CA" stopOpacity="0" />
-            </radialGradient>
-          </>
-        );
-    }
-  };
-
   const isMonochrome = variant === 'monochrome';
-  const fillA = isMonochrome ? 'currentColor' : `url(#nyraGradA-${id})`;
-  const fillB = isMonochrome ? 'currentColor' : `url(#nyraGradB-${id})`;
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 32 32"
+      viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`shrink-0 transition-transform ${glow ? 'drop-shadow-[0_0_12px_rgba(229,42,131,0.45)]' : ''} ${className}`}
       {...props}
     >
       <defs>
-        {getGradientDef()}
-        {glow && (
-          <filter id={`nyraGlowFilter-${id}`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
+        {/* Ribbon A (Purple) */}
+        <linearGradient id={`nyraRibbonA-${id}`} x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%" stopColor="#E9D5FF" />
+          <stop offset="33%" stopColor="#C084FC" />
+          <stop offset="66%" stopColor="#9333EA" />
+          <stop offset="100%" stopColor="#6B21A8" />
+        </linearGradient>
+
+        <linearGradient id={`nyraGlassSheenA-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+          <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
+          <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+
+        <linearGradient id={`nyraSoftSheenA-${id}`} x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Ribbon B (Pink) */}
+        <linearGradient id={`nyraRibbonB-${id}`} x1="90%" y1="0%" x2="10%" y2="100%">
+          <stop offset="0%" stopColor="#FFA0D2" />
+          <stop offset="33%" stopColor="#FF4FA3" />
+          <stop offset="66%" stopColor="#E52A83" />
+          <stop offset="100%" stopColor="#B31372" />
+        </linearGradient>
+
+        <linearGradient id={`nyraGlassSheenB-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+          <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
+          <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+
+        <linearGradient id={`nyraSoftSheenB-${id}`} x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Synapse Gradients */}
+        <linearGradient id={`synapseNorth-${id}`} x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.7" />
+        </linearGradient>
+
+        <linearGradient id={`synapseEast-${id}`} x1="100%" y1="50%" x2="0%" y2="50%">
+          <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.5" />
+        </linearGradient>
+
+        <linearGradient id={`synapseSouth-${id}`} x1="50%" y1="100%" x2="50%" y2="0%">
+          <stop offset="0%" stopColor="#E52A83" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4" />
+        </linearGradient>
+
+        <linearGradient id={`synapseWest-${id}`} x1="0%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#E52A83" stopOpacity="0.6" />
+        </linearGradient>
+
+        {!isMonochrome && (
+          <>
+            <filter id={`heroRealistic3DA-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#4C1D95" floodOpacity="0.4" result="dropShadow" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+              <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+              <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+              <feFlood floodColor="#E9D5FF" floodOpacity="0.8" result="highlightColor" />
+              <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+              <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+              <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+              <feFlood floodColor="#4C1D95" floodOpacity="0.75" result="shadowColor" />
+              <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+              <feMerge>
+                <feMergeNode in="dropShadow" />
+                <feMergeNode in="SourceGraphic" />
+                <feMergeNode in="innerShadow" />
+                <feMergeNode in="highlight" />
+              </feMerge>
+            </filter>
+
+            <filter id={`heroRealistic3DB-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#801456" floodOpacity="0.4" result="dropShadow" />
+              <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
+              <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
+              <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
+              <feFlood floodColor="#FFA0D2" floodOpacity="0.8" result="highlightColor" />
+              <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
+              <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
+              <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
+              <feFlood floodColor="#801456" floodOpacity="0.75" result="shadowColor" />
+              <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
+              <feMerge>
+                <feMergeNode in="dropShadow" />
+                <feMergeNode in="SourceGraphic" />
+                <feMergeNode in="innerShadow" />
+                <feMergeNode in="highlight" />
+              </feMerge>
+            </filter>
+          </>
         )}
       </defs>
 
-      {/* Central Neural Nexus Aura */}
-      {!isMonochrome && variant !== 'favicon' && (
-        <circle cx="16" cy="16" r="6.5" fill={`url(#nyraCoreGlow-${id})`} />
+      {/* Main Volumetric Ribbon A (Left Inverted V) */}
+      <path
+        d="M 104 392 L 104 168 C 104 125 138 93 182 106 C 216 115 243 147 269 186 L 346 304 C 371 342 394 371 408 387 C 416 397 406 413 394 413 L 312 413 C 285 413 261 398 245 374 L 179 275 L 179 392 C 179 405 168 416 155 416 L 128 416 C 115 416 104 405 104 392 Z"
+        fill={isMonochrome ? 'currentColor' : `url(#nyraRibbonA-${id})`}
+        stroke={isMonochrome ? 'none' : '#FF94CC'}
+        strokeWidth="2.5"
+        filter={!isMonochrome ? `url(#heroRealistic3DA-${id})` : undefined}
+      />
+
+      {!isMonochrome && (
+        <>
+          {/* Outer Glass Bevel Highlight Rim A */}
+          <path
+            d="M 108 380 L 108 172 C 108 135 138 106 178 116 C 206 123 232 152 258 190 L 336 308 C 358 342 382 372 396 388"
+            stroke={`url(#nyraGlassSheenA-${id})`}
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Inner Chamfer Refraction Rim A */}
+          <path
+            d="M 175 388 L 175 272 L 243 372 C 258 394 280 408 304 408 L 388 408"
+            stroke={`url(#nyraSoftSheenA-${id})`}
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </>
       )}
 
-      {/* Primary Neural Ribbon 1 (Left Pillar & Downward Diagonal Bridge) */}
+      {/* Main Volumetric Ribbon B (Right Upright V) */}
       <path
-        d="M 6.5 24.5 L 6.5 10.5 C 6.5 7.8 8.6 5.8 11.4 6.6 C 13.5 7.2 15.2 9.2 16.8 11.6 L 21.6 19 C 23.2 21.4 24.6 23.2 25.5 24.2 C 26 24.8 25.4 25.8 24.6 25.8 L 19.5 25.8 C 17.8 25.8 16.3 24.9 15.3 23.4 L 11.2 17.2 L 11.2 24.5 C 11.2 25.3 10.5 26 9.7 26 L 8 26 C 7.2 26 6.5 25.3 6.5 24.5 Z"
-        fill={fillA}
-        opacity={isMonochrome ? 0.95 : 1}
+        d="M 408 120 L 408 344 C 408 387 374 419 330 406 C 296 397 269 365 243 326 L 166 208 C 141 170 118 141 104 125 C 96 115 106 99 118 99 L 200 99 C 227 99 251 114 267 138 L 333 237 L 333 120 C 333 107 344 96 357 96 L 384 96 C 397 96 408 107 408 120 Z"
+        fill={isMonochrome ? 'currentColor' : `url(#nyraRibbonB-${id})`}
+        stroke={isMonochrome ? 'none' : '#A5B4FC'}
+        strokeWidth="2.5"
+        filter={!isMonochrome ? `url(#heroRealistic3DB-${id})` : undefined}
       />
 
-      {/* Secondary Neural Ribbon 2 (Right Pillar & Upward Cross Tangent) */}
-      <path
-        d="M 25.5 7.5 L 25.5 21.5 C 25.5 24.2 23.4 26.2 20.6 25.4 C 18.5 24.8 16.8 22.8 15.2 20.4 L 10.4 13 C 8.8 10.6 7.4 8.8 6.5 7.8 C 6 7.2 6.6 6.2 7.4 6.2 L 12.5 6.2 C 14.2 6.2 15.7 7.1 16.7 8.6 L 20.8 14.8 L 20.8 7.5 C 20.8 6.7 21.5 6 22.3 6 L 24 6 C 24.8 6 25.5 6.7 25.5 7.5 Z"
-        fill={fillB}
-        opacity={isMonochrome ? 0.65 : 0.9}
-        style={{ mixBlendMode: isMonochrome ? 'normal' : 'screen' }}
-      />
-
-      {/* Central Diamond Spark (Neural Synapse) */}
       {!isMonochrome && (
-        <path
-          d="M 16 12.5 L 18 16 L 16 19.5 L 14 16 Z"
-          fill="#FFFFFF"
-          opacity="0.85"
-        />
+        <>
+          {/* Outer Glass Bevel Highlight Rim B */}
+          <path
+            d="M 404 132 L 404 340 C 404 376 376 404 336 394 C 308 387 282 358 256 320 L 178 202 C 156 168 132 138 118 122"
+            stroke={`url(#nyraGlassSheenB-${id})`}
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.9"
+          />
+          {/* Inner Chamfer Refraction Rim B */}
+          <path
+            d="M 337 124 L 337 240 L 269 140 C 254 118 232 104 208 104 L 124 104"
+            stroke={`url(#nyraSoftSheenB-${id})`}
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+          />
+
+          {/* Central Quantum Synapse Prism */}
+          <g>
+            <path d="M 256 204 L 296 256 L 256 256 Z" fill={`url(#synapseNorth-${id})`} />
+            <path d="M 296 256 L 256 308 L 256 256 Z" fill={`url(#synapseEast-${id})`} />
+            <path d="M 256 308 L 216 256 L 256 256 Z" fill={`url(#synapseSouth-${id})`} />
+            <path d="M 216 256 L 256 204 L 256 256 Z" fill={`url(#synapseWest-${id})`} />
+            <path
+              d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
+              fill="none"
+              stroke="#FFFFFF"
+              strokeWidth="1.8"
+              className="drop-shadow-[0_0_12px_#FFFFFF]"
+            />
+            <line x1="256" y1="204" x2="256" y2="308" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+            <line x1="216" y1="256" x2="296" y2="256" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
+            <circle cx="256" cy="256" r="7" fill="#38BDF8" className="animate-pulse shadow-lg" />
+            <path
+              d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
+              fill="#FFFFFF"
+              opacity="0.95"
+              className="animate-spin"
+              style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
+            />
+          </g>
+        </>
       )}
     </svg>
   );
 }
-
-export default NyraIcon;
