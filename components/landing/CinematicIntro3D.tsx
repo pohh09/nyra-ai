@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import gsap from 'gsap';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface CinematicIntro3DProps {
   onComplete: () => void;
@@ -64,18 +65,14 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
       return;
     }
 
-    // Step 1 -> 2: Left V & Right V glide in from -100vw and +100vw (1000ms)
-    // Step 2: Logo lock-in moment at t = 1000ms
     const lockTimer = setTimeout(() => {
       setHasFormed(true);
-    }, 1000);
+    }, 400);
 
-    // Step 3: Brand text & subtitle appear at t = 1200ms
     const textTimer = setTimeout(() => {
       setShowBrandText(true);
-    }, 1200);
+    }, 1000);
 
-    // Step 4: Scene 2 Transition — Smooth fade into landing page at t = 2200ms
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
       if (containerRef.current) {
@@ -145,196 +142,25 @@ export default function CinematicIntro3D({ onComplete }: CinematicIntro3DProps) 
       ========================================================= */}
       <div className="relative z-10 flex flex-col items-center justify-center">
         {/* Vector Nyra Neural Logo */}
-        <div className="relative p-6 flex items-center justify-center overflow-visible">
-          <svg
-            width="512"
-            height="512"
-            viewBox="0 0 512 512"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            overflow="visible"
-            style={{ overflow: 'visible' }}
-            className="w-[200px] xs:w-[240px] sm:w-[290px] md:w-[330px] lg:w-[360px] h-auto drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)] filter"
+        <div className="relative p-6 flex items-center justify-center overflow-visible w-[250px] xs:w-[290px] sm:w-[340px] md:w-[380px] lg:w-[410px] h-[250px] xs:h-[290px] sm:h-[340px] md:h-[380px] lg:h-[410px]">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{
+              duration: 1.2,
+              ease: [0.16, 1, 0.3, 1], // Smooth premium entrance
+            }}
+            className="absolute inset-0 w-full h-full pointer-events-none overflow-visible drop-shadow-[0_25px_50px_rgba(0,0,0,0.7)]"
+            style={{ willChange: 'transform' }}
           >
-            <defs>
-              {/* Volumetric Ribbon A Gradient (Left Inverted V) - Theme Colors */}
-              <linearGradient id="introRibbonA" x1="10%" y1="0%" x2="90%" y2="100%">
-                <stop offset="0%" stopColor="#E9D5FF" />
-                <stop offset="33%" stopColor="#C084FC" />
-                <stop offset="66%" stopColor="#9333EA" />
-                <stop offset="100%" stopColor="#6B21A8" />
-              </linearGradient>
-
-              {/* Volumetric Ribbon B Gradient (Right Upright V) - Theme Colors */}
-              <linearGradient id="introRibbonB" x1="90%" y1="0%" x2="10%" y2="100%">
-                <stop offset="0%" stopColor="#FFA0D2" />
-                <stop offset="33%" stopColor="#FF4FA3" />
-                <stop offset="66%" stopColor="#E52A83" />
-                <stop offset="100%" stopColor="#B31372" />
-              </linearGradient>
-
-              {/* Specular Razor-Sharp Glass Highlight */}
-              <linearGradient id="introGlassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-                <stop offset="40%" stopColor="#FFFFFF" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-              </linearGradient>
-
-              {/* Inner Core Filament */}
-              <linearGradient id="introFilament" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9" />
-              </linearGradient>
-
-              {/* Synapse Prism Facets */}
-              <linearGradient id="introFacetNorth" x1="50%" y1="0%" x2="50%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.7" />
-              </linearGradient>
-
-              <linearGradient id="introFacetEast" x1="100%" y1="50%" x2="0%" y2="50%">
-                <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.5" />
-              </linearGradient>
-
-              <linearGradient id="introFacetSouth" x1="50%" y1="100%" x2="50%" y2="0%">
-                <stop offset="0%" stopColor="#E52A83" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4" />
-              </linearGradient>
-
-              <linearGradient id="introFacetWest" x1="0%" y1="50%" x2="100%" y2="50%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#E52A83" stopOpacity="0.6" />
-              </linearGradient>
-
-              <filter id="introRealistic3DA" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#4C1D95" floodOpacity="0.4" result="dropShadow" />
-                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
-                <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
-                <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                <feFlood floodColor="#E9D5FF" floodOpacity="0.8" result="highlightColor" />
-                <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-                <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
-                <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                <feFlood floodColor="#4C1D95" floodOpacity="0.75" result="shadowColor" />
-                <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
-                <feMerge>
-                  <feMergeNode in="dropShadow" />
-                  <feMergeNode in="SourceGraphic" />
-                  <feMergeNode in="innerShadow" />
-                  <feMergeNode in="highlight" />
-                </feMerge>
-              </filter>
-
-              <filter id="introRealistic3DB" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="12" stdDeviation="15" floodColor="#801456" floodOpacity="0.4" result="dropShadow" />
-                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur" />
-                <feOffset dx="-6" dy="-6" in="blur" result="offsetBlurTop" />
-                <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                <feFlood floodColor="#FFA0D2" floodOpacity="0.8" result="highlightColor" />
-                <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-                <feOffset dx="8" dy="8" in="blur" result="offsetBlurBottom" />
-                <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                <feFlood floodColor="#801456" floodOpacity="0.75" result="shadowColor" />
-                <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
-                <feMerge>
-                  <feMergeNode in="dropShadow" />
-                  <feMergeNode in="SourceGraphic" />
-                  <feMergeNode in="innerShadow" />
-                  <feMergeNode in="highlight" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* =========================================================
-                PIECE 1: LEFT V ELEMENT
-                Travels smoothly from offscreen left (-100vw) to center
-            ========================================================= */}
-            <motion.g
-              initial={{ x: '-100vw', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{
-                duration: 1.0,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
-              <path
-                d="M 104 392 L 104 168 C 104 125 138 93 182 106 C 216 115 243 147 269 186 L 346 304 C 371 342 394 371 408 387 C 416 397 406 413 394 413 L 312 413 C 285 413 261 398 245 374 L 179 275 L 179 392 C 179 405 168 416 155 416 L 128 416 C 115 416 104 405 104 392 Z"
-                fill="url(#introRibbonA)"
-                stroke="#FF80BF"
-                strokeWidth="2.5"
-                filter="url(#introRealistic3DA)"
-              />
-
-              <path
-                d="M 108 380 L 108 172 C 108 135 138 106 178 116 C 206 123 232 152 258 190 L 336 308 C 358 342 382 372 396 388"
-                stroke="url(#introGlassSheen)"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                fill="none"
-              />
-            </motion.g>
-
-            {/* =========================================================
-                PIECE 2: RIGHT V ELEMENT
-                Travels smoothly from offscreen right (+100vw) to center
-            ========================================================= */}
-            <motion.g
-              initial={{ x: '100vw', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{
-                duration: 1.0,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
-              <path
-                d="M 408 120 L 408 344 C 408 387 374 419 330 406 C 296 397 269 365 243 326 L 166 208 C 141 170 118 141 104 125 C 96 115 106 99 118 99 L 200 99 C 227 99 251 114 267 138 L 333 237 L 333 120 C 333 107 344 96 357 96 L 384 96 C 397 96 408 107 408 120 Z"
-                fill="url(#introRibbonB)"
-                stroke="#93C5FD"
-                strokeWidth="2.5"
-                filter="url(#introRealistic3DB)"
-              />
-
-              <path
-                d="M 404 132 L 404 340 C 404 376 376 404 336 394 C 308 387 282 358 256 320 L 178 202 C 156 168 132 138 118 122"
-                stroke="url(#introGlassSheen)"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                fill="none"
-                opacity="0.9"
-              />
-            </motion.g>
-
-            {/* =========================================================
-                CENTRAL QUANTUM SYNAPSE PRISM (Burst on assembly)
-            ========================================================= */}
-            <motion.g
-              initial={{ scale: 0, opacity: 0 }}
-              animate={hasFormed ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
-            >
-              <path d="M 256 204 L 296 256 L 256 256 Z" fill="url(#introFacetNorth)" />
-              <path d="M 296 256 L 256 308 L 256 256 Z" fill="url(#introFacetEast)" />
-              <path d="M 256 308 L 216 256 L 256 256 Z" fill="url(#introFacetSouth)" />
-              <path d="M 216 256 L 256 204 L 256 256 Z" fill="url(#introFacetWest)" />
-              <path
-                d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
-                fill="none"
-                stroke="#FFFFFF"
-                strokeWidth="1.8"
-                className="drop-shadow-[0_0_12px_#FFFFFF]"
-              />
-              <circle cx="256" cy="256" r="7" fill="#38BDF8" className="animate-pulse shadow-lg" />
-              <path
-                d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
-                fill="#FFFFFF"
-                opacity="0.95"
-                className="animate-spin"
-                style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
-              />
-            </motion.g>
-          </svg>
+            <Image 
+              src="/nyra-icon.svg"
+              alt="Nyra AI Logo"
+              fill
+              priority
+              className="object-contain"
+            />
+          </motion.div>
         </div>
 
         {/* Brand Wordmark & Tagline Reveal */}
