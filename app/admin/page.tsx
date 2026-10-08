@@ -95,9 +95,11 @@ export default function AdminPage() {
     messages: number;
   } | null>(null);
 
-  const fetchAdminData = async () => {
-    setLoading(true);
-    setErrorMessage(null);
+  const fetchAdminData = async (silent = false) => {
+    if (!silent) {
+      setLoading(true);
+      setErrorMessage(null);
+    }
     setAccessDenied(false);
 
     try {
@@ -113,14 +115,14 @@ export default function AdminPage() {
 
       if (statsRes.status === 401 || statsRes.status === 403 || usersRes.status === 401 || usersRes.status === 403) {
         setAccessDenied(true);
-        setLoading(false);
+        if (!silent) setLoading(false);
         return;
       }
 
       if (!statsRes.ok || !usersRes.ok) {
         const errData = await statsRes.json().catch(() => ({ error: 'Failed to load dashboard' }));
         setErrorMessage(errData.error || 'Failed to load administrative data');
-        setLoading(false);
+        if (!silent) setLoading(false);
         return;
       }
 
@@ -133,7 +135,7 @@ export default function AdminPage() {
     } catch (err: any) {
       setErrorMessage(err.message || 'Network error loading admin data');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -143,9 +145,15 @@ export default function AdminPage() {
         router.replace('/login?redirect=/admin');
       } else {
         fetchAdminData();
+        
+        const intervalId = setInterval(() => {
+          fetchAdminData(true);
+        }, 10000);
+        
+        return () => clearInterval(intervalId);
       }
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, session?.access_token]);
 
   const formatDate = (dateStr?: string | number) => {
     if (!dateStr) return '—';
