@@ -3,12 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import {
-  Zap,
-  Sparkles,
-  Globe,
-  FileText,
-} from 'lucide-react';
+import Image from 'next/image';
 
 interface HeroLogoVisualProps {
   onAssembled?: () => void;
@@ -37,17 +32,14 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
       return;
     }
 
-    // Step 1 -> 2: Left V & Right V travel from -100vw and +100vw (1000ms)
-    // Step 2: Logo lock-in moment at exactly t = 1000ms
     const assembleTimer = setTimeout(() => {
       setHasAssembled(true);
-    }, 1000);
+    }, 400);
 
-    // Step 3: Hold for 400ms (t = 1400ms), then trigger hero content and telemetry cards
     const heroContentTimer = setTimeout(() => {
       setShowTelemetry(true);
       onAssembled?.();
-    }, 1400);
+    }, 1000);
 
     return () => {
       clearTimeout(assembleTimer);
@@ -64,7 +56,6 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
           PRIMARY FLOATING ANIMATED NYRA LOGO
       ========================================================= */}
       <div className="relative z-20 flex flex-col items-center justify-center overflow-visible bg-transparent cursor-default">
-        {/* Static Logo Container */}
         <div className="relative flex flex-col items-center justify-center overflow-visible bg-transparent">
           {/* =========================================================
               AMBIENT VOLUMETRIC COLOR GLOW (Scene Lighting)
@@ -77,344 +68,27 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
               className="w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] rounded-full bg-gradient-to-tr from-[#E52A83]/30 via-[#9333EA]/25 to-[#06B6D4]/20 blur-[100px] lg:blur-[130px]"
             />
           </div>
+
           {/* Logo Container Box */}
           <div className="relative w-[280px] xs:w-[340px] sm:w-[440px] md:w-[490px] lg:w-[550px] xl:w-[610px] h-[280px] xs:h-[340px] sm:h-[440px] md:h-[490px] lg:h-[550px] xl:h-[610px] flex items-center justify-center overflow-visible bg-transparent">
-            {/* =========================================================
-                PIECE 1: LEFT V ELEMENT (Inverted V Ribbon)
-                Starts completely offscreen to the LEFT (-100vw)
-                Flies in over 1000ms to exact final position (x: 0)
-            ========================================================= */}
+            
             <motion.div
-              initial={prefersReducedMotion ? false : { x: '-100vw', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={prefersReducedMotion ? false : { scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{
-                duration: 1.0,
-                ease: [0.16, 1, 0.3, 1], // Polished physical decelerating easing
+                duration: 1.2,
+                ease: [0.16, 1, 0.3, 1], // Smooth premium entrance
               }}
-              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
+              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)]"
               style={{ willChange: 'transform' }}
             >
-              <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 512 512"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                overflow="visible"
-                style={{ overflow: 'visible' }}
-                className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
-              >
-                <defs>
-                  {/* Volumetric Metallic Gloss for Ribbon A (Left Inverted V) */}
-                  <linearGradient id="heroRibbonA" x1="15%" y1="0%" x2="85%" y2="100%">
-                    <stop offset="0%" stopColor="#e879f9" />
-                    <stop offset="20%" stopColor="#a21caf" />
-                    <stop offset="45%" stopColor="#701a75" />
-                    <stop offset="50%" stopColor="#fdf4ff" />
-                    <stop offset="55%" stopColor="#86198f" />
-                    <stop offset="100%" stopColor="#3b0764" />
-                  </linearGradient>
-
-                  {/* Specular Edge Stroke A */}
-                  <linearGradient id="heroStrokeA" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#fdf4ff" />
-                    <stop offset="50%" stopColor="#d946ef" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#fdf4ff" />
-                  </linearGradient>
-
-                  {/* Razor-Sharp Specular Glass Edge Highlight */}
-                  <linearGradient id="heroGlassSheenA" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-                    <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
-                    <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                  </linearGradient>
-
-                  {/* Secondary Soft Highlight Reflection */}
-                  <linearGradient id="heroSoftSheenA" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.7" />
-                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                  </linearGradient>
-
-                  <filter id="heroRealistic3DA" x="-30%" y="-30%" width="160%" height="160%">
-                    <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="#4c1d95" floodOpacity="0.6" result="dropShadow1" />
-                    <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000000" floodOpacity="0.4" result="dropShadow2" />
-                    
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="glowBlur" />
-                    <feFlood floodColor="#c026d3" floodOpacity="0.5" result="glowColor" />
-                    <feComposite in="glowColor" in2="glowBlur" operator="in" result="glow" />
-
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="bevelBlurTop" />
-                    <feOffset dx="-3" dy="-4" in="bevelBlurTop" result="offsetBlurTop" />
-                    <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                    <feFlood floodColor="#fae8ff" floodOpacity="0.95" result="highlightColor" />
-                    <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="bevelBlurBottom" />
-                    <feOffset dx="4" dy="6" in="bevelBlurBottom" result="offsetBlurBottom" />
-                    <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                    <feFlood floodColor="#3b0764" floodOpacity="0.85" result="shadowColor" />
-                    <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
-
-                    <feMerge>
-                      <feMergeNode in="glow" />
-                      <feMergeNode in="dropShadow1" />
-                      <feMergeNode in="dropShadow2" />
-                      <feMergeNode in="SourceGraphic" />
-                      <feMergeNode in="innerShadow" />
-                      <feMergeNode in="highlight" />
-                    </feMerge>
-                  </filter>
-                </defs>
-
-                {/* Main Volumetric Ribbon Body */}
-                <path
-                  d="M 104 392 L 104 168 C 104 125 138 93 182 106 C 216 115 243 147 269 186 L 346 304 C 371 342 394 371 408 387 C 416 397 406 413 394 413 L 312 413 C 285 413 261 398 245 374 L 179 275 L 179 392 C 179 405 168 416 155 416 L 128 416 C 115 416 104 405 104 392 Z"
-                  fill="url(#heroRibbonA)"
-                  stroke="url(#heroStrokeA)"
-                  strokeWidth="2.5"
-                  filter="url(#heroRealistic3DA)"
-                />
-
-
-
-                {/* Outer Glass Bevel Highlight Rim */}
-                <path
-                  d="M 108 380 L 108 172 C 108 135 138 106 178 116 C 206 123 232 152 258 190 L 336 308 C 358 342 382 372 396 388"
-                  stroke="url(#heroGlassSheenA)"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-
-                {/* Inner Chamfer Refraction Rim */}
-                <path
-                  d="M 175 388 L 175 272 L 243 372 C 258 394 280 408 304 408 L 388 408"
-                  stroke="url(#heroSoftSheenA)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              </svg>
-            </motion.div>
-
-            {/* =========================================================
-                PIECE 2: RIGHT V ELEMENT (Upright V Ribbon)
-                Starts completely offscreen to the RIGHT (+100vw)
-                Flies in over 1000ms to exact final position (x: 0)
-            ========================================================= */}
-            <motion.div
-              initial={prefersReducedMotion ? false : { x: '100vw', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{
-                duration: 1.0,
-                ease: [0.16, 1, 0.3, 1], // Symmetrical entrance easing
-              }}
-              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
-              style={{ willChange: 'transform' }}
-            >
-              <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 512 512"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                overflow="visible"
-                style={{ overflow: 'visible' }}
-                className="w-full h-full drop-shadow-[0_28px_56px_rgba(0,0,0,0.65)] filter"
-              >
-                <defs>
-                  {/* Volumetric Metallic Gloss for Ribbon B (Right Upright V) */}
-                  <linearGradient id="heroRibbonB" x1="85%" y1="0%" x2="15%" y2="100%">
-                    <stop offset="0%" stopColor="#fbcfe8" />
-                    <stop offset="20%" stopColor="#db2777" />
-                    <stop offset="45%" stopColor="#831843" />
-                    <stop offset="50%" stopColor="#fff1f2" />
-                    <stop offset="55%" stopColor="#be185d" />
-                    <stop offset="100%" stopColor="#4c0519" />
-                  </linearGradient>
-
-                  {/* Specular Edge Stroke B */}
-                  <linearGradient id="heroStrokeB" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#fff1f2" />
-                    <stop offset="50%" stopColor="#f472b6" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#fff1f2" />
-                  </linearGradient>
-
-                  {/* Razor-Sharp Specular Glass Edge Highlight */}
-                  <linearGradient id="heroGlassSheenB" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-                    <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.35" />
-                    <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.05" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                  </linearGradient>
-
-                  {/* Secondary Soft Highlight Reflection */}
-                  <linearGradient id="heroSoftSheenB" x1="100%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.7" />
-                    <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                  </linearGradient>
-
-                  <filter id="heroRealistic3DB" x="-30%" y="-30%" width="160%" height="160%">
-                    <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="#831843" floodOpacity="0.6" result="dropShadow1" />
-                    <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000000" floodOpacity="0.4" result="dropShadow2" />
-                    
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="glowBlur" />
-                    <feFlood floodColor="#db2777" floodOpacity="0.5" result="glowColor" />
-                    <feComposite in="glowColor" in2="glowBlur" operator="in" result="glow" />
-
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="bevelBlurTop" />
-                    <feOffset dx="-3" dy="-4" in="bevelBlurTop" result="offsetBlurTop" />
-                    <feComposite in="SourceAlpha" in2="offsetBlurTop" operator="out" result="highlightArea" />
-                    <feFlood floodColor="#fff1f2" floodOpacity="0.95" result="highlightColor" />
-                    <feComposite in="highlightColor" in2="highlightArea" operator="in" result="highlight" />
-
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="bevelBlurBottom" />
-                    <feOffset dx="4" dy="6" in="bevelBlurBottom" result="offsetBlurBottom" />
-                    <feComposite in="SourceAlpha" in2="offsetBlurBottom" operator="out" result="shadowArea" />
-                    <feFlood floodColor="#4c0519" floodOpacity="0.85" result="shadowColor" />
-                    <feComposite in="shadowColor" in2="shadowArea" operator="in" result="innerShadow" />
-
-                    <feMerge>
-                      <feMergeNode in="glow" />
-                      <feMergeNode in="dropShadow1" />
-                      <feMergeNode in="dropShadow2" />
-                      <feMergeNode in="SourceGraphic" />
-                      <feMergeNode in="innerShadow" />
-                      <feMergeNode in="highlight" />
-                    </feMerge>
-                  </filter>
-                </defs>
-
-                {/* Main Volumetric Ribbon Body */}
-                <path
-                  d="M 408 120 L 408 344 C 408 387 374 419 330 406 C 296 397 269 365 243 326 L 166 208 C 141 170 118 141 104 125 C 96 115 106 99 118 99 L 200 99 C 227 99 251 114 267 138 L 333 237 L 333 120 C 333 107 344 96 357 96 L 384 96 C 397 96 408 107 408 120 Z"
-                  fill="url(#heroRibbonB)"
-                  stroke="url(#heroStrokeB)"
-                  strokeWidth="2.5"
-                  filter="url(#heroRealistic3DB)"
-                />
-
-
-
-                {/* Outer Glass Bevel Highlight Rim */}
-                <path
-                  d="M 404 132 L 404 340 C 404 376 376 404 336 394 C 308 387 282 358 256 320 L 178 202 C 156 168 132 138 118 122"
-                  stroke="url(#heroGlassSheenB)"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  fill="none"
-                  opacity="0.9"
-                />
-
-                {/* Inner Chamfer Refraction Rim */}
-                <path
-                  d="M 337 124 L 337 240 L 269 140 C 254 118 232 104 208 104 L 124 104"
-                  stroke="url(#heroSoftSheenB)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              </svg>
-            </motion.div>
-
-            {/* =========================================================
-                CENTRAL FACETED QUANTUM PRISM SYNAPSE & STARFLARE
-                Locks into place at t = 1000ms when both V pieces meet
-            ========================================================= */}
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={hasAssembled ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
-              className="absolute inset-0 w-full h-full pointer-events-none overflow-visible"
-            >
-              <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 512 512"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                overflow="visible"
-                style={{ overflow: 'visible' }}
-                className="w-full h-full"
-              >
-                <defs>
-                  <linearGradient id="synapseNorth" x1="50%" y1="0%" x2="50%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-                    <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.7" />
-                  </linearGradient>
-
-                  <linearGradient id="synapseEast" x1="100%" y1="50%" x2="0%" y2="50%">
-                    <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.85" />
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.5" />
-                  </linearGradient>
-
-                  <linearGradient id="synapseSouth" x1="50%" y1="100%" x2="50%" y2="0%">
-                    <stop offset="0%" stopColor="#E52A83" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4" />
-                  </linearGradient>
-
-                  <linearGradient id="synapseWest" x1="0%" y1="50%" x2="100%" y2="50%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                    <stop offset="100%" stopColor="#E52A83" stopOpacity="0.6" />
-                  </linearGradient>
-                </defs>
-
-                {/* =========================================================
-                    CENTRAL QUANTUM SYNAPSE PRISM (Burst on assembly)
-                ========================================================= */}
-                <motion.g
-                  initial={prefersReducedMotion ? false : { scale: 0, opacity: 0 }}
-                  animate={hasAssembled ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-                  transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
-                  style={{ transformOrigin: 'center' }}
-                >
-                  {/* Diamond Facet 1: North */}
-                  <path d="M 256 204 L 296 256 L 256 256 Z" fill="url(#synapseNorth)" />
-
-                  {/* Diamond Facet 2: East */}
-                  <path d="M 296 256 L 256 308 L 256 256 Z" fill="url(#synapseEast)" />
-
-                  {/* Diamond Facet 3: South */}
-                  <path d="M 256 308 L 216 256 L 256 256 Z" fill="url(#synapseSouth)" />
-
-                  {/* Diamond Facet 4: West */}
-                  <path d="M 216 256 L 256 204 L 256 256 Z" fill="url(#synapseWest)" />
-
-                  {/* Diamond Outer Chamfer Border */}
-                  <path
-                    d="M 256 204 L 296 256 L 256 308 L 216 256 Z"
-                    fill="none"
-                    stroke="#FFFFFF"
-                    strokeWidth="1.8"
-                    className="drop-shadow-[0_0_12px_#FFFFFF]"
-                  />
-
-                  {/* Cross-Facet Dividers */}
-                  <line x1="256" y1="204" x2="256" y2="308" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
-                  <line x1="216" y1="256" x2="296" y2="256" stroke="#FFFFFF" strokeWidth="1" opacity="0.6" />
-
-                  {/* Glowing Core Synapse Node */}
-                  <circle
-                    cx="256"
-                    cy="256"
-                    r="7"
-                    fill="#38BDF8"
-                    className="animate-pulse shadow-lg"
-                  />
-
-                  {/* 4-Point Micro Starflare */}
-                  <path
-                    d="M 256 242 Q 256 256 270 256 Q 256 256 256 270 Q 256 256 242 256 Q 256 256 256 242 Z"
-                    fill="#FFFFFF"
-                    opacity="0.95"
-                    className="animate-spin"
-                    style={{ transformOrigin: '256px 256px', animationDuration: '8s' }}
-                  />
-                </motion.g>
-              </svg>
+              <Image 
+                src="/nyra-icon.svg"
+                alt="Nyra AI Logo"
+                fill
+                priority
+                className="object-contain"
+              />
             </motion.div>
           </div>
         </div>
@@ -422,7 +96,7 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
 
       {/* =========================================================
           4 FLOATING TELEMETRY VALUE CARDS AROUND LOGO
-          Fade in at t = 1400ms after logo finishes assembly
+          Fade in at t = 1000ms after logo finishes assembly
       ========================================================= */}
 
       {/* 1. TOP-LEFT: Fast Inference Speed */}
@@ -448,127 +122,130 @@ export default function HeroLogoVisual({ onAssembled }: HeroLogoVisualProps) {
         className="absolute -top-1 left-0 xs:top-0 sm:top-2 sm:-left-6 z-30 rounded-2xl border border-pink-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[145px] xs:max-w-[170px] sm:max-w-[210px] transition-all cursor-pointer hover:border-amber-400/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2 xs:gap-2.5">
-          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-400/35 text-amber-200 shadow-inner">
-            <Zap className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-amber-300 animate-pulse" />
+        <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+          <div className="flex h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-amber-400/20 shadow-[0_0_12px_rgba(251,191,36,0.3)] shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-amber-400 w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4">
+              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white truncate">Fast Inference</span>
-            </div>
-            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-pink-200/80 font-mono block truncate">
-              Groq LPU Powered
-            </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] xs:text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-amber-400/90 truncate">Inference</p>
+            <p className="text-xs xs:text-sm sm:text-base font-bold text-white truncate drop-shadow-md">0.4s TTS</p>
           </div>
         </div>
       </motion.div>
 
-      {/* 2. TOP-RIGHT: Multi-Model Reasoning */}
+      {/* 2. TOP-RIGHT: Cognitive Architecture */}
       <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: -12 }}
         animate={
           showTelemetry
             ? {
               opacity: 1,
               scale: 1,
-              y: prefersReducedMotion ? 0 : [6, -6, 6],
-              x: prefersReducedMotion ? 0 : [2, -2, 2],
+              y: prefersReducedMotion ? 0 : [4, -4, 4],
+              x: prefersReducedMotion ? 0 : [-3, 3, -3],
             }
-            : { opacity: 0, scale: 0.85, y: 12 }
+            : { opacity: 0, scale: 0.85, y: -12 }
         }
         transition={{
           opacity: { duration: 0.5, delay: 0.25 },
           scale: { duration: 0.5, delay: 0.25 },
-          y: { duration: 5.6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 },
-          x: { duration: 5.6, repeat: Infinity, ease: 'easeInOut', delay: 0.4 },
+          y: { duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 },
+          x: { duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 },
         }}
         whileHover={{ scale: 1.05, y: -4 }}
-        className="absolute -top-1 right-0 xs:top-0 sm:top-2 sm:-right-6 z-30 rounded-2xl border border-pink-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[145px] xs:max-w-[170px] sm:max-w-[210px] transition-all cursor-pointer hover:border-violet-400/50"
+        className="absolute top-8 right-2 xs:top-12 xs:-right-2 sm:top-24 sm:-right-10 z-30 rounded-2xl border border-cyan-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[155px] xs:max-w-[185px] sm:max-w-[230px] transition-all cursor-pointer hover:border-cyan-400/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2 xs:gap-2.5">
-          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-pink-500/20 border border-pink-400/35 text-pink-200 shadow-inner">
-            <Sparkles className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-pink-300" />
+        <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+          <div className="flex h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-cyan-400/20 shadow-[0_0_12px_rgba(34,211,238,0.3)] shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-cyan-400 w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4">
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 2L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 16L12 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M22 12L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M8 12L2 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white truncate">Multi-Model AI</span>
-            </div>
-            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-pink-200/80 font-mono block truncate">
-              Llama 3.3 & Gemini
-            </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] xs:text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-cyan-400/90 truncate">Reasoning</p>
+            <p className="text-xs xs:text-sm sm:text-base font-bold text-white truncate drop-shadow-md">Multi-Agent</p>
           </div>
         </div>
       </motion.div>
 
-      {/* 3. BOTTOM-LEFT: Live Web Search */}
+      {/* 3. BOTTOM-LEFT: Vector Memory */}
       <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, x: -12 }}
         animate={
           showTelemetry
             ? {
               opacity: 1,
               scale: 1,
-              y: prefersReducedMotion ? 0 : [7, -7, 7],
-              x: prefersReducedMotion ? 0 : [-3, 3, -3],
+              y: prefersReducedMotion ? 0 : [5, -5, 5],
+              x: prefersReducedMotion ? 0 : [2, -2, 2],
             }
-            : { opacity: 0, scale: 0.85, y: 12 }
+            : { opacity: 0, scale: 0.85, x: -12 }
         }
         transition={{
-          opacity: { duration: 0.5, delay: 0.35 },
-          scale: { duration: 0.5, delay: 0.35 },
-          y: { duration: 6.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 },
-          x: { duration: 6.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 },
+          opacity: { duration: 0.5, delay: 0.4 },
+          scale: { duration: 0.5, delay: 0.4 },
+          y: { duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 },
+          x: { duration: 4.8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 },
         }}
         whileHover={{ scale: 1.05, y: -4 }}
-        className="absolute bottom-2 left-0 xs:bottom-4 sm:bottom-6 sm:-left-6 z-30 rounded-2xl border border-pink-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[145px] xs:max-w-[180px] sm:max-w-[220px] transition-all hidden xs:block cursor-pointer hover:border-cyan-400/50"
+        className="absolute bottom-8 left-2 xs:bottom-12 xs:-left-2 sm:bottom-20 sm:-left-8 z-30 rounded-2xl border border-fuchsia-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[150px] xs:max-w-[180px] sm:max-w-[220px] transition-all cursor-pointer hover:border-fuchsia-400/50"
         onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2 xs:gap-2.5">
-          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-400/35 text-cyan-200 shadow-inner">
-            <Globe className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-cyan-300" />
+        <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+          <div className="flex h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-fuchsia-400/20 shadow-[0_0_12px_rgba(232,121,249,0.3)] shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-fuchsia-400 w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4">
+              <path d="M21 16V8C21 6.89543 20.1046 6 19 6H5C3.89543 6 3 6.89543 3 8V16C3 17.1046 3.89543 18 5 18H19C20.1046 18 21 17.1046 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M7 10L11 14L17 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white block truncate">Live Web Search</span>
-            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-pink-200/80 font-mono truncate block">
-              Tavily Verified Data
-            </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] xs:text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-fuchsia-400/90 truncate">Memory</p>
+            <p className="text-xs xs:text-sm sm:text-base font-bold text-white truncate drop-shadow-md">10M+ Tokens</p>
           </div>
         </div>
       </motion.div>
 
-      {/* 4. BOTTOM-RIGHT: Multimodal Document & Privacy */}
+      {/* 4. BOTTOM-RIGHT: Universal Code Gen */}
       <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, y: 12 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85, x: 12 }}
         animate={
           showTelemetry
             ? {
               opacity: 1,
               scale: 1,
-              y: prefersReducedMotion ? 0 : [-7, 7, -7],
+              y: prefersReducedMotion ? 0 : [-4, 4, -4],
               x: prefersReducedMotion ? 0 : [3, -3, 3],
             }
-            : { opacity: 0, scale: 0.85, y: 12 }
+            : { opacity: 0, scale: 0.85, x: 12 }
         }
         transition={{
-          opacity: { duration: 0.5, delay: 0.45 },
-          scale: { duration: 0.5, delay: 0.45 },
-          y: { duration: 5.8, repeat: Infinity, ease: 'easeInOut', delay: 1.1 },
-          x: { duration: 5.8, repeat: Infinity, ease: 'easeInOut', delay: 1.1 },
+          opacity: { duration: 0.5, delay: 0.55 },
+          scale: { duration: 0.5, delay: 0.55 },
+          y: { duration: 5.7, repeat: Infinity, ease: 'easeInOut', delay: 0.3 },
+          x: { duration: 5.7, repeat: Infinity, ease: 'easeInOut', delay: 0.3 },
         }}
         whileHover={{ scale: 1.05, y: -4 }}
-        className="absolute bottom-2 right-0 xs:bottom-4 sm:bottom-6 sm:-right-6 z-30 rounded-2xl border border-pink-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[145px] xs:max-w-[180px] sm:max-w-[220px] transition-all hidden xs:block cursor-pointer hover:border-pink-400/50"
-        onClick={() => router.push('/documents')}
+        className="absolute -bottom-2 right-1 xs:bottom-0 sm:bottom-2 sm:-right-4 z-30 rounded-2xl border border-emerald-500/25 bg-[#140622]/90 p-2.5 xs:p-3 sm:p-3.5 shadow-[0_12px_32px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[145px] xs:max-w-[170px] sm:max-w-[210px] transition-all cursor-pointer hover:border-emerald-400/50"
+        onClick={() => router.push('/chat-ui')}
       >
-        <div className="flex items-center gap-2 xs:gap-2.5">
-          <div className="flex h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/20 border border-violet-400/35 text-violet-200 shadow-inner">
-            <FileText className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-violet-300" />
+        <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5">
+          <div className="flex h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-400/20 shadow-[0_0_12px_rgba(52,211,153,0.3)] shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-emerald-400 w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4">
+              <path d="M16 18L22 12L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M8 6L2 12L8 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-white block truncate">PDF Document RAG</span>
-            <span className="text-[8.5px] xs:text-[9px] sm:text-[10px] text-pink-200/80 font-mono truncate block">
-              100% In-Browser Privacy
-            </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] xs:text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-400/90 truncate">Synthesis</p>
+            <p className="text-xs xs:text-sm sm:text-base font-bold text-white truncate drop-shadow-md">O1 Ready</p>
           </div>
         </div>
       </motion.div>
