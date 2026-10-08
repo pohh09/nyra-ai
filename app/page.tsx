@@ -893,18 +893,9 @@ export default function HomePage() {
                         <span>All Systems Operational</span>
                       </div>
 
-                      <button
-                        onClick={handleReplayIntro}
-                        className="inline-flex items-center gap-1.5 text-[11.5px] text-pink-200 hover:text-white transition-all cursor-pointer px-3 py-1.5 rounded-xl border border-pink-400/20 bg-pink-500/5 hover:bg-pink-500/15 hover:border-pink-300/40"
-                      >
-                        <RotateCcw className="h-3.5 w-3.5" />
-                        <span>Replay 3D Intro</span>
-                      </button>
-                    </div>
-
                     <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs">
                       <a
-                        href="https://github.com"
+                        href="https://github.com/pohh09/nyra-ai"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.09] text-[#A7A7B0] hover:text-white hover:border-pink-300/40 transition-all duration-200 cursor-pointer group shadow-2xs"
@@ -915,7 +906,7 @@ export default function HomePage() {
                       </a>
 
                       <a
-                        href="https://linkedin.com"
+                        href="https://www.linkedin.com/in/pooja-daki/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.09] text-[#A7A7B0] hover:text-white hover:border-pink-300/40 transition-all duration-200 cursor-pointer group shadow-2xs"
@@ -923,15 +914,6 @@ export default function HomePage() {
                       >
                         <Linkedin className="h-4 w-4 text-cyan-300 group-hover:text-white transition-colors" />
                         <span className="text-xs font-medium">LinkedIn</span>
-                      </a>
-
-                      <a
-                        href="mailto:contact@nyra.ai"
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.09] text-[#A7A7B0] hover:text-white hover:border-pink-300/40 transition-all duration-200 cursor-pointer group shadow-2xs"
-                        aria-label="Contact Email"
-                      >
-                        <Mail className="h-4 w-4 text-amber-300 group-hover:text-white transition-colors" />
-                        <span className="text-xs font-medium">Contact</span>
                       </a>
                     </div>
                   </div>
